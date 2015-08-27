@@ -5,4 +5,19 @@
         <!-- Customize your theme here. -->
     </style>
 
+    <style name="Container">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:padding">@dimen/activity_horizontal_margin</item>
+    </style>
+    
+    <style name="Container.Background">
+        <item name="android:background">@drawable/background</item>
+    </style>
+
+    <style name="Container.YellowBackground">
+        <item name="android:background">@color/yellow</item>
+    </style>
+
 </resources>
