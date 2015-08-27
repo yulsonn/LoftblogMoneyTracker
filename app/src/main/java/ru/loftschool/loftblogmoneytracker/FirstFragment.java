@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class FirstFragment extends Fragment {
@@ -18,7 +19,7 @@ public class FirstFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.first_fragment, container,false);
+        View view = inflater.inflate(R.layout.first_fragment, container, false);
         listView = (ListView) view.findViewById(R.id.main_listview);
         List<Transaction> adapterData = getDataList();
         getActivity().setTitle("First fragment");
@@ -28,10 +29,10 @@ public class FirstFragment extends Fragment {
     }
 
     private List<Transaction> getDataList(){
-        data.add(new Transaction("Telephone", "2000"));
-        data.add(new Transaction("Internet", "3000"));
-        data.add(new Transaction("Food", "4000"));
-        data.add(new Transaction("Transport", "5000"));
+        data.add(new Transaction("Telephone", 2000, new Date()));
+        data.add(new Transaction("Internet", 3000, new Date()));
+        data.add(new Transaction("Food", 4000, new Date()));
+        data.add(new Transaction("Transport", 500, new Date()));
         return data;
     }
 }

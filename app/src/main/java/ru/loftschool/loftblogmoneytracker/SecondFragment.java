@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class SecondFragment extends Fragment {
@@ -28,14 +29,14 @@ public class SecondFragment extends Fragment {
     }
 
     private List<Transaction> getDataList(){
-        data.add(new Transaction("Telephone", "2000"));
-        data.add(new Transaction("Internet", "3000"));
-        data.add(new Transaction("Food", "4000"));
-        data.add(new Transaction("Transport", "5000"));
-        data.add(new Transaction("Telephone", "2000"));
-        data.add(new Transaction("Internet", "3000"));
-        data.add(new Transaction("Food", "4000"));
-        data.add(new Transaction("Transport", "5000"));
+        data.add(new Transaction("Telephone", 2000, new Date()));
+        data.add(new Transaction("Internet", 3000, new Date()));
+        data.add(new Transaction("Food", 4000, new Date()));
+        data.add(new Transaction("Transport", 500, new Date()));
+        data.add(new Transaction("Telephone", 2000, new Date()));
+        data.add(new Transaction("Internet", 3000, new Date()));
+        data.add(new Transaction("Food", 4000, new Date()));
+        data.add(new Transaction("Transport", 500, new Date()));
         return data;
     }
 }
