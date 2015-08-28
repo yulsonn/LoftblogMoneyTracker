@@ -21,23 +21,40 @@ public class TransactionAdapter extends ArrayAdapter<Transaction>{
         this.transactions = transactions;
     }
 
+    //applying ViewHolder Design Pattern to cache data into the holder and reduce number of findViewById() calling
+    static class ViewHolderItem {
+        TextView textTitle;
+        TextView sumTitle;
+        TextView dateTitle;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Transaction transaction = getItem(position);
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         int[] colors = {Color.parseColor("#81D4FA"), Color.parseColor("#EEFF41"), Color.parseColor("#B2FF59"), Color.parseColor("#FF8A80"), Color.parseColor("#EA80FC")};
+        ViewHolderItem viewHolder;
+
         if(convertView == null){
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item, parent, false);
+            // cache view fields into the holder
+            viewHolder = new ViewHolderItem();
+            viewHolder.textTitle = (TextView) convertView.findViewById(R.id.name_text);
+            viewHolder.dateTitle = (TextView) convertView.findViewById(R.id.date_text);
+            viewHolder.sumTitle = (TextView) convertView.findViewById(R.id.sum_text);
+            // store the holder with the view
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolderItem) convertView.getTag();
         }
-        TextView textTitle = (TextView) convertView.findViewById(R.id.name_text);
-        TextView sumTitle = (TextView) convertView.findViewById(R.id.sum_text);
-        TextView dateTitle = (TextView) convertView.findViewById(R.id.date_text);
-        textTitle.setText(transaction.getTitle());
-        sumTitle.setText(Integer.toString(transaction.getSum()));
-        dateTitle.setText(dateFormat.format(transaction.getDate()));
-        textTitle.setBackgroundColor(colors[new Random(System.currentTimeMillis()).nextInt(colors.length)]);
-        sumTitle.setBackgroundColor(colors[new Random(System.currentTimeMillis()).nextInt(colors.length)]);
-        dateTitle.setBackgroundColor(colors[new Random(System.currentTimeMillis()).nextInt(colors.length)]);
+        if (transaction != null) {
+            viewHolder.textTitle.setText(transaction.getTitle());
+            viewHolder.dateTitle.setText(dateFormat.format(transaction.getDate()));
+            viewHolder.sumTitle.setText(Integer.toString(transaction.getSum()));
+            viewHolder.textTitle.setBackgroundColor(colors[new Random(System.currentTimeMillis()).nextInt(colors.length)]);
+            viewHolder.dateTitle.setBackgroundColor(colors[new Random(System.currentTimeMillis()).nextInt(colors.length)]);
+            viewHolder.sumTitle.setBackgroundColor(colors[new Random(System.currentTimeMillis()).nextInt(colors.length)]);
+        }
         return convertView;
     }
 }
