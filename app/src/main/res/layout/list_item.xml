@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/medium_main_text"
-        android:text="Name"/>
+        android:text="@string/item_text_name"/>
 
     <TextView
         android:id="@+id/date_text"
@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:textSize="@dimen/medium_main_text"
-        android:text="Date"/>
+        android:text="@string/item_text_date"/>
 
     <TextView
         android:id="@+id/sum_text"
@@ -27,6 +27,6 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:textSize="@dimen/medium_main_text"
-        android:text="Sum"/>
+        android:text="@string/item_text_sum"/>
 
 </RelativeLayout>
