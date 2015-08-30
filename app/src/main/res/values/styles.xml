@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
@@ -13,11 +13,17 @@
     </style>
     
     <style name="Container.Background">
-        <item name="android:background">@color/white</item>
+        <item name="android:background">@color/gray97</item>
     </style>
 
     <style name="Container.YellowBackground">
         <item name="android:background">@color/yellow</item>
+    </style>
+
+    <style name="DrawerText">
+        <item name="android:fontFamily" tools:targetApi="jelly_bean">Roboto Medium</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
 </resources>

@@ -17,15 +17,16 @@
         android:id="@+id/date_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:textSize="@dimen/medium_main_text"
-        android:text="@string/item_text_date"/>
+        android:textSize="@dimen/small_main_text"
+        android:text="@string/item_text_date"
+        android:layout_below="@+id/name_text" />
 
     <TextView
         android:id="@+id/sum_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
+        android:layout_marginTop="@dimen/text_margin_top"
         android:textSize="@dimen/medium_main_text"
         android:text="@string/item_text_sum"/>
 

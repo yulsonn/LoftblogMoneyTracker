@@ -3,21 +3,20 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/drawer_expenses"
+            android:id="@+id/drawer_item_expenses"
             android:title="@string/nav_drawer_expenses"
             android:checked="true">
         </item>
         <item
-            android:id="@+id/drawer_categories"
+            android:id="@+id/drawer_item_categories"
             android:title="@string/nav_drawer_categories">
         </item>
         <item
-            android:id="@+id/drawer_statistics"
-            android:title="@string/nav_drawer_statistics"
-            android:checked="true">
+            android:id="@+id/drawer_item_statistics"
+            android:title="@string/nav_drawer_statistics">
         </item>
         <item
-            android:id="@+id/drawer_settings"
+            android:id="@+id/drawer_item_settings"
             android:title="@string/nav_drawer_settings">
         </item>
     </group>

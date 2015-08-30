@@ -32,7 +32,7 @@ public class TransactionAdapter extends ArrayAdapter<Transaction>{
     public View getView(int position, View convertView, ViewGroup parent) {
         Transaction transaction = getItem(position);
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-        int[] colors = {Color.parseColor("#81D4FA"), Color.parseColor("#EEFF41"), Color.parseColor("#B2FF59"), Color.parseColor("#FF8A80"), Color.parseColor("#EA80FC")};
+        /*int[] colors = {Color.parseColor("#81D4FA"), Color.parseColor("#EEFF41"), Color.parseColor("#B2FF59"), Color.parseColor("#FF8A80"), Color.parseColor("#EA80FC")};*/
         ViewHolderItem viewHolder;
 
         if(convertView == null){
@@ -51,9 +51,9 @@ public class TransactionAdapter extends ArrayAdapter<Transaction>{
             viewHolder.textTitle.setText(transaction.getTitle());
             viewHolder.dateTitle.setText(dateFormat.format(transaction.getDate()));
             viewHolder.sumTitle.setText(Integer.toString(transaction.getSum()));
-            viewHolder.textTitle.setBackgroundColor(colors[new Random(System.currentTimeMillis()).nextInt(colors.length)]);
+/*            viewHolder.textTitle.setBackgroundColor(colors[new Random(System.currentTimeMillis()).nextInt(colors.length)]);
             viewHolder.dateTitle.setBackgroundColor(colors[new Random(System.currentTimeMillis()).nextInt(colors.length)]);
-            viewHolder.sumTitle.setBackgroundColor(colors[new Random(System.currentTimeMillis()).nextInt(colors.length)]);
+            viewHolder.sumTitle.setBackgroundColor(colors[new Random(System.currentTimeMillis()).nextInt(colors.length)]);*/
         }
         return convertView;
     }

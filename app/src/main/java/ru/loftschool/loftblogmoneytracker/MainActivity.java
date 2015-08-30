@@ -2,9 +2,11 @@ package ru.loftschool.loftblogmoneytracker;
 
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -26,9 +28,7 @@ public class MainActivity extends AppCompatActivity {
         initToolbar();
         setupNavigationDrawer();
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.frame_container, new ExpensesFragment())
-                    .addToBackStack(null)
-                    .commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.frame_container, new ExpensesFragment()).commit();
         }
     }
 
@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if(actionBar != null){
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
     }
@@ -47,12 +48,54 @@ public class MainActivity extends AppCompatActivity {
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
-                Snackbar.make(container, menuItem.getTitle() + " pressed", Snackbar.LENGTH_SHORT).show();
+                /*Snackbar.make(container, menuItem.getTitle() + " " + menuItem.getItemId()+ " pressed", Snackbar.LENGTH_SHORT).show();*/
                 menuItem.setChecked(true);
-                drawerLayout.closeDrawers();
-                return false;
+                selectDrawerItem(menuItem);
+                return true;
             }
         });
+    }
+
+    private void selectDrawerItem(MenuItem menuItem){
+        Fragment fragment = null;
+        Class fragmentClass = null;
+
+        switch (menuItem.getItemId()){
+            case R.id.drawer_item_expenses:
+                fragmentClass = ExpensesFragment.class;
+                break;
+            case R.id.drawer_item_categories:
+                fragmentClass = CategoriesFragment.class;
+                break;
+            case R.id.drawer_item_statistics:
+                fragmentClass = StatisticsFragment.class;
+                break;
+            case R.id.drawer_item_settings:
+                fragmentClass = SettingsFragment.class;
+                break;
+            default:
+                fragmentClass = ExpensesFragment.class;
+        }
+
+        try {
+            fragment = (Fragment) fragmentClass.newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_container, fragment).addToBackStack(null).commit();
+        menuItem.setChecked(true);
+        drawerLayout.closeDrawers();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -85,6 +128,12 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
+
+        if (id == android.R.id.home) {
+           drawerLayout.openDrawer(GravityCompat.START);
+            return true;
+        }
+
 
         return super.onOptionsItemSelected(item);
     }

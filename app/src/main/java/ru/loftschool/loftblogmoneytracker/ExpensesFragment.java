@@ -22,7 +22,7 @@ public class ExpensesFragment extends Fragment {
         View view = inflater.inflate(R.layout.expenses_fragment, container, false);
         listView = (ListView) view.findViewById(R.id.main_listview);
         List<Transaction> adapterData = getDataList();
-        getActivity().setTitle("First fragment");
+        getActivity().setTitle(R.string.frag_title_expenses);
         transactionAdapter = new TransactionAdapter(getActivity(), adapterData);
         listView.setAdapter(transactionAdapter);
         return view;
