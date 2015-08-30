@@ -1,19 +1,19 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/primary</item>
     </style>
 
     <style name="Container">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:gravity">center_horizontal</item>
-        <item name="android:padding">@dimen/activity_horizontal_margin</item>
     </style>
     
     <style name="Container.Background">
-        <item name="android:background">@drawable/background</item>
+        <item name="android:background">@color/white</item>
     </style>
 
     <style name="Container.YellowBackground">

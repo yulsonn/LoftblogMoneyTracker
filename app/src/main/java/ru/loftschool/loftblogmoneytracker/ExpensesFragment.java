@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class FirstFragment extends Fragment {
+public class ExpensesFragment extends Fragment {
 
     private ListView listView;
     private List<Transaction> data = new ArrayList<>();
@@ -19,7 +19,7 @@ public class FirstFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.first_fragment, container, false);
+        View view = inflater.inflate(R.layout.expenses_fragment, container, false);
         listView = (ListView) view.findViewById(R.id.main_listview);
         List<Transaction> adapterData = getDataList();
         getActivity().setTitle("First fragment");
