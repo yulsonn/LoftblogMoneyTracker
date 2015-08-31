@@ -2,6 +2,7 @@ package ru.loftschool.loftblogmoneytracker;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.method.TransformationMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,6 @@ import java.util.List;
 public class ExpensesFragment extends Fragment {
 
     private ListView listView;
-    private List<Transaction> data = new ArrayList<>();
     private TransactionAdapter transactionAdapter;
 
     @Override
@@ -29,6 +29,8 @@ public class ExpensesFragment extends Fragment {
     }
 
     private List<Transaction> getDataList(){
+        List<Transaction> data = new ArrayList<>();
+
         data.add(new Transaction("Telephone", 2000, new Date()));
         data.add(new Transaction("Internet", 3000, new Date()));
         data.add(new Transaction("Food", 4000, new Date()));

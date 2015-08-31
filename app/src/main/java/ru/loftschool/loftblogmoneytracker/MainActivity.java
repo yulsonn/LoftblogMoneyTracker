@@ -57,32 +57,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void selectDrawerItem(MenuItem menuItem){
-        Fragment fragment = null;
-        Class fragmentClass = null;
+        Fragment fragment;
 
         switch (menuItem.getItemId()){
             case R.id.drawer_item_expenses:
-                fragmentClass = ExpensesFragment.class;
+                fragment = new ExpensesFragment();
                 break;
             case R.id.drawer_item_categories:
-                fragmentClass = CategoriesFragment.class;
+                fragment = new CategoriesFragment();
                 break;
             case R.id.drawer_item_statistics:
-                fragmentClass = StatisticsFragment.class;
+                fragment = new StatisticsFragment();
                 break;
             case R.id.drawer_item_settings:
-                fragmentClass = SettingsFragment.class;
+                fragment = new SettingsFragment();
                 break;
             default:
-                fragmentClass = ExpensesFragment.class;
-        }
-
-        try {
-            fragment = (Fragment) fragmentClass.newInstance();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+                fragment = new ExpensesFragment();
         }
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_container, fragment).addToBackStack(null).commit();
         menuItem.setChecked(true);
