@@ -1,11 +1,11 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/Container.YellowBackground">
+    style="@style/Container.Background">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white">
+        android:background="@color/gray97">
 
         <ListView
             android:id="@+id/main_listview"

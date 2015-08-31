@@ -1,39 +1,92 @@
 package ru.loftschool.loftblogmoneytracker;
 
+import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
     private final String LOG_TAG = MainActivity.class.getSimpleName();
-    private Button firstButtonFragment;
-    private Button secondButtonFragment;
+    private DrawerLayout drawerLayout;
+    private View container;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Log.d(LOG_TAG, "onCreate() method called");
-        firstButtonFragment = (Button) findViewById(R.id.button_first);
-        secondButtonFragment = (Button) findViewById(R.id.button_second);
-        firstButtonFragment.setOnClickListener(new View.OnClickListener() {
+        container = findViewById(R.id.frame_container);
+        initToolbar();
+        setupNavigationDrawer();
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.frame_container, new ExpensesFragment()).commit();
+        }
+    }
+
+    private void initToolbar(){
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null){
+            actionBar.setHomeAsUpIndicator(R.drawable.ic_menu_white_24dp);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    private void setupNavigationDrawer(){
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        NavigationView navView = (NavigationView) findViewById(R.id.navigation_view);
+        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public void onClick(View v) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new FirstFragment()).commit();
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
+                /*Snackbar.make(container, menuItem.getTitle() + " " + menuItem.getItemId()+ " pressed", Snackbar.LENGTH_SHORT).show();*/
+                menuItem.setChecked(true);
+                selectDrawerItem(menuItem);
+                return true;
             }
         });
+    }
 
-        secondButtonFragment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new SecondFragment()).commit();
+    private void selectDrawerItem(MenuItem menuItem){
+        Fragment fragment;
 
-            }
-        });
+        switch (menuItem.getItemId()){
+            case R.id.drawer_item_expenses:
+                fragment = new ExpensesFragment();
+                break;
+            case R.id.drawer_item_categories:
+                fragment = new CategoriesFragment();
+                break;
+            case R.id.drawer_item_statistics:
+                fragment = new StatisticsFragment();
+                break;
+            case R.id.drawer_item_settings:
+                fragment = new SettingsFragment();
+                break;
+            default:
+                fragment = new ExpensesFragment();
+        }
+        getSupportFragmentManager().beginTransaction().replace(R.id.frame_container, fragment).addToBackStack(null).commit();
+        menuItem.setChecked(true);
+        drawerLayout.closeDrawers();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -66,6 +119,12 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
+
+        if (id == android.R.id.home) {
+           drawerLayout.openDrawer(GravityCompat.START);
+            return true;
+        }
+
 
         return super.onOptionsItemSelected(item);
     }

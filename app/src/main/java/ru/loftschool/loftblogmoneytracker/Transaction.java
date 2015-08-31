@@ -18,23 +18,12 @@ public class Transaction {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public int getSum() {
         return sum;
-    }
-
-    public void setSum(int sum) {
-        this.sum = sum;
     }
 
     public Date getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
-    }
 }

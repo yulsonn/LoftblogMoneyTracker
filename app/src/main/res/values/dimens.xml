@@ -4,4 +4,16 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="divider_height_list">0.4dp</dimen>
     <dimen name="medium_main_text">16sp</dimen>
+    <dimen name="small_main_text">10sp</dimen>
+    <dimen name="toolbar_elevation">4dp</dimen>
+    <dimen name="text_margin_top">8dp</dimen>
+
+    <!--Navigation Drawer dimens-->
+    <dimen name="drawer_header_height">172dp</dimen>
+    <dimen name="drawer_padding_top">25dp</dimen>
+    <dimen name="drawer_avatar_size">64dp</dimen>
+    <dimen name="drawer_avatar_elevation">4dp</dimen>
+    <dimen name="drawer_header_text_size">14sp</dimen>
+    <dimen name="drawer_margin_large">16dp</dimen>
+    <dimen name="drawer_avatar_border">0dp</dimen>
 </resources>

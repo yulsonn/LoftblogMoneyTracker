@@ -4,8 +4,29 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
-    <string name="money.tracker.title">Money Tracker</string>
+    <!--Строки для списка транзакций-->
     <string name="item_text_name">Name</string>
     <string name="item_text_date">Date</string>
     <string name="item_text_sum">Sum</string>
+
+    <!--Строки меню для NavigationDrawer-->
+    <string name="nav_drawer_expenses">Траты</string>
+    <string name="nav_drawer_categories">Категории</string>
+    <string name="nav_drawer_statistics">Статистика</string>
+    <string name="nav_drawer_settings">Настройки</string>
+
+    <!--Временный текст для фрагментов-->
+    <string name="categories_text">Здесь будут категории...</string>
+    <string name="statistics_text">Здесь будет статистика...</string>
+    <string name="settings_text">Здесь будут настройки...</string>
+
+    <!--Заголовки фрагментов-->
+    <string name="frag_title_expenses">Траты</string>
+    <string name="frag_title_categories">Категории</string>
+    <string name="frag_title_statistics">Статистика</string>
+    <string name="frag_title_settings">Настройки</string>
+
+    <!--Стркоки для Drawer header-->
+    <string name="drawer_header_username">Yulia Sadovskaya</string>
+    <string name="drawer_header_email">yulsonn@gmail.com</string>
 </resources>

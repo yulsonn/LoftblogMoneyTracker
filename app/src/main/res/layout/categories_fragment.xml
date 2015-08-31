@@ -5,10 +5,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white">
+        android:background="@color/gray97">
 
         <ListView
-            android:id="@+id/main_listview"
+            android:id="@+id/categories_listview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:divider="@android:color/transparent"
