@@ -7,6 +7,7 @@
     <dimen name="small_main_text">10sp</dimen>
     <dimen name="toolbar_elevation">4dp</dimen>
     <dimen name="text_margin_top">8dp</dimen>
+    <dimen name="text_margins">10dp</dimen>
 
     <!--Navigation Drawer dimens-->
     <dimen name="drawer_header_height">172dp</dimen>
