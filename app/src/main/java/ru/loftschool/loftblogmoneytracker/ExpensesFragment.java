@@ -5,6 +5,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,16 +22,15 @@ public class ExpensesFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        getActivity().setTitle(R.string.frag_title_expenses);
         final View view = inflater.inflate(R.layout.expenses_fragment, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_content);
-        recyclerView.setHasFixedSize(true);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getActivity(), 2);
-        gridLayoutManager.setOrientation(GridLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(gridLayoutManager);
         floatingActionButton = (FloatingActionButton) view.findViewById(R.id.fab);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), 1, false);
         List<Expense> adapterData = getDataList();
-        getActivity().setTitle(R.string.frag_title_expenses);
         expensesAdapter = new ExpensesAdapter(adapterData);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(expensesAdapter);
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,38 +44,12 @@ public class ExpensesFragment extends Fragment {
     private List<Expense> getDataList(){
         List<Expense> data = new ArrayList<>();
 
-        data.add(new Expense("Telephone", 2000, new Date()));
-        data.add(new Expense("Internet", 3000, new Date()));
-        data.add(new Expense("Food", 4000, new Date()));
-        data.add(new Expense("Transport", 500, new Date()));
-        data.add(new Expense("Telephone", 2000, new Date()));
-        data.add(new Expense("Internet", 3000, new Date()));
-        data.add(new Expense("Food", 4000, new Date()));
-        data.add(new Expense("Transport", 500, new Date()));
-        data.add(new Expense("Telephone", 2000, new Date()));
-        data.add(new Expense("Internet", 3000, new Date()));
-        data.add(new Expense("Food", 4000, new Date()));
-        data.add(new Expense("Transport", 500, new Date()));
-        data.add(new Expense("Telephone", 2000, new Date()));
-        data.add(new Expense("Internet", 3000, new Date()));
-        data.add(new Expense("Food", 4000, new Date()));
-        data.add(new Expense("Transport", 500, new Date()));
-        data.add(new Expense("Telephone", 2000, new Date()));
-        data.add(new Expense("Internet", 3000, new Date()));
-        data.add(new Expense("Food", 4000, new Date()));
-        data.add(new Expense("Transport", 500, new Date()));
-        data.add(new Expense("Telephone", 2000, new Date()));
-        data.add(new Expense("Internet", 3000, new Date()));
-        data.add(new Expense("Food", 4000, new Date()));
-        data.add(new Expense("Transport", 500, new Date()));
-        data.add(new Expense("Telephone", 2000, new Date()));
-        data.add(new Expense("Internet", 3000, new Date()));
-        data.add(new Expense("Food", 4000, new Date()));
-        data.add(new Expense("Transport", 500, new Date()));
-        data.add(new Expense("Telephone", 2000, new Date()));
-        data.add(new Expense("Internet", 3000, new Date()));
-        data.add(new Expense("Food", 4000, new Date()));
-        data.add(new Expense("Transport", 500, new Date()));
+        for (int i = 0; i < 5; i++) {
+            data.add(new Expense("Telephone", 2000, new Date()));
+            data.add(new Expense("Internet", 3000, new Date()));
+            data.add(new Expense("Food", 4000, new Date()));
+            data.add(new Expense("Transport", 500, new Date()));
+        }
         return data;
     }
 }
