@@ -9,12 +9,12 @@ import android.widget.TextView;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class ExpensesAdapter extends RecyclerView.Adapter<ExpensesAdapter.CardViewHolder> {
 
     private List<Expense> expenses;
-    private final static DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-
+    private final static DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
 
     public ExpensesAdapter(List<Expense> expenses) {
         this.expenses = expenses;
