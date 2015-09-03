@@ -38,6 +38,15 @@ public class ExpensesFragment extends Fragment {
                 Snackbar.make(recyclerView, "pressed", Snackbar.LENGTH_SHORT).show();
             }
         });
+
+        Bundle args = getArguments();
+        if (args != null){
+            Boolean showSnackbar = args.getBoolean("showSnackbar");
+            if (showSnackbar){
+                Snackbar.make(recyclerView, getActivity().getTitle() + " selected", Snackbar.LENGTH_SHORT).show();
+            }
+            args.clear();
+        }
         return view;
     }
 

@@ -58,13 +58,18 @@ public class MainActivity extends AppCompatActivity {
 
     private void selectDrawerItem(MenuItem menuItem){
         Fragment fragment;
+        Bundle bundle = null;
 
         switch (menuItem.getItemId()){
             case R.id.drawer_item_expenses:
                 fragment = new ExpensesFragment();
+                bundle = new Bundle();
+                bundle.putBoolean("showSnackbar",true);
                 break;
             case R.id.drawer_item_categories:
                 fragment = new CategoriesFragment();
+                bundle = new Bundle();
+                bundle.putBoolean("showSnackbar",true);
                 break;
             case R.id.drawer_item_statistics:
                 fragment = new StatisticsFragment();
@@ -74,6 +79,14 @@ public class MainActivity extends AppCompatActivity {
                 break;
             default:
                 fragment = new ExpensesFragment();
+                bundle = new Bundle();
+                bundle.putBoolean("showSnackbar",true);
+        }
+
+        if(bundle != null){
+            fragment.setArguments(bundle);
+        } else {
+            Snackbar.make(container, menuItem.getTitle() + " selected", Snackbar.LENGTH_SHORT).show();
         }
         getSupportFragmentManager().beginTransaction().replace(R.id.frame_container, fragment).addToBackStack(null).commit();
         menuItem.setChecked(true);
