@@ -1,6 +1,7 @@
 package ru.loftschool.loftblogmoneytracker;
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,16 @@ public class CategoriesFragment extends Fragment {
         getActivity().setTitle(R.string.frag_title_categories);
         adapter = new ArrayAdapter<>(getActivity(), R.layout.categories_list_item, adapterData);
         listView.setAdapter(adapter);
+
+
+        Bundle args = getArguments();
+        if (args != null){
+            Boolean showSnackbar = args.getBoolean("showSnackbar");
+            if (showSnackbar){
+                Snackbar.make(listView, getActivity().getTitle() + " selected", Snackbar.LENGTH_SHORT).show();
+            }
+            args.clear();
+        }
         return view;
     }
 
