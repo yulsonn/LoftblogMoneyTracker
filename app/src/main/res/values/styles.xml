@@ -17,7 +17,7 @@
     </style>
     
     <style name="Container.Background">
-        <item name="android:background">@color/gray97</item>
+        <item name="android:background">@color/background</item>
     </style>
 
     <style name="Container.YellowBackground">
