@@ -3,28 +3,33 @@ package ru.loftschool.loftblogmoneytracker;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.res.StringRes;
+
 import java.util.ArrayList;
 
+@EFragment(R.layout.categories_fragment)
 public class CategoriesFragment extends Fragment {
 
-    private ListView listView;
     private ArrayAdapter<String> adapter;
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.categories_fragment, container, false);
-        listView = (ListView) view.findViewById(R.id.categories_listview);
+    @ViewById(R.id.categories_listview)
+    ListView listView;
+
+    @StringRes(R.string.frag_title_categories)
+    String title;
+
+    @AfterViews
+    void ready(){
+        getActivity().setTitle(title);
         ArrayList<String> adapterData = getDataList();
-        getActivity().setTitle(R.string.frag_title_categories);
         adapter = new ArrayAdapter<>(getActivity(), R.layout.categories_list_item, adapterData);
         listView.setAdapter(adapter);
-
 
         Bundle args = getArguments();
         if (args != null){
@@ -34,7 +39,6 @@ public class CategoriesFragment extends Fragment {
             }
             args.clear();
         }
-        return view;
     }
 
     private ArrayList<String> getDataList(){

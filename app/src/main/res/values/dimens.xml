@@ -28,4 +28,7 @@
 
     <!--FAB dimens-->
     <dimen name="fab_margin">16dp</dimen>
+
+    <!--Grid Layout dimens for Expenses add activity-->
+    <dimen name="padding_medium">20dp</dimen>
 </resources>

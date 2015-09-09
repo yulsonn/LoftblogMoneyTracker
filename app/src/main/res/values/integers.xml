@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--Grid Layout dimens for Expenses add activity-->
+    <integer name="column_count">2</integer>
+    <integer name="row_count">4</integer>
+</resources>

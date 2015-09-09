@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Container.Background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/toolbar"/>
+
+    <GridLayout
+        android:id="@+id/expense_add"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:columnCount="@integer/column_count"
+        android:rowCount="@integer/row_count"
+        android:background="@color/background"
+        android:padding="@dimen/padding_medium">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"
+            android:gravity="start|center"
+            android:text="@string/text_sum"/>
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"
+            android:gravity="start|center"
+            android:text="@string/text_name"/>
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"
+            android:gravity="start|center"
+            android:text="@string/text_category"/>
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"
+            android:gravity="start|center"
+            android:text="@string/text_date"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"
+            android:hint="@string/hint_date"/>
+
+    </GridLayout>
+</LinearLayout>
