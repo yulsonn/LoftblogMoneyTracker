@@ -25,6 +25,7 @@
             android:text="@string/text_sum"/>
 
         <EditText
+            android:id="@+id/etPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="fill"/>
@@ -37,6 +38,7 @@
             android:text="@string/text_name"/>
 
         <EditText
+            android:id="@+id/etName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="fill"/>
@@ -46,12 +48,14 @@
             android:layout_height="wrap_content"
             android:layout_gravity="fill"
             android:gravity="start|center"
-            android:text="@string/text_category"/>
+            android:text="@string/text_category" />
 
-        <EditText
+        <Spinner
+            android:id="@+id/spCategories"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="fill"/>
+            android:layout_gravity="fill"
+            android:spinnerMode="dropdown" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -66,5 +70,16 @@
             android:layout_gravity="fill"
             android:hint="@string/hint_date"/>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/add_expense_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_add_expense_text"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/button_add_expense_margin"/>
     </GridLayout>
 </LinearLayout>

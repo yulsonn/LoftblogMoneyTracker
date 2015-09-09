@@ -8,15 +8,18 @@ import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import ru.loftschool.loftblogmoneytracker.database.models.Expenses;
+
 public class ExpensesAdapter extends RecyclerView.Adapter<ExpensesAdapter.CardViewHolder> {
 
-    private List<Expense> expenses;
+    private List<Expenses> expenses;
     private final static DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
 
-    public ExpensesAdapter(List<Expense> expenses) {
+    public ExpensesAdapter(List<Expenses> expenses) {
         this.expenses = expenses;
     }
 
@@ -28,10 +31,10 @@ public class ExpensesAdapter extends RecyclerView.Adapter<ExpensesAdapter.CardVi
 
     @Override
     public void onBindViewHolder(CardViewHolder holder, int position) {
-        Expense expense = expenses.get(position);
-        holder.textTitle.setText(expense.getTitle());
-        holder.dateTitle.setText(dateFormat.format(expense.getDate()));
-        holder.sumTitle.setText(Integer.toString(expense.getSum()));
+        Expenses expense = expenses.get(position);
+        holder.textTitle.setText(expense.getName());
+        holder.dateTitle.setText(dateFormat.format(new Date()));
+        holder.sumTitle.setText(expense.getPrice());
     }
 
     @Override

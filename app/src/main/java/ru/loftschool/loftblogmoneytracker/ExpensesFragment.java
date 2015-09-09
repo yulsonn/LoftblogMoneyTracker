@@ -5,8 +5,13 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+
+import com.raizlabs.android.dbflow.sql.language.Select;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -14,9 +19,9 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.StringRes;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+
+import ru.loftschool.loftblogmoneytracker.database.models.Expenses;
 
 @EFragment(R.layout.expenses_fragment)
 public class ExpensesFragment extends Fragment {
@@ -40,12 +45,12 @@ public class ExpensesFragment extends Fragment {
     void ready(){
         getActivity().setTitle(title);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), 1, false);
-        List<Expense> adapterData = getDataList();
-        ExpensesAdapter expensesAdapter = new ExpensesAdapter(adapterData);
+//        List<Expenses> adapterData = getDataList();
+//        ExpensesAdapter expensesAdapter = new ExpensesAdapter(getDataList());
 
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setAdapter(expensesAdapter);
+//        recyclerView.setAdapter(expensesAdapter);
 
         Bundle args = getArguments();
         if (args != null){
@@ -57,15 +62,37 @@ public class ExpensesFragment extends Fragment {
         }
     }
 
-    private List<Expense> getDataList(){
-        List<Expense> data = new ArrayList<>();
+    @Override
+    public void onResume() {
+        super.onResume();
+        getLoaderManager().restartLoader(0, null, new LoaderManager.LoaderCallbacks<List<Expenses>>() {
+            @Override
+            public Loader<List<Expenses>> onCreateLoader(int id, Bundle args) {
+                final AsyncTaskLoader<List<Expenses>> loader = new AsyncTaskLoader<List<Expenses>>(getActivity()){
 
-        for (int i = 0; i < 5; i++) {
-            data.add(new Expense("Telephone", 2000, new Date()));
-            data.add(new Expense("Internet", 3000, new Date()));
-            data.add(new Expense("Food", 4000, new Date()));
-            data.add(new Expense("Transport", 500, new Date()));
-        }
-        return data;
+                    @Override
+                    public List<Expenses> loadInBackground() {
+                        return getDataList();
+                    }
+                };
+                loader.forceLoad();
+
+                return loader;
+            }
+
+            @Override
+            public void onLoadFinished(Loader<List<Expenses>> loader, List<Expenses> data) {
+                recyclerView.setAdapter(new ExpensesAdapter(getDataList()));
+            }
+
+            @Override
+            public void onLoaderReset(Loader<List<Expenses>> loader) {
+
+            }
+        });
+    }
+
+    private List<Expenses> getDataList(){
+        return new Select().from(Expenses.class).queryList();
     }
 }

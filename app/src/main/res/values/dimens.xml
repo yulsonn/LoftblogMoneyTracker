@@ -31,4 +31,5 @@
 
     <!--Grid Layout dimens for Expenses add activity-->
     <dimen name="padding_medium">20dp</dimen>
+    <dimen name="button_add_expense_margin">25dp</dimen>
 </resources>

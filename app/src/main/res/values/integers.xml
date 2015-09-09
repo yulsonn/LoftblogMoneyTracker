@@ -2,5 +2,5 @@
 <resources>
     <!--Grid Layout dimens for Expenses add activity-->
     <integer name="column_count">2</integer>
-    <integer name="row_count">4</integer>
+    <integer name="row_count">5</integer>
 </resources>

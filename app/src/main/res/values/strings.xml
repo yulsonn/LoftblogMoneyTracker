@@ -39,6 +39,7 @@
     <string name="text_category">Категория</string>
     <string name="text_date">Дата</string>
     <string name="hint_date">Сегодня</string>
+    <string name="button_add_expense_text">Добавить трату</string>
 
     <!--Splash text-->
     <string name="splash_text">Welcome to Loftblog Money Tracker</string>
