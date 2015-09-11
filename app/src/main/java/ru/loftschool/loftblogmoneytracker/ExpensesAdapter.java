@@ -12,8 +12,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import ru.loftschool.loftblogmoneytracker.database.models.Expenses;
-
 public class ExpensesAdapter extends RecyclerView.Adapter<ExpensesAdapter.CardViewHolder> {
 
     private List<Expenses> expenses;

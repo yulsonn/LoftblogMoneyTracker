@@ -21,8 +21,6 @@ import org.androidannotations.annotations.res.StringRes;
 
 import java.util.List;
 
-import ru.loftschool.loftblogmoneytracker.database.models.Expenses;
-
 @EFragment(R.layout.expenses_fragment)
 public class ExpensesFragment extends Fragment {
 
