@@ -48,31 +48,36 @@
             android:layout_height="wrap_content"
             android:layout_gravity="fill"
             android:gravity="start|center"
-            android:text="@string/text_category" />
+            android:text="@string/text_category"
+            android:paddingTop="@dimen/padding_small"/>
 
         <Spinner
             android:id="@+id/spCategories"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="fill"
-            android:spinnerMode="dropdown" />
+            android:spinnerMode="dropdown"
+            android:paddingTop="@dimen/padding_small"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="fill"
             android:gravity="start|center"
-            android:text="@string/text_date"/>
+            android:text="@string/text_date"
+            android:paddingTop="@dimen/padding_small"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="fill"
-            android:hint="@string/hint_date"/>
+            android:hint="@string/hint_date"
+            android:paddingTop="@dimen/padding_small"/>
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/padding_small"/>
 
         <Button
             android:id="@+id/add_expense_button"

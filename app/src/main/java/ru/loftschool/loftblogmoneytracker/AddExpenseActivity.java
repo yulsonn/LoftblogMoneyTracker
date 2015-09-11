@@ -19,7 +19,7 @@ import org.androidannotations.annotations.res.StringRes;
 import ru.loftschool.loftblogmoneytracker.database.models.Expenses;
 
 @EActivity(R.layout.activity_add_expense)
-public class AddExpenseActivity extends AppCompatActivity{
+public class AddExpenseActivity extends AppCompatActivity {
 
     @ViewById
     Toolbar toolbar;
@@ -33,15 +33,27 @@ public class AddExpenseActivity extends AppCompatActivity{
     @StringRes(R.string.act_title_add_expense)
     String title;
 
+    @StringRes(R.string.error_null_price)
+    String nullPriceError;
+
+    @StringRes(R.string.error_null_name)
+    String nullNamError;
+
+    @StringRes(R.string.error_num_price)
+    String numPriceError;
+
+    @StringRes(R.string.error_input_message)
+    String errorMessage;
+
     private String[] data = {"Fun", "Social", "Food", "Clothes"};
 
     @OptionsItem(android.R.id.home)
-    void back(){
+    void back() {
         onBackPressed();
     }
 
     @AfterViews
-    void ready(){
+    void ready() {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setTitle(title);
@@ -64,14 +76,40 @@ public class AddExpenseActivity extends AppCompatActivity{
     }
 
     @Click(R.id.add_expense_button)
-    public void addExpenseButton(){
+    public void addExpenseButton() {
 
-        Expenses expenses = new Expenses();
-        expenses.setPrice(etPrice.getText().toString());
-        expenses.setName(etName.getText().toString());
-        expenses.insert();
+        if(!inputValidation()) {
+            return;
+        } else {
+            Expenses expenses = new Expenses();
+            expenses.setPrice(etPrice.getText().toString());
+            expenses.setName(etName.getText().toString());
+            expenses.insert();
 
-        Toast.makeText(this, " " + etPrice.getText().toString() + ", "
-                                    + etName.getText().toString(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, " " + etPrice.getText().toString() + ", "
+                                        + etName.getText().toString(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private boolean inputValidation() {
+
+        boolean isValid = true;
+
+        if (etPrice.getText().toString().trim().length() == 0) {
+            etPrice.setError(nullPriceError);
+            Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
+            isValid = false;
+        } else if (!etPrice.getText().toString().matches("[0-9]+")) {
+            etPrice.setError(numPriceError);
+            Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
+            isValid = false;
+        }
+        if(etName.getText().toString().trim().length() == 0) {
+            etName.setError(nullNamError);
+            Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
+            isValid = false;
+        }
+
+        return isValid;
     }
 }

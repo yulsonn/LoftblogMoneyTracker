@@ -40,6 +40,11 @@
     <string name="text_date">Дата</string>
     <string name="hint_date">Сегодня</string>
     <string name="button_add_expense_text">Добавить трату</string>
+    <string name="error_null_price">Введите сумму!</string>
+    <string name="error_null_name">Введите название!</string>
+    <string name="error_num_price">Сумма долна быть цифрой!</string>
+    <string name="error_input_message">Одно или несколько полей не заполнены, либо заполнены некорректно!</string>
+
 
     <!--Splash text-->
     <string name="splash_text">Welcome to Loftblog Money Tracker</string>
