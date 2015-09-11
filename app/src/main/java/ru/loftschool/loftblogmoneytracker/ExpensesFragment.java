@@ -11,7 +11,7 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import com.raizlabs.android.dbflow.sql.language.Select;
+import com.activeandroid.query.Select;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -20,6 +20,8 @@ import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.StringRes;
 
 import java.util.List;
+
+import ru.loftschool.loftblogmoneytracker.database.model.Expenses;
 
 @EFragment(R.layout.expenses_fragment)
 public class ExpensesFragment extends Fragment {
@@ -43,12 +45,8 @@ public class ExpensesFragment extends Fragment {
     void ready(){
         getActivity().setTitle(title);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), 1, false);
-//        List<Expenses> adapterData = getDataList();
-//        ExpensesAdapter expensesAdapter = new ExpensesAdapter(getDataList());
-
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(linearLayoutManager);
-//        recyclerView.setAdapter(expensesAdapter);
 
         Bundle args = getArguments();
         if (args != null){
@@ -91,6 +89,6 @@ public class ExpensesFragment extends Fragment {
     }
 
     private List<Expenses> getDataList(){
-        return new Select().from(Expenses.class).queryList();
+        return new Select().from(Expenses.class).execute();
     }
 }

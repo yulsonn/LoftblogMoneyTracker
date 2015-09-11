@@ -16,6 +16,13 @@ import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.StringRes;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+import ru.loftschool.loftblogmoneytracker.database.model.Expenses;
+
 @EActivity(R.layout.activity_add_expense)
 public class AddExpenseActivity extends AppCompatActivity {
 
@@ -44,6 +51,8 @@ public class AddExpenseActivity extends AppCompatActivity {
     String errorMessage;
 
     private String[] data = {"Fun", "Social", "Food", "Clothes"};
+
+    private final static DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
 
     @OptionsItem(android.R.id.home)
     void back() {
@@ -76,14 +85,10 @@ public class AddExpenseActivity extends AppCompatActivity {
     @Click(R.id.add_expense_button)
     public void addExpenseButton() {
 
-        if(!inputValidation()) {
+        if (!inputValidation()) {
             return;
         } else {
-            Expenses expenses = new Expenses();
-            expenses.setPrice(etPrice.getText().toString());
-            expenses.setName(etName.getText().toString());
-            expenses.insert();
-
+            new Expenses(etName.getText().toString(), etPrice.getText().toString(), String.valueOf(dateFormat.format(new Date()))).save();
             Toast.makeText(this, " " + etPrice.getText().toString() + ", "
                                         + etName.getText().toString(), Toast.LENGTH_SHORT).show();
         }
