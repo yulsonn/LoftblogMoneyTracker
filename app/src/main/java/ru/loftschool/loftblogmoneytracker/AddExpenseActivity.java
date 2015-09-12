@@ -44,10 +44,7 @@ public class AddExpenseActivity extends AppCompatActivity {
     String nullPriceError;
 
     @StringRes(R.string.error_null_name)
-    String nullNamError;
-
-    @StringRes(R.string.error_num_price)
-    String numPriceError;
+    String nullNameError;
 
     @StringRes(R.string.error_input_message)
     String errorMessage;
@@ -91,8 +88,6 @@ public class AddExpenseActivity extends AppCompatActivity {
                                         + etName.getText().toString() + ", "
                                         + String.valueOf(dateFormat.format(new Date())) + ", "
                                         + spCategories.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
-        } else {
-            return;
         }
     }
 
@@ -104,13 +99,9 @@ public class AddExpenseActivity extends AppCompatActivity {
             etPrice.setError(nullPriceError);
             Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
             isValid = false;
-        } else if (!etPrice.getText().toString().matches("[0-9]+")) {
-            etPrice.setError(numPriceError);
-            Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
-            isValid = false;
         }
-        if(etName.getText().toString().trim().length() == 0) {
-            etName.setError(nullNamError);
+        if (etName.getText().toString().trim().length() == 0) {
+            etName.setError(nullNameError);
             Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
             isValid = false;
         }
