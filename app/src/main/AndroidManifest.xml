@@ -14,7 +14,7 @@
         <meta-data
             android:name="AA_MODELS"
             android:value="ru.loftschool.loftblogmoneytracker.database.model.Expenses,
-                            ru.loftschool.loftblogmoneytracker.database.Category" />
+                            ru.loftschool.loftblogmoneytracker.database.model.Categories" />
 
         <activity android:name=".SplashActivity">
             <intent-filter>

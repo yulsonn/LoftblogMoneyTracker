@@ -16,14 +16,18 @@ public class Expenses extends Model {
     @Column(name = "Date")
     public String date;
 
+    @Column(name = "Category")
+    public Categories category;
+
     public Expenses() {
         super();
     }
 
-    public Expenses(String name, String price, String date) {
+    public Expenses(String name, String price, String date, Categories category) {
         super();
         this.name = name;
         this.price = price;
         this.date = date;
+        this.category = category;
     }
 }

@@ -4,7 +4,7 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="divider_height_list">0.4dp</dimen>
     <dimen name="medium_main_text">16sp</dimen>
-    <dimen name="small_main_text">9sp</dimen>
+    <dimen name="small_main_text">12sp</dimen>
     <dimen name="toolbar_elevation">4dp</dimen>
     <dimen name="text_margin_top">4dp</dimen>
     <dimen name="text_margins">10dp</dimen>

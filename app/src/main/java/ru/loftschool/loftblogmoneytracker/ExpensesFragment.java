@@ -21,12 +21,13 @@ import org.androidannotations.annotations.res.StringRes;
 
 import java.util.List;
 
+import ru.loftschool.loftblogmoneytracker.database.model.Categories;
 import ru.loftschool.loftblogmoneytracker.database.model.Expenses;
 
 @EFragment(R.layout.expenses_fragment)
 public class ExpensesFragment extends Fragment {
 
-    @ViewById(R.id.recycler_view_content)
+    @ViewById(R.id.recycler_view_content_expenses)
     RecyclerView recyclerView;
 
     @ViewById(R.id.fab)
@@ -47,6 +48,10 @@ public class ExpensesFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), 1, false);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(linearLayoutManager);
+//      to avoid an error "recyclerview No adapter attached; skipping layout" set a blank adapter for the recyclerView
+        recyclerView.setAdapter(new ExpensesAdapter());
+
+        initialCategoriesFill();
 
         Bundle args = getArguments();
         if (args != null){
@@ -90,5 +95,14 @@ public class ExpensesFragment extends Fragment {
 
     private List<Expenses> getDataList(){
         return new Select().from(Expenses.class).execute();
+    }
+
+    private void initialCategoriesFill() {
+        if (new Select().from(Categories.class).execute().size() == 0) {
+            new Categories("Social").save();
+            new Categories("Fun").save();
+            new Categories("Clothes").save();
+            new Categories("Food").save();
+        }
     }
 }

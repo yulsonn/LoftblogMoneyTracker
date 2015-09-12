@@ -4,13 +4,11 @@
     android:id="@+id/categories_content"
     style="@style/Container.Background">
 
-     <ListView
-            android:id="@+id/categories_listview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:divider="@android:color/transparent"
-            android:dividerHeight="@dimen/divider_height_list">
-        </ListView>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view_content_categories"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/relative_layout_margin"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/categories_fab"
@@ -19,6 +17,6 @@
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_add_white_24dp"
         app:layout_behavior="ru.loftschool.loftblogmoneytracker.ScrollFABBehavior"
-        app:layout_anchor="@id/categories_listview"
+        app:layout_anchor="@id/recycler_view_content_categories"
         app:layout_anchorGravity="bottom|right|end"/>
 </android.support.design.widget.CoordinatorLayout>

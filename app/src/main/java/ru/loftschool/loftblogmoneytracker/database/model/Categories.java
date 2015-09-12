@@ -21,7 +21,12 @@ public class Categories extends Model {
         this.name = name;
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
+
     public List<Expenses> expenses(){
-        return getMany(Expenses.class, "Category");
+        return getMany(Expenses.class, "Categories");
     }
 }

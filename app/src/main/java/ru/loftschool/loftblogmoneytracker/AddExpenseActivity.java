@@ -2,12 +2,12 @@ package ru.loftschool.loftblogmoneytracker;
 
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.activeandroid.query.Select;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -19,8 +19,10 @@ import org.androidannotations.annotations.res.StringRes;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
+import ru.loftschool.loftblogmoneytracker.database.model.Categories;
 import ru.loftschool.loftblogmoneytracker.database.model.Expenses;
 
 @EActivity(R.layout.activity_add_expense)
@@ -50,8 +52,6 @@ public class AddExpenseActivity extends AppCompatActivity {
     @StringRes(R.string.error_input_message)
     String errorMessage;
 
-    private String[] data = {"Fun", "Social", "Food", "Clothes"};
-
     private final static DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
 
     @OptionsItem(android.R.id.home)
@@ -65,32 +65,34 @@ public class AddExpenseActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setTitle(title);
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, data);
+        ArrayAdapter<Categories> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, getCategoriesList());
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spCategories.setAdapter(adapter);
 
-        spCategories.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(), "Position: " + position, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+//        spCategories.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                Toast.makeText(getApplicationContext(), "Position: " + position, Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//
+//            }
+//        });
     }
 
     @Click(R.id.add_expense_button)
     public void addExpenseButton() {
 
-        if (!inputValidation()) {
-            return;
+        if (inputValidation()) {
+            new Expenses(etName.getText().toString(), etPrice.getText().toString(), String.valueOf(dateFormat.format(new Date())), (Categories)spCategories.getSelectedItem()).save();
+            Toast.makeText(this, "Added: " + etPrice.getText().toString() + ", "
+                                        + etName.getText().toString() + ", "
+                                        + String.valueOf(dateFormat.format(new Date())) + ", "
+                                        + spCategories.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
         } else {
-            new Expenses(etName.getText().toString(), etPrice.getText().toString(), String.valueOf(dateFormat.format(new Date()))).save();
-            Toast.makeText(this, " " + etPrice.getText().toString() + ", "
-                                        + etName.getText().toString(), Toast.LENGTH_SHORT).show();
+            return;
         }
     }
 
@@ -114,5 +116,9 @@ public class AddExpenseActivity extends AppCompatActivity {
         }
 
         return isValid;
+    }
+
+    private List<Categories> getCategoriesList(){
+        return new Select().from(Categories.class).execute();
     }
 }
