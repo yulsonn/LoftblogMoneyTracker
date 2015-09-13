@@ -25,9 +25,11 @@
             android:text="@string/text_sum"/>
 
         <EditText
+            android:id="@+id/etPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="fill"/>
+            android:layout_gravity="fill"
+            android:inputType="numberDecimal"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -37,6 +39,7 @@
             android:text="@string/text_name"/>
 
         <EditText
+            android:id="@+id/etName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="fill"/>
@@ -46,25 +49,43 @@
             android:layout_height="wrap_content"
             android:layout_gravity="fill"
             android:gravity="start|center"
-            android:text="@string/text_category"/>
+            android:text="@string/text_category"
+            android:paddingTop="@dimen/padding_small"/>
 
-        <EditText
+        <Spinner
+            android:id="@+id/spCategories"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="fill"/>
+            android:layout_gravity="fill"
+            android:spinnerMode="dropdown"
+            android:paddingTop="@dimen/padding_small"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="fill"
             android:gravity="start|center"
-            android:text="@string/text_date"/>
+            android:text="@string/text_date"
+            android:paddingTop="@dimen/padding_small"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="fill"
-            android:hint="@string/hint_date"/>
+            android:hint="@string/hint_date"
+            android:paddingTop="@dimen/padding_small"/>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="@dimen/padding_small"/>
+
+        <Button
+            android:id="@+id/add_expense_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/button_add_expense_text"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/button_add_expense_margin"/>
     </GridLayout>
 </LinearLayout>

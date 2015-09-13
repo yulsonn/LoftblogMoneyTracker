@@ -8,6 +8,7 @@
     <string name="item_text_name">Name</string>
     <string name="item_text_date">Date</string>
     <string name="item_text_sum">Sum</string>
+    <string name="item_text_category">Category</string>
 
     <!--Строки меню для NavigationDrawer-->
     <string name="nav_drawer_expenses">Траты</string>
@@ -39,6 +40,10 @@
     <string name="text_category">Категория</string>
     <string name="text_date">Дата</string>
     <string name="hint_date">Сегодня</string>
+    <string name="button_add_expense_text">Добавить трату</string>
+    <string name="error_null_price">Введите сумму!</string>
+    <string name="error_null_name">Введите название!</string>
+    <string name="error_input_message">Одно или несколько полей не заполнены!</string>
 
     <!--Splash text-->
     <string name="splash_text">Welcome to Loftblog Money Tracker</string>
