@@ -1,4 +1,4 @@
-package ru.loftschool.loftblogmoneytracker;
+package ru.loftschool.loftblogmoneytracker.ui.fragments;
 
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -18,6 +18,8 @@ import org.androidannotations.annotations.res.StringRes;
 
 import java.util.List;
 
+import ru.loftschool.loftblogmoneytracker.adapters.CategoriesAdapter;
+import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.database.model.Categories;
 
 @EFragment(R.layout.categories_fragment)

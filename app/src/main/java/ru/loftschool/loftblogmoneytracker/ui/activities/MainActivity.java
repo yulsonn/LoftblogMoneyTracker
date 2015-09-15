@@ -1,4 +1,4 @@
-package ru.loftschool.loftblogmoneytracker;
+package ru.loftschool.loftblogmoneytracker.ui.activities;
 
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -13,11 +13,20 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.activeandroid.query.Select;
+
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
 import org.androidannotations.annotations.ViewById;
+
+import ru.loftschool.loftblogmoneytracker.R;
+import ru.loftschool.loftblogmoneytracker.database.model.Categories;
+import ru.loftschool.loftblogmoneytracker.ui.fragments.CategoriesFragment_;
+import ru.loftschool.loftblogmoneytracker.ui.fragments.ExpensesFragment_;
+import ru.loftschool.loftblogmoneytracker.ui.fragments.SettingsFragment_;
+import ru.loftschool.loftblogmoneytracker.ui.fragments.StatisticsFragment_;
 
 @EActivity(R.layout.activity_main)
 @OptionsMenu(R.menu.menu_main)
@@ -45,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     void ready(){
         initToolbar();
         setupNavigationDrawer();
+        initialCategoriesFill();
     }
 
     @Override
@@ -132,5 +142,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.d(LOG_TAG, "onDestroy() method called");
+    }
+
+    private void initialCategoriesFill() {
+        if (new Select().from(Categories.class).execute().size() == 0) {
+            new Categories("Social").save();
+            new Categories("Fun").save();
+            new Categories("Clothes").save();
+            new Categories("Food").save();
+        }
     }
 }

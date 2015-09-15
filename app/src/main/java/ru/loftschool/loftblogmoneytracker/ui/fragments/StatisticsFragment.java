@@ -1,4 +1,4 @@
-package ru.loftschool.loftblogmoneytracker;
+package ru.loftschool.loftblogmoneytracker.ui.fragments;
 
 import android.support.v4.app.Fragment;
 
@@ -6,10 +6,12 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.res.StringRes;
 
-@EFragment(R.layout.settings_fragment)
-public class SettingsFragment extends Fragment {
+import ru.loftschool.loftblogmoneytracker.R;
 
-    @StringRes(R.string.frag_title_settings)
+@EFragment(R.layout.statistics_fragment)
+public class StatisticsFragment extends Fragment {
+
+    @StringRes(R.string.frag_title_statistics)
     String title;
 
     @AfterViews

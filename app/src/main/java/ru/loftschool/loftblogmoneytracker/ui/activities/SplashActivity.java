@@ -1,9 +1,11 @@
-package ru.loftschool.loftblogmoneytracker;
+package ru.loftschool.loftblogmoneytracker.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+
+import ru.loftschool.loftblogmoneytracker.R;
 
 public class SplashActivity extends AppCompatActivity {
 
