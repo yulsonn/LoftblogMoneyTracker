@@ -30,6 +30,8 @@ dependencies {
     compile 'org.androidannotations:androidannotations-api:3.3.1'
     apt "org.androidannotations:androidannotations:3.3.1"
     compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
+    compile 'com.squareup.retrofit:retrofit:1.9.0'
+    compile 'com.google.code.gson:gson:2.3.1'
 }
 
 apt {

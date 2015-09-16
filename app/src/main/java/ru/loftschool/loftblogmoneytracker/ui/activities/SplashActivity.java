@@ -9,7 +9,7 @@ import ru.loftschool.loftblogmoneytracker.R;
 
 public class SplashActivity extends AppCompatActivity {
 
-    private final int SPLASH_DISPLAY_LENGTH = 3000;
+    private final int SPLASH_DISPLAY_LENGTH = 1500;
 
     @Override
     public void onCreate(Bundle icicle) {
@@ -19,8 +19,8 @@ public class SplashActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent mainIntent = new Intent(SplashActivity.this, MainActivity_.class);
-                startActivity(mainIntent);
+                Intent regIntent = new Intent(SplashActivity.this, RegistrationActivity_.class);
+                startActivity(regIntent);
                 finish();
             }
         }, SPLASH_DISPLAY_LENGTH);

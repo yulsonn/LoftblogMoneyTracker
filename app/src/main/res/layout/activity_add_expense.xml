@@ -29,6 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="fill"
+            android:layout_marginLeft="@dimen/add_expense_field_margin_left"
             android:inputType="numberDecimal"/>
 
         <TextView
@@ -42,7 +43,8 @@
             android:id="@+id/etName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="fill"/>
+            android:layout_gravity="fill"
+            android:layout_marginLeft="@dimen/add_expense_field_margin_left"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -58,7 +60,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="fill"
             android:spinnerMode="dropdown"
-            android:paddingTop="@dimen/padding_small"/>
+            android:paddingTop="@dimen/padding_small"
+            android:layout_marginLeft="@dimen/add_expense_field_margin_left_small"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -73,19 +76,17 @@
             android:layout_height="wrap_content"
             android:layout_gravity="fill"
             android:hint="@string/hint_date"
-            android:paddingTop="@dimen/padding_small"/>
+            android:paddingTop="@dimen/padding_small"
+            android:layout_marginLeft="@dimen/add_expense_field_margin_left"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/padding_small"/>
-
-        <Button
-            android:id="@+id/add_expense_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/button_add_expense_text"
-            android:layout_gravity="end"
-            android:layout_marginTop="@dimen/button_add_expense_margin"/>
     </GridLayout>
+
+    <Button
+        android:id="@+id/add_expense_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/button_add_expense_text"
+        android:layout_gravity="center_vertical"
+        android:textColor="@color/primary"
+        android:layout_margin="@dimen/button_add_expense_margin"/>
 </LinearLayout>

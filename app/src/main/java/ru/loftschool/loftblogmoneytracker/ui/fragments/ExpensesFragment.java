@@ -21,9 +21,8 @@ import org.androidannotations.annotations.res.StringRes;
 
 import java.util.List;
 
-import ru.loftschool.loftblogmoneytracker.adapters.ExpensesAdapter;
 import ru.loftschool.loftblogmoneytracker.R;
-import ru.loftschool.loftblogmoneytracker.database.model.Categories;
+import ru.loftschool.loftblogmoneytracker.adapters.ExpensesAdapter;
 import ru.loftschool.loftblogmoneytracker.database.model.Expenses;
 import ru.loftschool.loftblogmoneytracker.ui.activities.AddExpenseActivity_;
 

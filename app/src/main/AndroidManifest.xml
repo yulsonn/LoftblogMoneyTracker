@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ru.loftschool.loftblogmoneytracker" >
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:name="MoneyTrackerApplication"
         android:allowBackup="true"
@@ -22,6 +24,8 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
+        <activity android:name=".ui.activities.RegistrationActivity_" />
 
         <activity
             android:name=".ui.activities.MainActivity_"

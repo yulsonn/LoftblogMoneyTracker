@@ -36,15 +36,28 @@
 
     <!--Строки для экрана добавления трат-->
     <string name="text_sum">Сумма</string>
-    <string name="text_name">Примечание</string>
+    <string name="text_name">Наименование</string>
     <string name="text_category">Категория</string>
     <string name="text_date">Дата</string>
     <string name="hint_date">Сегодня</string>
     <string name="button_add_expense_text">Добавить трату</string>
     <string name="error_null_price">Введите сумму!</string>
-    <string name="error_null_name">Введите название!</string>
+    <string name="error_null_name">Введите наименование!</string>
     <string name="error_input_message">Одно или несколько полей не заполнены!</string>
+    <string name="expense_added_text">Трата добавлена: </string>
 
     <!--Splash text-->
     <string name="splash_text">Welcome to Loftblog Money Tracker</string>
+
+    <!--Строки для экрана регистрации-->
+    <string name="reg_hint_user">Имя пользователя</string>
+    <string name="reg_hint_password">Пароль</string>
+    <string name="error_null_reg_name">Введите имя пользователя!</string>
+    <string name="error_null_reg_password">Введите пароль!</string>
+    <string name="error_exists_reg_name">Такое имя пользователя уже существует, введите другое имя!</string>
+    <string name="error_unknown">Неизвестная ошибка при регистрации!</string>
+    <string name="reg_success">Регистрация завершена успешно</string>
+    <string name="text_registration_header">РЕГИСТРАЦИЯ</string>
+    <string name="button_registration">Зарегистрировать</string>
+
 </resources>
