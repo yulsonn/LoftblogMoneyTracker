@@ -16,7 +16,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_add_white_24dp"
-        app:layout_behavior="ru.loftschool.loftblogmoneytracker.ScrollFABBehavior"
+        app:backgroundTint="@color/buttonAccent"
+        app:layout_behavior="ru.loftschool.loftblogmoneytracker.utils.ScrollFABBehavior"
         app:layout_anchor="@id/recycler_view_content_categories"
         app:layout_anchorGravity="bottom|right|end"/>
 </android.support.design.widget.CoordinatorLayout>

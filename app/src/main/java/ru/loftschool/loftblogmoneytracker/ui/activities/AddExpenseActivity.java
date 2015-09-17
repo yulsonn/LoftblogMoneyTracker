@@ -1,4 +1,4 @@
-package ru.loftschool.loftblogmoneytracker;
+package ru.loftschool.loftblogmoneytracker.ui.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.database.model.Categories;
 import ru.loftschool.loftblogmoneytracker.database.model.Expenses;
 
@@ -46,8 +47,8 @@ public class AddExpenseActivity extends AppCompatActivity {
     @StringRes(R.string.error_null_name)
     String nullNameError;
 
-    @StringRes(R.string.error_input_message)
-    String errorMessage;
+    @StringRes(R.string.expense_added_text)
+    String expenseAdded;
 
     private final static DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
 
@@ -84,11 +85,13 @@ public class AddExpenseActivity extends AppCompatActivity {
 
         if (inputValidation()) {
             new Expenses(etName.getText().toString(), etPrice.getText().toString(), String.valueOf(dateFormat.format(new Date())), (Categories)spCategories.getSelectedItem()).save();
-            Toast.makeText(this, "Added: " + etPrice.getText().toString() + ", "
+            Toast.makeText(this, expenseAdded + etPrice.getText().toString() + ", "
                                         + etName.getText().toString() + ", "
                                         + String.valueOf(dateFormat.format(new Date())) + ", "
                                         + spCategories.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
         }
+        etPrice.setText(null);
+        etName.setText(null);
     }
 
     private boolean inputValidation() {
@@ -97,12 +100,10 @@ public class AddExpenseActivity extends AppCompatActivity {
 
         if (etPrice.getText().toString().trim().length() == 0) {
             etPrice.setError(nullPriceError);
-            Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
             isValid = false;
         }
         if (etName.getText().toString().trim().length() == 0) {
             etName.setError(nullNameError);
-            Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_SHORT).show();
             isValid = false;
         }
 
