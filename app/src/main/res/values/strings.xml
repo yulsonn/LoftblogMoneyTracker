@@ -59,5 +59,6 @@
     <string name="reg_success">Регистрация завершена успешно</string>
     <string name="text_registration_header">РЕГИСТРАЦИЯ</string>
     <string name="button_registration">Зарегистрировать</string>
+    <string name="error_no_internet">Отсутствует подключение к сети!</string>
 
 </resources>

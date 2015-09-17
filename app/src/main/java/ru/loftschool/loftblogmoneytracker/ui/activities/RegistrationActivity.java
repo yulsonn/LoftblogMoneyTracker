@@ -26,6 +26,7 @@ import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.rest.RestService;
 import ru.loftschool.loftblogmoneytracker.rest.models.UserRegisterModel;
 import ru.loftschool.loftblogmoneytracker.rest.status.UserRegisterModelStatus;
+import ru.loftschool.loftblogmoneytracker.utils.NetworkConnectionUtil;
 
 @EActivity(R.layout.activity_registration)
 public class RegistrationActivity extends AppCompatActivity {
@@ -66,6 +67,9 @@ public class RegistrationActivity extends AppCompatActivity {
     @StringRes(R.string.error_unknown)
     String unknownError;
 
+    @StringRes(R.string.error_no_internet)
+    String noInternetError;
+
     @StringRes(R.string.reg_success)
     String successMessage;
 
@@ -79,7 +83,11 @@ public class RegistrationActivity extends AppCompatActivity {
     void btnRegister() {
         hideKeyboard();
         if (inputValidation()) {
-            registration();
+            if (NetworkConnectionUtil.isNetworkConnected(this)) {
+                registration();
+            } else {
+                Toast.makeText(getApplicationContext(), noInternetError, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
