@@ -19,7 +19,7 @@ public class SplashActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent regIntent = new Intent(SplashActivity.this, RegistrationActivity_.class);
+                Intent regIntent = new Intent(SplashActivity.this, LoginActivity_.class);
                 startActivity(regIntent);
                 finish();
             }

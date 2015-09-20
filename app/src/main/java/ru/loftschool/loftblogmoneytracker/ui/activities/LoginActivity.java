@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -24,29 +25,31 @@ import java.lang.ref.WeakReference;
 
 import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.rest.RestService;
-import ru.loftschool.loftblogmoneytracker.rest.models.UserRegisterModel;
-import ru.loftschool.loftblogmoneytracker.rest.status.UserRegisterModelStatus;
+import ru.loftschool.loftblogmoneytracker.rest.models.CategoryAddModel;
+import ru.loftschool.loftblogmoneytracker.rest.models.CategoryDetails;
+import ru.loftschool.loftblogmoneytracker.rest.models.UserLoginModel;
+import ru.loftschool.loftblogmoneytracker.rest.status.UserLoginModelStatus;
 import ru.loftschool.loftblogmoneytracker.utils.NetworkConnectionChecker;
 
-@EActivity(R.layout.activity_registration)
-public class RegistrationActivity extends AppCompatActivity {
+@EActivity(R.layout.activity_login)
+public class LoginActivity extends AppCompatActivity {
 
     // to get fields in the main UI thread from background thread use Handler
     private final WeakRefHandler handler = new WeakRefHandler(this);
 
-    @ViewById(R.id.btn_register)
-    Button btnRegister;
+    @ViewById(R.id.btn_login)
+    Button btnLogin;
 
-    @ViewById(R.id.usernameWrapper)
+    @ViewById(R.id.login_usernameWrapper)
     TextInputLayout usernameWrapper;
 
-    @ViewById(R.id.passwordWrapper)
+    @ViewById(R.id.login_passwordWrapper)
     TextInputLayout passwordWrapper;
 
-    @ViewById(R.id.et_reg_user)
+    @ViewById(R.id.et_log_user)
     EditText etUser;
 
-    @ViewById(R.id.et_reg_password)
+    @ViewById(R.id.et_log_password)
     EditText etPassword;
 
     @StringRes(R.string.reg_hint_user)
@@ -61,17 +64,17 @@ public class RegistrationActivity extends AppCompatActivity {
     @StringRes(R.string.error_null_reg_password)
     String nullPasswordError;
 
-    @StringRes(R.string.error_exists_reg_name)
-    String existsNameError;
+    @StringRes(R.string.error_login_no_such_name)
+    String noSuchNameError;
+
+    @StringRes(R.string.error_login_wrong_password)
+    String wrongPasswordError;
 
     @StringRes(R.string.error_unknown)
     String unknownError;
 
     @StringRes(R.string.error_no_internet)
     String noInternetError;
-
-    @StringRes(R.string.reg_success)
-    String successMessage;
 
     @AfterViews
     void ready() {
@@ -80,11 +83,11 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     @Click
-    void btnRegister() {
+    void btnLogin() {
         hideKeyboard();
         if (inputValidation()) {
             if (NetworkConnectionChecker.isNetworkConnected(this)) {
-                registration();
+                login();
             } else {
                 Toast.makeText(getApplicationContext(), noInternetError, Toast.LENGTH_SHORT).show();
             }
@@ -92,16 +95,20 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     @Background
-    void registration() {
+    void login() {
         RestService restService = new RestService();
-        UserRegisterModel response = restService.register(etUser.getText().toString(), etPassword.getText().toString());
+        UserLoginModel response = restService.login(etUser.getText().toString(), etPassword.getText().toString());
+        String status = response.getStatus();
 
-        if (UserRegisterModelStatus.STATUS_OK.equals(response.getStatus())) {
-            completeRegistration();
-        } else if (UserRegisterModelStatus.STATUS_ERROR.equals(response.getStatus())) {
-            showErrorRegistrationMessage(true);
+//        CategoryAddModel category = restService.addCategory("Clothes", response.getAuthToken());
+//
+//        Log.e("LoginActivity", "Category name: " + category.getData().getTitle() +
+//                "Category id: " + category.getData().getId());
+
+        if (UserLoginModelStatus.STATUS_OK.equals(status)) {
+            completeLogin();
         } else {
-            showErrorRegistrationMessage(false);
+            showErrorLoginMessage(status);
         }
     }
 
@@ -122,21 +129,29 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     @UiThread
-    protected void completeRegistration() {
-        Intent mainIntent = new Intent(RegistrationActivity.this, MainActivity_.class);
-        Toast.makeText(getApplicationContext(), successMessage, Toast.LENGTH_SHORT).show();
+    protected void completeLogin() {
+        Intent mainIntent = new Intent(LoginActivity.this, MainActivity_.class);
         startActivity(mainIntent);
         finish();
     }
 
     @UiThread
-    protected void showErrorRegistrationMessage(boolean flag) {
-        if (flag) {
-            Message msg = new Message();
-            msg.obj = existsNameError;
-            handler.sendMessage(msg);
-        } else {
-            Toast.makeText(getApplicationContext(), unknownError, Toast.LENGTH_SHORT).show();
+    protected void showErrorLoginMessage(String status) {
+        Message msg = new Message();
+
+        switch (status) {
+            case UserLoginModelStatus.STATUS_WRONG_LOGIN:
+                msg.obj = noSuchNameError;
+                msg.what = 0;
+                handler.sendMessage(msg);
+                break;
+            case UserLoginModelStatus.STATUS_WRONG_PASSWORD:
+                msg.obj = wrongPasswordError;
+                msg.what = 1;
+                handler.sendMessage(msg);
+                break;
+            default:
+                Toast.makeText(getApplicationContext(), unknownError, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -151,18 +166,23 @@ public class RegistrationActivity extends AppCompatActivity {
 
     //to avoid "leak might occur" warning while using handler create custom static class WeakRefHandler
     private static class WeakRefHandler extends Handler {
-        private final WeakReference<RegistrationActivity> mActivity;
+        private final WeakReference<LoginActivity> mActivity;
 
-        public WeakRefHandler(RegistrationActivity activity) {
+        public WeakRefHandler(LoginActivity activity) {
             mActivity = new WeakReference<>(activity);
         }
 
         @Override
         public void handleMessage(Message msg) {
-            RegistrationActivity activity = mActivity.get();
+            LoginActivity activity = mActivity.get();
             if (activity != null) {
-                activity.etUser.requestFocus();
-                activity.etUser.setError((String) msg.obj);
+                if (msg.what == 0) {
+                    activity.etUser.requestFocus();
+                    activity.etUser.setError((String) msg.obj);
+                } else {
+                    activity.etPassword.requestFocus();
+                    activity.etPassword.setError((String) msg.obj);
+                }
             }
         }
     }
