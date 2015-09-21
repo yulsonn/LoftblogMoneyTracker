@@ -61,7 +61,7 @@
     <string name="error_unknown">Неизвестная ошибка при регистрации!</string>
     <string name="error_no_internet">Отсутствует подключение к сети!</string>
 
-    <string name="reg_success">Регистрация завершена успешно</string>
+    <string name="reg_success">Registration successful. Please Login now.</string>
     <string name="text_registration_header">РЕГИСТРАЦИЯ</string>
     <string name="button_registration">Зарегистрировать</string>
 

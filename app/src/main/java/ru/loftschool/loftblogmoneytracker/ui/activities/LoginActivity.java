@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.androidannotations.annotations.AfterViews;
@@ -23,6 +24,7 @@ import org.androidannotations.annotations.res.StringRes;
 
 import java.lang.ref.WeakReference;
 
+import ru.loftschool.loftblogmoneytracker.MoneyTrackerApplication;
 import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.rest.RestService;
 import ru.loftschool.loftblogmoneytracker.rest.models.CategoryAddModel;
@@ -52,6 +54,9 @@ public class LoginActivity extends AppCompatActivity {
     @ViewById(R.id.et_log_password)
     EditText etPassword;
 
+    @ViewById(R.id.link_registration)
+    TextView linkRegistration;
+
     @StringRes(R.string.reg_hint_user)
     String hintUser;
 
@@ -76,11 +81,28 @@ public class LoginActivity extends AppCompatActivity {
     @StringRes(R.string.error_no_internet)
     String noInternetError;
 
+
     @AfterViews
     void ready() {
         usernameWrapper.setHint(hintUser);
         passwordWrapper.setHint(hintPassword);
+
+        linkRegistration.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), RegistrationActivity_.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            etUser.setText(intent.getStringExtra("etUser"));
+            etPassword.setText(intent.getStringExtra("etPassword"));
+        }
     }
+
 
     @Click
     void btnLogin() {
@@ -98,6 +120,7 @@ public class LoginActivity extends AppCompatActivity {
     void login() {
         RestService restService = new RestService();
         UserLoginModel response = restService.login(etUser.getText().toString(), etPassword.getText().toString());
+        MoneyTrackerApplication.setToken(this, response.getAuthToken());
         String status = response.getStatus();
 
 //        CategoryAddModel category = restService.addCategory("Clothes", response.getAuthToken());

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.androidannotations.annotations.AfterViews;
@@ -49,6 +50,9 @@ public class RegistrationActivity extends AppCompatActivity {
     @ViewById(R.id.et_reg_password)
     EditText etPassword;
 
+    @ViewById(R.id.link_login)
+    TextView linkLogin;
+
     @StringRes(R.string.reg_hint_user)
     String hintUser;
 
@@ -77,6 +81,15 @@ public class RegistrationActivity extends AppCompatActivity {
     void ready() {
         usernameWrapper.setHint(hintUser);
         passwordWrapper.setHint(hintPassword);
+
+        linkLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), LoginActivity_.class);
+                startActivity(intent);
+                finish();
+            }
+        });
     }
 
     @Click
@@ -123,8 +136,10 @@ public class RegistrationActivity extends AppCompatActivity {
 
     @UiThread
     protected void completeRegistration() {
-        Intent mainIntent = new Intent(RegistrationActivity.this, MainActivity_.class);
-        Toast.makeText(getApplicationContext(), successMessage, Toast.LENGTH_SHORT).show();
+        Intent mainIntent = new Intent(RegistrationActivity.this, LoginActivity_.class);
+        mainIntent.putExtra("etUser", etUser.getText().toString());
+        mainIntent.putExtra("etPassword", etPassword.getText().toString());
+        Toast.makeText(getApplicationContext(), successMessage, Toast.LENGTH_LONG).show();
         startActivity(mainIntent);
         finish();
     }

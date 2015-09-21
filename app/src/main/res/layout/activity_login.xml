@@ -10,15 +10,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0.5"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@color/primary">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:gravity="center"
-            android:text="Log In"
-            android:textColor="@color/primary"
+            android:text="Login"
+            android:textColor="@color/white"
             android:textStyle="bold"
             android:textSize="@dimen/registration_text_size"/>
 
@@ -36,13 +37,14 @@
             android:id="@+id/login_usernameWrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/reg_hint_user">
+            android:layout_marginTop="@dimen/registration_control_margins"
+            android:textColorHint="@color/primary">
 
             <EditText
                 android:id="@+id/et_log_user"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:focusable="true"/>
+                android:focusable="true" />
 
         </android.support.design.widget.TextInputLayout>
 
@@ -51,23 +53,36 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/registration_margin_top"
-            android:hint="@string/reg_hint_password">
+            android:hint="@string/reg_hint_password"
+            android:textColorHint="@color/primary">
 
             <EditText
                 android:id="@+id/et_log_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPassword"/>
+                android:inputType="textPassword" />
 
         </android.support.design.widget.TextInputLayout>
 
         <Button
             android:id="@+id/btn_login"
-            android:layout_marginTop="@dimen/registration_margin_top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/primary"
+            android:layout_marginTop="@dimen/registration_control_margins"
+            android:layout_marginBottom="@dimen/registration_control_margins"
+            android:background="@color/primary"
+            android:textColor="@color/white"
+            android:gravity="center"
             android:text="login"/>
+
+        <TextView android:id="@+id/link_registration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/primary"
+            android:text="No account yet? Create one"
+            android:textStyle="bold"
+            android:textSize="16sp" />
 
     </LinearLayout>
 </LinearLayout>
