@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:gravity="center"
-            android:text="Login"
+            android:text="@string/login_screen_header_text"
             android:textColor="@color/white"
             android:textStyle="bold"
             android:textSize="@dimen/registration_text_size"/>
@@ -38,12 +38,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/registration_control_margins"
-            android:textColorHint="@color/primary">
+            android:paddingTop="@dimen/registration_control_padding">
 
             <EditText
+                style="@style/SignInEditText"
                 android:id="@+id/et_log_user"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:focusable="true" />
 
         </android.support.design.widget.TextInputLayout>
@@ -53,14 +52,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/registration_margin_top"
-            android:hint="@string/reg_hint_password"
-            android:textColorHint="@color/primary">
+            android:hint="@string/reg_hint_password">
 
             <EditText
                 android:id="@+id/et_log_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPassword" />
+                style="@style/SignInEditText.Password"/>
 
         </android.support.design.widget.TextInputLayout>
 
@@ -73,14 +69,14 @@
             android:background="@color/primary"
             android:textColor="@color/white"
             android:gravity="center"
-            android:text="login"/>
+            android:text="@string/login_screen_btn_login_text"/>
 
         <TextView android:id="@+id/link_registration"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textColor="@color/primary"
-            android:text="No account yet? Create one"
+            android:text="@string/login_screen_new_ac_text"
             android:textStyle="bold"
             android:textSize="16sp" />
 

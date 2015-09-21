@@ -3,4 +3,7 @@
     <!--Grid Layout dimens for Expenses add activity-->
     <integer name="column_count">2</integer>
     <integer name="row_count">5</integer>
+    <integer name="max_field_length">15</integer>
+    <integer name="min_field_username_length">3</integer>
+    <integer name="min_field_password_length">5</integer>
 </resources>

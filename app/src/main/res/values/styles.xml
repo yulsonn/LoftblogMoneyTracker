@@ -37,4 +37,16 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="SignInEditText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColorHint">@color/primary</item>
+        <item name="android:maxLength">@integer/max_field_length</item>
+        <item name="android:inputType">textNoSuggestions</item>
+    </style>
+
+    <style name="SignInEditText.Password">
+        <item name="android:inputType">textNoSuggestions|textPassword</item>
+    </style>
+
 </resources>

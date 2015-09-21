@@ -4,6 +4,7 @@ import retrofit.RestAdapter;
 import ru.loftschool.loftblogmoneytracker.rest.api.CategoryAddAPI;
 import ru.loftschool.loftblogmoneytracker.rest.api.UserLoginAPI;
 import ru.loftschool.loftblogmoneytracker.rest.api.UserRegisterAPI;
+import ru.loftschool.loftblogmoneytracker.utils.RetrofitErrorHandler;
 
 public class RestClient {
 
@@ -17,6 +18,7 @@ public class RestClient {
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setLogLevel(RestAdapter.LogLevel.FULL)
                 .setEndpoint(BASE_URL)
+                .setErrorHandler(new RetrofitErrorHandler())
                 .build();
 
         userRegisterAPI = restAdapter.create(UserRegisterAPI.class);

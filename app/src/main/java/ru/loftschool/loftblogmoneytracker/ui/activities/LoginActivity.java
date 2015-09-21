@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -27,8 +26,6 @@ import java.lang.ref.WeakReference;
 import ru.loftschool.loftblogmoneytracker.MoneyTrackerApplication;
 import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.rest.RestService;
-import ru.loftschool.loftblogmoneytracker.rest.models.CategoryAddModel;
-import ru.loftschool.loftblogmoneytracker.rest.models.CategoryDetails;
 import ru.loftschool.loftblogmoneytracker.rest.models.UserLoginModel;
 import ru.loftschool.loftblogmoneytracker.rest.status.UserLoginModelStatus;
 import ru.loftschool.loftblogmoneytracker.utils.NetworkConnectionChecker;
@@ -120,13 +117,9 @@ public class LoginActivity extends AppCompatActivity {
     void login() {
         RestService restService = new RestService();
         UserLoginModel response = restService.login(etUser.getText().toString(), etPassword.getText().toString());
+        // save auth_token to SharedPreferences
         MoneyTrackerApplication.setToken(this, response.getAuthToken());
         String status = response.getStatus();
-
-//        CategoryAddModel category = restService.addCategory("Clothes", response.getAuthToken());
-//
-//        Log.e("LoginActivity", "Category name: " + category.getData().getTitle() +
-//                "Category id: " + category.getData().getId());
 
         if (UserLoginModelStatus.STATUS_OK.equals(status)) {
             completeLogin();

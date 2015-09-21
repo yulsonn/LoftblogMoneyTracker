@@ -1,5 +1,6 @@
 package ru.loftschool.loftblogmoneytracker.rest;
 
+import ru.loftschool.loftblogmoneytracker.rest.exception.UnauthorizedException;
 import ru.loftschool.loftblogmoneytracker.rest.models.CategoryAddModel;
 import ru.loftschool.loftblogmoneytracker.rest.models.UserLoginModel;
 import ru.loftschool.loftblogmoneytracker.rest.models.UserRegisterModel;
@@ -22,7 +23,7 @@ public class RestService {
         return restClient.getUserLoginAPI().loginUser(login, password);
     }
 
-    public CategoryAddModel addCategory(String title, String token) {
+    public CategoryAddModel addCategory(String title, String token) throws UnauthorizedException{
         return restClient.getCategoryAddAPI().addCategory(title, token);
     }
 }

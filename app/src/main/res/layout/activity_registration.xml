@@ -18,10 +18,10 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:gravity="center"
-            android:text="Register"
+            android:text="@string/reg_screen_header_text"
             android:textColor="@color/white"
             android:textStyle="bold"
-            android:textSize="@dimen/registration_text_size"/>
+            android:textSize="@dimen/registration_text_size" />
 
     </RelativeLayout>
 
@@ -37,13 +37,13 @@
             android:id="@+id/usernameWrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/registration_control_margins">
+            android:layout_marginTop="@dimen/registration_control_margins"
+            android:paddingTop="@dimen/registration_control_padding">
 
             <EditText
+                style="@style/SignInEditText"
                 android:id="@+id/et_reg_user"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:focusable="true"/>
+                android:focusable="true" />
 
         </android.support.design.widget.TextInputLayout>
 
@@ -54,10 +54,8 @@
             android:layout_marginTop="@dimen/registration_margin_top">
 
             <EditText
-                android:id="@+id/et_reg_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPassword"/>
+                style="@style/SignInEditText.Password"
+                android:id="@+id/et_reg_password" />
 
         </android.support.design.widget.TextInputLayout>
 
@@ -70,14 +68,14 @@
             android:background="@color/primary"
             android:textColor="@color/white"
             android:gravity="center"
-            android:text="create account"/>
+            android:text="@string/reg_screen_btn_reg_text"/>
 
         <TextView android:id="@+id/link_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textColor="@color/primary"
-            android:text="Already a member? Login"
+            android:text="@string/reg_screen_login_text"
             android:textStyle="bold"
             android:textSize="16sp"/>
 

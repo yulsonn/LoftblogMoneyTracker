@@ -20,6 +20,7 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.StringRes;
+import org.androidannotations.annotations.res.IntegerRes;
 
 import java.lang.ref.WeakReference;
 
@@ -77,6 +78,15 @@ public class RegistrationActivity extends AppCompatActivity {
     @StringRes(R.string.reg_success)
     String successMessage;
 
+    @StringRes(R.string.error_min_length)
+    String minLengthError;
+
+    @IntegerRes(R.integer.min_field_password_length)
+    Integer minPasswordLength;
+
+    @IntegerRes(R.integer.min_field_username_length)
+    Integer minNameLength;
+
     @AfterViews
     void ready() {
         usernameWrapper.setHint(hintUser);
@@ -125,9 +135,15 @@ public class RegistrationActivity extends AppCompatActivity {
         if (etUser.getText().toString().trim().length() == 0) {
             etUser.setError(nullNameError);
             isValid = false;
+        } else if (etUser.getText().toString().trim().length() < minNameLength) {
+            etUser.setError(minLengthError + minNameLength);
+            isValid = false;
         }
         if (etPassword.getText().toString().trim().length() == 0) {
             etPassword.setError(nullPasswordError);
+            isValid = false;
+        } else if (etPassword.getText().toString().trim().length() < minPasswordLength) {
+            etPassword.setError(minLengthError + minPasswordLength);
             isValid = false;
         }
 
@@ -180,5 +196,10 @@ public class RegistrationActivity extends AppCompatActivity {
                 activity.etUser.setError((String) msg.obj);
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 }
