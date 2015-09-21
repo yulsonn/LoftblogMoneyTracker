@@ -73,5 +73,6 @@
 
     <string name="error_unauthorized">Сессия устарела. Пожалуйста, войдите в систему снова.</string>
     <string name="error_min_length">"Минимальное количество символов: "</string>
+    <string name="menu_item_logout">Logout</string>
 
 </resources>

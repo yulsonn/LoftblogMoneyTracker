@@ -3,6 +3,7 @@ package ru.loftschool.loftblogmoneytracker.rest;
 import retrofit.RestAdapter;
 import ru.loftschool.loftblogmoneytracker.rest.api.CategoryAddAPI;
 import ru.loftschool.loftblogmoneytracker.rest.api.UserLoginAPI;
+import ru.loftschool.loftblogmoneytracker.rest.api.UserLogoutAPI;
 import ru.loftschool.loftblogmoneytracker.rest.api.UserRegisterAPI;
 import ru.loftschool.loftblogmoneytracker.utils.RetrofitErrorHandler;
 
@@ -12,6 +13,7 @@ public class RestClient {
 
     private UserRegisterAPI userRegisterAPI;
     private UserLoginAPI userLoginAPI;
+    private UserLogoutAPI userLogoutAPI;
     private CategoryAddAPI categoryAddAPI;
 
     RestClient() {
@@ -23,6 +25,7 @@ public class RestClient {
 
         userRegisterAPI = restAdapter.create(UserRegisterAPI.class);
         userLoginAPI    = restAdapter.create(UserLoginAPI.class);
+        userLogoutAPI   = restAdapter.create(UserLogoutAPI.class);
         categoryAddAPI  = restAdapter.create(CategoryAddAPI.class);
     }
 
@@ -32,6 +35,10 @@ public class RestClient {
 
     public UserLoginAPI getUserLoginAPI() {
         return userLoginAPI;
+    }
+
+    public UserLogoutAPI getUserLogoutAPI() {
+        return userLogoutAPI;
     }
 
     public CategoryAddAPI getCategoryAddAPI() {

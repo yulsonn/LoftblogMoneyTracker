@@ -197,10 +197,22 @@ public class MainActivity extends AppCompatActivity {
 
     @UiThread
     void unauthorizedErrorReaction() {
-        Intent intent = new Intent(this, LoginActivity_.class);
         Toast.makeText(this, unauthorizedError, Toast.LENGTH_LONG).show();
-        Log.e(LOG_TAG, "WRONG TOKEN");
+        Log.e(LOG_TAG, CategoryAddModelStatus.STATUS_WRONG_TOKEN);
+        goToLogin();
+        finish();
+    }
+
+    @UiThread
+    void goToLogin() {
+        Intent intent = new Intent(this, LoginActivity_.class);
         startActivity(intent);
         finish();
+    }
+
+    @Background
+    public void logout(MenuItem item){
+        goToLogin();
+        MoneyTrackerApplication.setToken(this, MoneyTrackerApplication.DEFAULT_TOKEN_KEY);
     }
 }
