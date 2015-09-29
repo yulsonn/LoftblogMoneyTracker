@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.UiThread;
@@ -29,6 +30,8 @@ import ru.loftschool.loftblogmoneytracker.rest.RestService;
 import ru.loftschool.loftblogmoneytracker.rest.models.UserLoginModel;
 import ru.loftschool.loftblogmoneytracker.rest.status.UserLoginModelStatus;
 import ru.loftschool.loftblogmoneytracker.utils.NetworkConnectionChecker;
+import ru.loftschool.loftblogmoneytracker.utils.SignInMessages;
+import ru.loftschool.loftblogmoneytracker.utils.TextInputValidator;
 
 @EActivity(R.layout.activity_login)
 public class LoginActivity extends AppCompatActivity {
@@ -60,38 +63,19 @@ public class LoginActivity extends AppCompatActivity {
     @StringRes(R.string.reg_hint_password)
     String hintPassword;
 
-    @StringRes(R.string.error_null_reg_name)
-    String nullNameError;
-
-    @StringRes(R.string.error_null_reg_password)
-    String nullPasswordError;
-
-    @StringRes(R.string.error_login_no_such_name)
-    String noSuchNameError;
-
-    @StringRes(R.string.error_login_wrong_password)
-    String wrongPasswordError;
-
-    @StringRes(R.string.error_unknown)
-    String unknownError;
-
     @StringRes(R.string.error_no_internet)
     String noInternetError;
 
+    @Bean
+    TextInputValidator validator;
+
+    @Bean
+    SignInMessages message;
 
     @AfterViews
     void ready() {
         usernameWrapper.setHint(hintUser);
         passwordWrapper.setHint(hintPassword);
-
-        linkRegistration.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), RegistrationActivity_.class);
-                startActivity(intent);
-                finish();
-            }
-        });
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -100,11 +84,17 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    @Click
+    void linkRegistration() {
+        Intent intent = new Intent(getApplicationContext(), RegistrationActivity_.class);
+        startActivity(intent);
+        finish();
+    }
 
     @Click
     void btnLogin() {
         hideKeyboard();
-        if (inputValidation()) {
+        if (validator.validateLoginForm(etUser, etPassword)) {
             if (NetworkConnectionChecker.isNetworkConnected(this)) {
                 login();
             } else {
@@ -124,24 +114,8 @@ public class LoginActivity extends AppCompatActivity {
         if (UserLoginModelStatus.STATUS_OK.equals(status)) {
             completeLogin();
         } else {
-            showErrorLoginMessage(status);
+            message.showErrorLoginMessage(status, this.getCurrentFocus(), handler);
         }
-    }
-
-    private boolean inputValidation() {
-
-        boolean isValid = true;
-
-        if (etUser.getText().toString().trim().length() == 0) {
-            etUser.setError(nullNameError);
-            isValid = false;
-        }
-        if (etPassword.getText().toString().trim().length() == 0) {
-            etPassword.setError(nullPasswordError);
-            isValid = false;
-        }
-
-        return isValid;
     }
 
     @UiThread
@@ -149,26 +123,6 @@ public class LoginActivity extends AppCompatActivity {
         Intent mainIntent = new Intent(LoginActivity.this, MainActivity_.class);
         startActivity(mainIntent);
         finish();
-    }
-
-    @UiThread
-    protected void showErrorLoginMessage(String status) {
-        Message msg = new Message();
-
-        switch (status) {
-            case UserLoginModelStatus.STATUS_WRONG_LOGIN:
-                msg.obj = noSuchNameError;
-                msg.what = 0;
-                handler.sendMessage(msg);
-                break;
-            case UserLoginModelStatus.STATUS_WRONG_PASSWORD:
-                msg.obj = wrongPasswordError;
-                msg.what = 1;
-                handler.sendMessage(msg);
-                break;
-            default:
-                Toast.makeText(getApplicationContext(), unknownError, Toast.LENGTH_SHORT).show();
-        }
     }
 
     // Android doesn't hide the virtual keyboard automatically if focus on some editText field
@@ -192,7 +146,7 @@ public class LoginActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
             LoginActivity activity = mActivity.get();
             if (activity != null) {
-                if (msg.what == 0) {
+                if (msg.what == SignInMessages.MESSAGE_USER) {
                     activity.etUser.requestFocus();
                     activity.etUser.setError((String) msg.obj);
                 } else {

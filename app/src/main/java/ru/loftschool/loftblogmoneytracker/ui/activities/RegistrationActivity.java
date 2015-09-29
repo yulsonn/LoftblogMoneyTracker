@@ -15,12 +15,12 @@ import android.widget.Toast;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.StringRes;
-import org.androidannotations.annotations.res.IntegerRes;
 
 import java.lang.ref.WeakReference;
 
@@ -29,6 +29,8 @@ import ru.loftschool.loftblogmoneytracker.rest.RestService;
 import ru.loftschool.loftblogmoneytracker.rest.models.UserRegisterModel;
 import ru.loftschool.loftblogmoneytracker.rest.status.UserRegisterModelStatus;
 import ru.loftschool.loftblogmoneytracker.utils.NetworkConnectionChecker;
+import ru.loftschool.loftblogmoneytracker.utils.SignInMessages;
+import ru.loftschool.loftblogmoneytracker.utils.TextInputValidator;
 
 @EActivity(R.layout.activity_registration)
 public class RegistrationActivity extends AppCompatActivity {
@@ -60,52 +62,35 @@ public class RegistrationActivity extends AppCompatActivity {
     @StringRes(R.string.reg_hint_password)
     String hintPassword;
 
-    @StringRes(R.string.error_null_reg_name)
-    String nullNameError;
-
-    @StringRes(R.string.error_null_reg_password)
-    String nullPasswordError;
-
-    @StringRes(R.string.error_exists_reg_name)
-    String existsNameError;
-
-    @StringRes(R.string.error_unknown)
-    String unknownError;
-
     @StringRes(R.string.error_no_internet)
     String noInternetError;
 
     @StringRes(R.string.reg_success)
     String successMessage;
 
-    @StringRes(R.string.error_min_length)
-    String minLengthError;
+    @Bean
+    TextInputValidator validator;
 
-    @IntegerRes(R.integer.min_field_password_length)
-    Integer minPasswordLength;
-
-    @IntegerRes(R.integer.min_field_username_length)
-    Integer minNameLength;
+    @Bean
+    SignInMessages message;
 
     @AfterViews
     void ready() {
         usernameWrapper.setHint(hintUser);
         passwordWrapper.setHint(hintPassword);
+    }
 
-        linkLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), LoginActivity_.class);
-                startActivity(intent);
-                finish();
-            }
-        });
+    @Click
+    void linkLogin() {
+        Intent intent = new Intent(getApplicationContext(), LoginActivity_.class);
+        startActivity(intent);
+        finish();
     }
 
     @Click
     void btnRegister() {
         hideKeyboard();
-        if (inputValidation()) {
+        if (validator.validateRegisterForm(etUser, etPassword)) {
             if (NetworkConnectionChecker.isNetworkConnected(this)) {
                 registration();
             } else {
@@ -122,32 +107,10 @@ public class RegistrationActivity extends AppCompatActivity {
         if (UserRegisterModelStatus.STATUS_OK.equals(response.getStatus())) {
             completeRegistration();
         } else if (UserRegisterModelStatus.STATUS_ERROR.equals(response.getStatus())) {
-            showErrorRegistrationMessage(true);
+            message.showErrorRegistrationMessage(true, getCurrentFocus(), handler);
         } else {
-            showErrorRegistrationMessage(false);
+            message.showErrorRegistrationMessage(false, getCurrentFocus(), handler);
         }
-    }
-
-    private boolean inputValidation() {
-
-        boolean isValid = true;
-
-        if (etUser.getText().toString().trim().length() == 0) {
-            etUser.setError(nullNameError);
-            isValid = false;
-        } else if (etUser.getText().toString().trim().length() < minNameLength) {
-            etUser.setError(minLengthError + minNameLength);
-            isValid = false;
-        }
-        if (etPassword.getText().toString().trim().length() == 0) {
-            etPassword.setError(nullPasswordError);
-            isValid = false;
-        } else if (etPassword.getText().toString().trim().length() < minPasswordLength) {
-            etPassword.setError(minLengthError + minPasswordLength);
-            isValid = false;
-        }
-
-        return isValid;
     }
 
     @UiThread
@@ -158,17 +121,6 @@ public class RegistrationActivity extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), successMessage, Toast.LENGTH_LONG).show();
         startActivity(mainIntent);
         finish();
-    }
-
-    @UiThread
-    protected void showErrorRegistrationMessage(boolean flag) {
-        if (flag) {
-            Message msg = new Message();
-            msg.obj = existsNameError;
-            handler.sendMessage(msg);
-        } else {
-            Toast.makeText(getApplicationContext(), unknownError, Toast.LENGTH_SHORT).show();
-        }
     }
 
     // Android doesn't hide the virtual keyboard automatically if focus on some editText field
