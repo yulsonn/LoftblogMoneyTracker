@@ -26,7 +26,7 @@ import ru.loftschool.loftblogmoneytracker.adapters.ExpensesAdapter;
 import ru.loftschool.loftblogmoneytracker.database.model.Expenses;
 import ru.loftschool.loftblogmoneytracker.ui.activities.AddExpenseActivity_;
 
-@EFragment(R.layout.expenses_fragment)
+@EFragment(R.layout.fragment_expenses)
 public class ExpensesFragment extends Fragment {
 
     @ViewById(R.id.recycler_view_content_expenses)

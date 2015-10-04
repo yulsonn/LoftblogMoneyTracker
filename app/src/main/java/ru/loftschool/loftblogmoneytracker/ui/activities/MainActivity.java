@@ -1,5 +1,6 @@
 package ru.loftschool.loftblogmoneytracker.ui.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -12,17 +13,28 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.activeandroid.query.Select;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.res.StringRes;
 
+import java.util.List;
+
+import ru.loftschool.loftblogmoneytracker.MoneyTrackerApplication;
 import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.database.model.Categories;
+import ru.loftschool.loftblogmoneytracker.rest.RestService;
+import ru.loftschool.loftblogmoneytracker.rest.exception.UnauthorizedException;
+import ru.loftschool.loftblogmoneytracker.rest.models.CategoryAddModel;
+import ru.loftschool.loftblogmoneytracker.rest.status.CategoryAddModelStatus;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.CategoriesFragment_;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.ExpensesFragment_;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.SettingsFragment_;
@@ -45,6 +57,12 @@ public class MainActivity extends AppCompatActivity {
     @ViewById
     Toolbar toolbar;
 
+    @StringRes(R.string.error_unknown)
+    String unknownError;
+
+    @StringRes(R.string.error_unauthorized)
+    String unauthorizedError;
+
     @OptionsItem(android.R.id.home)
     void settings(){
         drawerLayout.openDrawer(GravityCompat.START);
@@ -55,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
         initToolbar();
         setupNavigationDrawer();
         initialCategoriesFill();
+        addCategoriesToServer();
     }
 
     @Override
@@ -151,5 +170,49 @@ public class MainActivity extends AppCompatActivity {
             new Categories("Clothes").save();
             new Categories("Food").save();
         }
+    }
+
+    @Background
+    void addCategoriesToServer() {
+        RestService restService = new RestService();
+        CategoryAddModel categoryAddResp = null;
+        List<Categories> categories = new Select().from(Categories.class).execute();
+
+        for (Categories category : categories) {
+            try {
+                categoryAddResp = restService.addCategory(category.name, MoneyTrackerApplication.getToken(this));
+                if (CategoryAddModelStatus.STATUS_OK.equals(categoryAddResp.getStatus())) {
+                    Log.e(LOG_TAG, "Category name: " + categoryAddResp.getData().getTitle() +
+                                    ", Category id: " + categoryAddResp.getData().getId());
+                } else {
+                    Toast.makeText(this, unknownError, Toast.LENGTH_LONG).show();
+                    Log.e(LOG_TAG, unknownError);
+                }
+            } catch (UnauthorizedException e) {
+                unauthorizedErrorReaction();
+                break;
+            }
+        }
+    }
+
+    @UiThread
+    void unauthorizedErrorReaction() {
+        Toast.makeText(this, unauthorizedError, Toast.LENGTH_LONG).show();
+        Log.e(LOG_TAG, CategoryAddModelStatus.STATUS_WRONG_TOKEN);
+        goToLogin();
+        finish();
+    }
+
+    @UiThread
+    void goToLogin() {
+        Intent intent = new Intent(this, LoginActivity_.class);
+        startActivity(intent);
+        finish();
+    }
+
+    @Background
+    public void logout(MenuItem item){
+        goToLogin();
+        MoneyTrackerApplication.setToken(this, MoneyTrackerApplication.DEFAULT_TOKEN_KEY);
     }
 }

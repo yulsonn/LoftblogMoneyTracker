@@ -24,7 +24,7 @@ public class ExpensesAdapter extends RecyclerView.Adapter<ExpensesAdapter.CardVi
 
     @Override
     public CardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.expenses_list_item, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_expenses, parent, false);
         return new CardViewHolder(itemView);
     }
 

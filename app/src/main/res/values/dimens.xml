@@ -36,8 +36,10 @@
     <dimen name="add_expense_field_margin_left">10dp</dimen>
     <dimen name="add_expense_field_margin_left_small">6dp</dimen>
 
-    <!--Registration screen-->
+    <!--Registration & Login screens-->
     <dimen name="registration_text_size">25sp</dimen>
     <dimen name="registration_fields_padding">50dp</dimen>
     <dimen name="registration_margin_top">4dp</dimen>
+    <dimen name="registration_control_margins">24dp</dimen>
+    <dimen name="registration_control_padding">24dp</dimen>
 </resources>

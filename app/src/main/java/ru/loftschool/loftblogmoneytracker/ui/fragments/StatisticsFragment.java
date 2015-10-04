@@ -8,7 +8,7 @@ import org.androidannotations.annotations.res.StringRes;
 
 import ru.loftschool.loftblogmoneytracker.R;
 
-@EFragment(R.layout.statistics_fragment)
+@EFragment(R.layout.fragment_statistics)
 public class StatisticsFragment extends Fragment {
 
     @StringRes(R.string.frag_title_statistics)

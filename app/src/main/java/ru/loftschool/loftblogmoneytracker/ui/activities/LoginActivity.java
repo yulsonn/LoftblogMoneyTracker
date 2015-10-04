@@ -24,37 +24,38 @@ import org.androidannotations.annotations.res.StringRes;
 
 import java.lang.ref.WeakReference;
 
+import ru.loftschool.loftblogmoneytracker.MoneyTrackerApplication;
 import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.rest.RestService;
-import ru.loftschool.loftblogmoneytracker.rest.models.UserRegisterModel;
-import ru.loftschool.loftblogmoneytracker.rest.status.UserRegisterModelStatus;
+import ru.loftschool.loftblogmoneytracker.rest.models.UserLoginModel;
+import ru.loftschool.loftblogmoneytracker.rest.status.UserLoginModelStatus;
 import ru.loftschool.loftblogmoneytracker.utils.NetworkConnectionChecker;
 import ru.loftschool.loftblogmoneytracker.utils.SignInMessages;
 import ru.loftschool.loftblogmoneytracker.utils.TextInputValidator;
 
-@EActivity(R.layout.activity_registration)
-public class RegistrationActivity extends AppCompatActivity {
+@EActivity(R.layout.activity_login)
+public class LoginActivity extends AppCompatActivity {
 
     // to get fields in the main UI thread from background thread use Handler
     private final WeakRefHandler handler = new WeakRefHandler(this);
 
-    @ViewById(R.id.btn_register)
-    Button btnRegister;
+    @ViewById(R.id.btn_login)
+    Button btnLogin;
 
-    @ViewById(R.id.usernameWrapper)
+    @ViewById(R.id.login_usernameWrapper)
     TextInputLayout usernameWrapper;
 
-    @ViewById(R.id.passwordWrapper)
+    @ViewById(R.id.login_passwordWrapper)
     TextInputLayout passwordWrapper;
 
-    @ViewById(R.id.et_reg_user)
+    @ViewById(R.id.et_log_user)
     EditText etUser;
 
-    @ViewById(R.id.et_reg_password)
+    @ViewById(R.id.et_log_password)
     EditText etPassword;
 
-    @ViewById(R.id.link_login)
-    TextView linkLogin;
+    @ViewById(R.id.link_registration)
+    TextView linkRegistration;
 
     @StringRes(R.string.reg_hint_user)
     String hintUser;
@@ -64,9 +65,6 @@ public class RegistrationActivity extends AppCompatActivity {
 
     @StringRes(R.string.error_no_internet)
     String noInternetError;
-
-    @StringRes(R.string.reg_success)
-    String successMessage;
 
     @Bean
     TextInputValidator validator;
@@ -78,21 +76,27 @@ public class RegistrationActivity extends AppCompatActivity {
     void ready() {
         usernameWrapper.setHint(hintUser);
         passwordWrapper.setHint(hintPassword);
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            etUser.setText(intent.getStringExtra("etUser"));
+            etPassword.setText(intent.getStringExtra("etPassword"));
+        }
     }
 
     @Click
-    void linkLogin() {
-        Intent intent = new Intent(getApplicationContext(), LoginActivity_.class);
+    void linkRegistration() {
+        Intent intent = new Intent(getApplicationContext(), RegistrationActivity_.class);
         startActivity(intent);
         finish();
     }
 
     @Click
-    void btnRegister() {
+    void btnLogin() {
         hideKeyboard();
-        if (validator.validateRegisterForm(etUser, etPassword)) {
+        if (validator.validateLoginForm(etUser, etPassword)) {
             if (NetworkConnectionChecker.isNetworkConnected(this)) {
-                registration();
+                login();
             } else {
                 Toast.makeText(getApplicationContext(), noInternetError, Toast.LENGTH_SHORT).show();
             }
@@ -100,25 +104,23 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     @Background
-    void registration() {
+    void login() {
         RestService restService = new RestService();
-        UserRegisterModel response = restService.register(etUser.getText().toString(), etPassword.getText().toString());
+        UserLoginModel response = restService.login(etUser.getText().toString(), etPassword.getText().toString());
+        // save auth_token to SharedPreferences
+        MoneyTrackerApplication.setToken(this, response.getAuthToken());
+        String status = response.getStatus();
 
-        if (UserRegisterModelStatus.STATUS_OK.equals(response.getStatus())) {
-            completeRegistration();
-        } else if (UserRegisterModelStatus.STATUS_ERROR.equals(response.getStatus())) {
-            message.showErrorRegistrationMessage(true, getCurrentFocus(), handler);
+        if (UserLoginModelStatus.STATUS_OK.equals(status)) {
+            completeLogin();
         } else {
-            message.showErrorRegistrationMessage(false, getCurrentFocus(), handler);
+            message.showErrorLoginMessage(status, this.getCurrentFocus(), handler);
         }
     }
 
     @UiThread
-    protected void completeRegistration() {
-        Intent mainIntent = new Intent(RegistrationActivity.this, LoginActivity_.class);
-        mainIntent.putExtra("etUser", etUser.getText().toString());
-        mainIntent.putExtra("etPassword", etPassword.getText().toString());
-        Toast.makeText(getApplicationContext(), successMessage, Toast.LENGTH_LONG).show();
+    protected void completeLogin() {
+        Intent mainIntent = new Intent(LoginActivity.this, MainActivity_.class);
         startActivity(mainIntent);
         finish();
     }
@@ -134,24 +136,24 @@ public class RegistrationActivity extends AppCompatActivity {
 
     //to avoid "leak might occur" warning while using handler create custom static class WeakRefHandler
     private static class WeakRefHandler extends Handler {
-        private final WeakReference<RegistrationActivity> mActivity;
+        private final WeakReference<LoginActivity> mActivity;
 
-        public WeakRefHandler(RegistrationActivity activity) {
+        public WeakRefHandler(LoginActivity activity) {
             mActivity = new WeakReference<>(activity);
         }
 
         @Override
         public void handleMessage(Message msg) {
-            RegistrationActivity activity = mActivity.get();
+            LoginActivity activity = mActivity.get();
             if (activity != null) {
-                activity.etUser.requestFocus();
-                activity.etUser.setError((String) msg.obj);
+                if (msg.what == SignInMessages.MESSAGE_USER) {
+                    activity.etUser.requestFocus();
+                    activity.etUser.setError((String) msg.obj);
+                } else {
+                    activity.etPassword.requestFocus();
+                    activity.etPassword.setError((String) msg.obj);
+                }
             }
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
     }
 }

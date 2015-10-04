@@ -22,7 +22,7 @@ import ru.loftschool.loftblogmoneytracker.adapters.CategoriesAdapter;
 import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.database.model.Categories;
 
-@EFragment(R.layout.categories_fragment)
+@EFragment(R.layout.fragment_categories)
 public class CategoriesFragment extends Fragment {
 
     @ViewById(R.id.recycler_view_content_categories)

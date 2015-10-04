@@ -49,16 +49,30 @@
     <!--Splash text-->
     <string name="splash_text">Welcome to Loftblog Money Tracker</string>
 
-    <!--Строки для экрана регистрации-->
+    <!--Строки для экрана регистрации и LogIn-->
     <string name="reg_hint_user">Имя пользователя</string>
     <string name="reg_hint_password">Пароль</string>
-    <string name="error_null_reg_name">Введите имя пользователя!</string>
-    <string name="error_null_reg_password">Введите пароль!</string>
-    <string name="error_exists_reg_name">Такое имя пользователя уже существует, введите другое имя!</string>
-    <string name="error_unknown">Неизвестная ошибка при регистрации!</string>
-    <string name="reg_success">Регистрация завершена успешно</string>
-    <string name="text_registration_header">РЕГИСТРАЦИЯ</string>
-    <string name="button_registration">Зарегистрировать</string>
-    <string name="error_no_internet">Отсутствует подключение к сети!</string>
+
+    <string name="error_null_reg_name">Введите имя пользователя</string>
+    <string name="error_null_reg_password">Введите пароль</string>
+    <string name="error_exists_reg_name">Такое имя пользователя уже существует</string>
+    <string name="error_login_no_such_name">Учетной записи с таким именем не существует</string>
+    <string name="error_login_wrong_password">Неверный пароль</string>
+    <string name="error_unknown">Неизвестная ошибка при регистрации</string>
+    <string name="error_no_internet">Отсутствует подключение к сети</string>
+
+    <string name="reg_success">Registration successful. Login now please.</string>
+
+    <string name="login_screen_header_text">Login</string>
+    <string name="login_screen_btn_login_text">login</string>
+    <string name="login_screen_new_ac_text">No account yet? Create one</string>
+
+    <string name="reg_screen_header_text">Register</string>
+    <string name="reg_screen_btn_reg_text">create account</string>
+    <string name="reg_screen_login_text">Already a member? Login</string>
+
+    <string name="error_unauthorized">Сессия устарела. Пожалуйста, войдите в систему снова.</string>
+    <string name="error_min_length">"Минимальное количество символов: "</string>
+    <string name="menu_item_logout">Logout</string>
 
 </resources>
