@@ -39,6 +39,7 @@ import ru.loftschool.loftblogmoneytracker.ui.fragments.CategoriesFragment_;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.ExpensesFragment_;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.SettingsFragment_;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.StatisticsFragment_;
+import ru.loftschool.loftblogmoneytracker.utils.TokenKeyStorage;
 
 @EActivity(R.layout.activity_main)
 @OptionsMenu(R.menu.menu_main)
@@ -178,19 +179,21 @@ public class MainActivity extends AppCompatActivity {
         CategoryAddModel categoryAddResp = null;
         List<Categories> categories = new Select().from(Categories.class).execute();
 
-        for (Categories category : categories) {
-            try {
-                categoryAddResp = restService.addCategory(category.name, MoneyTrackerApplication.getToken(this));
-                if (CategoryAddModelStatus.STATUS_OK.equals(categoryAddResp.getStatus())) {
-                    Log.e(LOG_TAG, "Category name: " + categoryAddResp.getData().getTitle() +
-                                    ", Category id: " + categoryAddResp.getData().getId());
-                } else {
-                    Toast.makeText(this, unknownError, Toast.LENGTH_LONG).show();
-                    Log.e(LOG_TAG, unknownError);
+        if (!categories.isEmpty()) {
+            for (Categories category : categories) {
+                try {
+                    categoryAddResp = restService.addCategory(category.name, MoneyTrackerApplication.getGoogleToken(this), MoneyTrackerApplication.getToken(this));
+                    if (CategoryAddModelStatus.STATUS_OK.equals(categoryAddResp.getStatus())) {
+                        Log.e(LOG_TAG, "Category name: " + categoryAddResp.getData().getTitle() +
+                                ", Category id: " + categoryAddResp.getData().getId());
+                    } else {
+                        Toast.makeText(this, unknownError, Toast.LENGTH_LONG).show();
+                        Log.e(LOG_TAG, unknownError);
+                    }
+                } catch (UnauthorizedException e) {
+                    unauthorizedErrorReaction();
+                    break;
                 }
-            } catch (UnauthorizedException e) {
-                unauthorizedErrorReaction();
-                break;
             }
         }
     }
@@ -213,6 +216,6 @@ public class MainActivity extends AppCompatActivity {
     @Background
     public void logout(MenuItem item){
         goToLogin();
-        MoneyTrackerApplication.setToken(this, MoneyTrackerApplication.DEFAULT_TOKEN_KEY);
+        MoneyTrackerApplication.setToken(this, TokenKeyStorage.DEFAULT_TOKEN_KEY);
     }
 }

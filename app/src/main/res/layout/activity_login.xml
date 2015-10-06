@@ -71,6 +71,13 @@
             android:gravity="center"
             android:text="@string/login_screen_btn_login_text"/>
 
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/btn_google_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/registration_control_margins"
+            android:gravity="center"/>
+
         <TextView android:id="@+id/link_registration"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

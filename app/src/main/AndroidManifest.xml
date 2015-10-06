@@ -19,7 +19,7 @@
             android:value="ru.loftschool.loftblogmoneytracker.database.model.Expenses,
                             ru.loftschool.loftblogmoneytracker.database.model.Categories" />
 
-        <activity android:name=".ui.activities.SplashActivity">
+        <activity android:name=".ui.activities.SplashActivity_">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

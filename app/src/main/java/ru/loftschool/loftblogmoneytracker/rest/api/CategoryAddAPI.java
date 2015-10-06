@@ -9,5 +9,6 @@ public interface CategoryAddAPI {
 
     @GET("/categories/add")
     CategoryAddModel addCategory(@Query("title") String title,
+                                 @Query("google_token") String gToken,
                                  @Query("auth_token") String token) throws UnauthorizedException;
 }
