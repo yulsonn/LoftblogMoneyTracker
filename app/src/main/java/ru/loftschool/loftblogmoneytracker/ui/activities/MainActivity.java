@@ -13,9 +13,12 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.activeandroid.query.Select;
+import com.squareup.picasso.Picasso;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -34,11 +37,13 @@ import ru.loftschool.loftblogmoneytracker.database.model.Categories;
 import ru.loftschool.loftblogmoneytracker.rest.RestService;
 import ru.loftschool.loftblogmoneytracker.rest.exception.UnauthorizedException;
 import ru.loftschool.loftblogmoneytracker.rest.models.CategoryAddModel;
+import ru.loftschool.loftblogmoneytracker.rest.models.GoogleAccountDataModel;
 import ru.loftschool.loftblogmoneytracker.rest.status.CategoryAddModelStatus;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.CategoriesFragment_;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.ExpensesFragment_;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.SettingsFragment_;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.StatisticsFragment_;
+import ru.loftschool.loftblogmoneytracker.utils.NetworkConnectionChecker;
 import ru.loftschool.loftblogmoneytracker.utils.TokenKeyStorage;
 
 @EActivity(R.layout.activity_main)
@@ -58,6 +63,15 @@ public class MainActivity extends AppCompatActivity {
     @ViewById
     Toolbar toolbar;
 
+    @ViewById(R.id.avatar)
+    ImageView avatar;
+
+    @ViewById(R.id.drawer_username)
+    TextView userName;
+
+    @ViewById(R.id.drawer_email)
+    TextView email;
+
     @StringRes(R.string.error_unknown)
     String unknownError;
 
@@ -75,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
         setupNavigationDrawer();
         initialCategoriesFill();
         addCategoriesToServer();
+        initDrawerHeaderWithGoogleAccInfo();
     }
 
     @Override
@@ -217,5 +232,28 @@ public class MainActivity extends AppCompatActivity {
     public void logout(MenuItem item){
         goToLogin();
         MoneyTrackerApplication.setToken(this, TokenKeyStorage.DEFAULT_TOKEN_KEY);
+    }
+
+    void initDrawerHeaderWithGoogleAccInfo() {
+        if (NetworkConnectionChecker.isNetworkConnected(this)
+                && !TokenKeyStorage.DEFAULT_TOKEN_GOOGLE_KEY.equalsIgnoreCase(MoneyTrackerApplication.getGoogleToken(this))) {
+            getGoogleAccountData();
+        }
+    }
+
+    @Background
+    void getGoogleAccountData() {
+        RestService restService = new RestService();
+        GoogleAccountDataModel gAccountData = restService.getGoogleAccountData(MoneyTrackerApplication.getGoogleToken(this));
+        if (gAccountData != null) {
+            setDrawerGoogleAccountData(gAccountData);
+        }
+    }
+
+    @UiThread
+    void setDrawerGoogleAccountData(GoogleAccountDataModel gAccountData) {
+        Picasso.with(this).load(gAccountData.getPicture()).into(avatar);
+        userName.setText(gAccountData.getName());
+        email.setText(gAccountData.getEmail());
     }
 }
