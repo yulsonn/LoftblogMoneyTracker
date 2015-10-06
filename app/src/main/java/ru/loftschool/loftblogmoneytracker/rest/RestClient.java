@@ -1,7 +1,7 @@
 package ru.loftschool.loftblogmoneytracker.rest;
 
 import retrofit.RestAdapter;
-import ru.loftschool.loftblogmoneytracker.rest.api.CategoryAddAPI;
+import ru.loftschool.loftblogmoneytracker.rest.api.CategoriesAPI;
 import ru.loftschool.loftblogmoneytracker.rest.api.GoogleAccountDataGetAPI;
 import ru.loftschool.loftblogmoneytracker.rest.api.UserLoginAPI;
 import ru.loftschool.loftblogmoneytracker.rest.api.UserLogoutAPI;
@@ -15,7 +15,7 @@ public class RestClient {
     private UserRegisterAPI userRegisterAPI;
     private UserLoginAPI userLoginAPI;
     private UserLogoutAPI userLogoutAPI;
-    private CategoryAddAPI categoryAddAPI;
+    private CategoriesAPI categoriesAPI;
     private GoogleAccountDataGetAPI googleAccountDataGetAPI;
 
     public RestClient() {
@@ -28,7 +28,7 @@ public class RestClient {
         userRegisterAPI = restAdapter.create(UserRegisterAPI.class);
         userLoginAPI    = restAdapter.create(UserLoginAPI.class);
         userLogoutAPI   = restAdapter.create(UserLogoutAPI.class);
-        categoryAddAPI  = restAdapter.create(CategoryAddAPI.class);
+        categoriesAPI = restAdapter.create(CategoriesAPI.class);
         googleAccountDataGetAPI = restAdapter.create(GoogleAccountDataGetAPI.class);
     }
 
@@ -44,8 +44,8 @@ public class RestClient {
         return userLogoutAPI;
     }
 
-    public CategoryAddAPI getCategoryAddAPI() {
-        return categoryAddAPI;
+    public CategoriesAPI getCategoriesAPI() {
+        return categoriesAPI;
     }
 
     public GoogleAccountDataGetAPI getGoogleAccountDataGetAPI() {

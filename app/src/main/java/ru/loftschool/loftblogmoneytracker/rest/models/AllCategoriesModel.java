@@ -1,13 +1,19 @@
 package ru.loftschool.loftblogmoneytracker.rest.models;
 
 import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
-public class CategoryAddModel {
+import java.util.ArrayList;
+import java.util.List;
+
+
+public class AllCategoriesModel {
 
     @Expose
     private String status;
+    @SerializedName("data")
     @Expose
-    private CategoryDetails data;
+    private List<AllCategoriesItem> categories = new ArrayList<AllCategoriesItem>();
 
     /**
      *
@@ -32,17 +38,17 @@ public class CategoryAddModel {
      * @return
      * The data
      */
-    public CategoryDetails getData() {
-        return data;
+    public List<AllCategoriesItem> getCategories() {
+        return categories;
     }
 
     /**
      *
-     * @param data
+     * @param categoriesItems
      * The data
      */
-    public void setData(CategoryDetails data) {
-        this.data = data;
+    public void setCategories(List<AllCategoriesItem> categoriesItems) {
+        this.categories = categoriesItems;
     }
 
 }
