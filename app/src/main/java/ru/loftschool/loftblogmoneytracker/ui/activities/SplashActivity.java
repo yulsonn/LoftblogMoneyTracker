@@ -1,6 +1,7 @@
 package ru.loftschool.loftblogmoneytracker.ui.activities;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -22,6 +23,7 @@ import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.rest.RestClient;
 import ru.loftschool.loftblogmoneytracker.rest.models.GoogleAccountDataModel;
 import ru.loftschool.loftblogmoneytracker.rest.status.GoogleAccountDataStatus;
+import ru.loftschool.loftblogmoneytracker.sync.TrackerSyncAdapter;
 import ru.loftschool.loftblogmoneytracker.utils.NetworkConnectionChecker;
 import ru.loftschool.loftblogmoneytracker.utils.google.GoogleTokenUtil;
 import ru.loftschool.loftblogmoneytracker.utils.TokenKeyStorage;
@@ -41,6 +43,12 @@ public class SplashActivity extends AppCompatActivity implements TokenKeyStorage
 
     @Bean
     GoogleTokenUtil googleTokenUtil;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        TrackerSyncAdapter.initializeSyncAdapter(this);
+    }
 
     @AfterViews
     void ready() {
