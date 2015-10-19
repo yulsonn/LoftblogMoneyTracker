@@ -81,7 +81,8 @@
     <string name="sync_account_type">loftblogmoneytracker.loftschool.ru</string>
 
     <string name="error_unknown">Неизвестная ошибка</string>
-    <string name="delete">menu_delete</string>
+    <string name="delete">Удалить</string>
+    <string name="select_all">Выбрать все</string>
 
     <!--Categories fragment-->
     <string name="category_add_enter_category">Введите название категории</string>

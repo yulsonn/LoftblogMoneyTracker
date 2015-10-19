@@ -37,7 +37,6 @@ public abstract class SelectableAdapter<VH extends RecyclerView.ViewHolder> exte
             selectedItems.delete(position);
         } else {
             selectedItems.put(position, true);
-
         }
         notifyItemChanged(position);
     }
@@ -60,6 +59,19 @@ public abstract class SelectableAdapter<VH extends RecyclerView.ViewHolder> exte
             items.add(selectedItems.keyAt(i));
         }
         return items;
+    }
+
+    public void selectAll(int size) {
+        for (int i = 0; i < size; i++) {
+            selectItem(i);
+        }
+    }
+
+    private void selectItem(int position) {
+        if (!selectedItems.get(position, false)) {
+            selectedItems.put(position, true);
+            notifyItemChanged(position);
+        }
     }
 
     public void onSaveInstanceState(Bundle outState) {

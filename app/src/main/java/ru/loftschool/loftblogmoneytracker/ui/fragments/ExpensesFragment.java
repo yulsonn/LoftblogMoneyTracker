@@ -196,6 +196,10 @@ public class ExpensesFragment extends Fragment {
                     adapter.removeItems(adapter.getSelectedItems());
                     mode.finish();
                     return true;
+                case R.id.menu_select_all:
+                    adapter.selectAll((adapter.getItemCount()));
+                    MainActivity.getActionMode().setTitle(String.valueOf(adapter.getSelectedItemsCount()));
+                    return true;
                 default:
                     return false;
             }

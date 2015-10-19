@@ -276,9 +276,12 @@ public class CategoriesFragment extends Fragment {
                             .setTitle(categoryRemoveTitle)
                             .setMessage(categoryRemoveText)
                             .create();
-
                     alertDialog.show();
 
+                    return true;
+                case R.id.menu_select_all:
+                    adapter.selectAll((adapter.getItemCount()));
+                    MainActivity.getActionMode().setTitle(String.valueOf(adapter.getSelectedItemsCount()));
                     return true;
                 default:
                     return false;
