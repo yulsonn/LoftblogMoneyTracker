@@ -16,7 +16,7 @@ public class Expenses extends Model {
     @Column(name = "Date")
     public String date;
 
-    @Column(name = "Category")
+    @Column(name = "Category", onUpdate = Column.ForeignKeyAction.CASCADE, onDelete = Column.ForeignKeyAction.CASCADE)
     public Categories category;
 
     public Expenses() {

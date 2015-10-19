@@ -42,4 +42,9 @@
     <dimen name="registration_margin_top">4dp</dimen>
     <dimen name="registration_control_margins">24dp</dimen>
     <dimen name="registration_control_padding">24dp</dimen>
+
+    <!--Add category dialog-->
+    <dimen name="dialog_padding_vertical">24dp</dimen>
+    <dimen name="dialog_padding_horizontal">24dp</dimen>
+
 </resources>

@@ -1,5 +1,6 @@
 package ru.loftschool.loftblogmoneytracker.utils;
 
+import android.support.design.widget.TextInputLayout;
 import android.widget.EditText;
 
 import org.androidannotations.annotations.EBean;
@@ -7,6 +8,7 @@ import org.androidannotations.annotations.res.IntegerRes;
 import org.androidannotations.annotations.res.StringRes;
 
 import ru.loftschool.loftblogmoneytracker.R;
+import ru.loftschool.loftblogmoneytracker.database.model.Categories;
 
 @EBean
 public class TextInputValidator {
@@ -25,6 +27,12 @@ public class TextInputValidator {
 
     @StringRes(R.string.error_min_length)
     String minLengthError;
+
+    @StringRes(R.string.error_null_category_name)
+    String nullCategoryName;
+
+    @StringRes(R.string.error_exists_category_name)
+    String existsCategoryName;
 
     @IntegerRes(R.integer.min_field_password_length)
     Integer minPasswordLength;
@@ -63,6 +71,21 @@ public class TextInputValidator {
             isValid = false;
         } else if (password.getText().toString().trim().length() < minPasswordLength) {
             password.setError(minLengthError + minPasswordLength);
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    public boolean validateCategoryName(String categoryName, TextInputLayout wrapper) {
+        boolean isValid = true;
+
+        if (categoryName.trim().length() == 0) {
+            wrapper.setError(nullCategoryName);
+            isValid = false;
+        }
+        if (!Categories.selectByNameCaseInsensitive(categoryName).isEmpty()) {
+            wrapper.setError(existsCategoryName);
             isValid = false;
         }
 

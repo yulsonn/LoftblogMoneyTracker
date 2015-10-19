@@ -25,6 +25,7 @@ import java.util.Locale;
 import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.database.model.Categories;
 import ru.loftschool.loftblogmoneytracker.database.model.Expenses;
+import ru.loftschool.loftblogmoneytracker.ui.fragments.ExpensesFragment;
 
 @EActivity(R.layout.activity_add_expense)
 public class AddExpenseActivity extends AppCompatActivity {
@@ -84,11 +85,12 @@ public class AddExpenseActivity extends AppCompatActivity {
     public void addExpenseButton() {
 
         if (inputValidation()) {
-            new Expenses(etName.getText().toString(), etPrice.getText().toString(), String.valueOf(dateFormat.format(new Date())), (Categories)spCategories.getSelectedItem()).save();
-            Toast.makeText(this, expenseAdded + etPrice.getText().toString() + ", "
-                                        + etName.getText().toString() + ", "
-                                        + String.valueOf(dateFormat.format(new Date())) + ", "
-                                        + spCategories.getSelectedItem().toString(), Toast.LENGTH_SHORT).show();
+            Expenses newExpense = new Expenses(etName.getText().toString(), etPrice.getText().toString(), String.valueOf(dateFormat.format(new Date())), (Categories)spCategories.getSelectedItem());
+            ExpensesFragment.getAdapter().addExpense(newExpense);
+            Toast.makeText(this, expenseAdded + newExpense.price + ", "
+                                                + newExpense.name + ", "
+                                                + String.valueOf(dateFormat.format(new Date())) + ", "
+                                                + newExpense.category.toString(), Toast.LENGTH_SHORT).show();
         }
         etPrice.setText(null);
         etName.setText(null);

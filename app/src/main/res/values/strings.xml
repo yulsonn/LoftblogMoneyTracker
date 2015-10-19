@@ -15,6 +15,8 @@
     <string name="nav_drawer_categories">Категории</string>
     <string name="nav_drawer_statistics">Статистика</string>
     <string name="nav_drawer_settings">Настройки</string>
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
 
     <!--Временный текст для фрагментов-->
     <string name="categories_text">Здесь будут категории...</string>
@@ -79,6 +81,17 @@
     <string name="sync_account_type">loftblogmoneytracker.loftschool.ru</string>
 
     <string name="error_unknown">Неизвестная ошибка</string>
+    <string name="delete">menu_delete</string>
+
+    <!--Categories fragment-->
+    <string name="category_add_enter_category">Введите название категории</string>
+    <string name="category_add_added_text">"Добавлена категория: "</string>
+    <string name="error_null_category_name">Название категории должно быть заполнено</string>
+    <string name="error_exists_category_name">Такая категория уже существует</string>
+    <string name="category_remove_accept">Удалить</string>
+    <string name="category_remove_cancel">Отменить</string>
+    <string name="category_remove_dialog_title">Удалить выбранные категории?</string>
+    <string name="category_remove_dialog_text">Также будут удалены все траты, относящие к выбранным категориям</string>
 
 
 </resources>

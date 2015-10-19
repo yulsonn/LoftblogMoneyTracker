@@ -8,12 +8,12 @@ import ru.loftschool.loftblogmoneytracker.rest.api.GoogleAccountDataGetAPI;
 import ru.loftschool.loftblogmoneytracker.rest.api.UserLoginAPI;
 import ru.loftschool.loftblogmoneytracker.rest.api.UserLogoutAPI;
 import ru.loftschool.loftblogmoneytracker.rest.api.UserRegisterAPI;
-import ru.loftschool.loftblogmoneytracker.rest.models.CategoryWithExpensesModel;
 import ru.loftschool.loftblogmoneytracker.utils.RetrofitErrorHandler;
 
 public class RestClient {
 
-    private static final String BASE_URL = "http://62.109.17.114";
+    //private static final String BASE_URL = "http://62.109.17.114";
+    private static final String BASE_URL = "http://lmt.loftblog.tmweb.ru";
 
     private UserRegisterAPI userRegisterAPI;
     private UserLoginAPI userLoginAPI;
