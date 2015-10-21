@@ -10,6 +10,7 @@
     <string name="item_text_sum">Sum</string>
     <string name="item_text_category">Category</string>
 
+
     <!--Строки меню для NavigationDrawer-->
     <string name="nav_drawer_expenses">Траты</string>
     <string name="nav_drawer_categories">Категории</string>

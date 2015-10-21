@@ -1,9 +1,13 @@
 package ru.loftschool.loftblogmoneytracker.adapters;
 
+import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import java.util.Collections;
@@ -17,6 +21,8 @@ public class CategoriesAdapter extends SelectableAdapter<CategoriesAdapter.CardV
 
     private List<Categories> categories;
     private CardViewCategoryHolder.ClickListener clickListener;
+    private Context context;
+    private int lastPosition = -1;
 
     public CategoriesAdapter() {
     }
@@ -29,6 +35,7 @@ public class CategoriesAdapter extends SelectableAdapter<CategoriesAdapter.CardV
     @Override
     public CategoriesAdapter.CardViewCategoryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_categories, parent, false);
+        context = parent.getContext();
         return new CardViewCategoryHolder(itemView, clickListener);
     }
 
@@ -37,6 +44,8 @@ public class CategoriesAdapter extends SelectableAdapter<CategoriesAdapter.CardV
         Categories category = categories.get(position);
         holder.textTitle.setText(category.name);
         holder.selectedOverlay.setVisibility(isSelected(position) ? View.VISIBLE : View.INVISIBLE);
+
+        setAnimation(holder.cardView, position);
     }
 
     public void removeItems(List<Integer> positions) {
@@ -69,7 +78,7 @@ public class CategoriesAdapter extends SelectableAdapter<CategoriesAdapter.CardV
         }
     }
 
-    private void removeItem(int position) {
+    public void removeItem(int position) {
         removeCategories(position);
         notifyItemRemoved(position);
     }
@@ -100,9 +109,19 @@ public class CategoriesAdapter extends SelectableAdapter<CategoriesAdapter.CardV
         return categories == null ? 0 : categories.size();
     }
 
+    private void setAnimation(View viewToAnimate, int position) {
+        if (position > lastPosition) {
+            Animation animation = AnimationUtils.loadAnimation(context, R.anim.slide_up);
+            viewToAnimate.startAnimation(animation);
+            lastPosition = position;
+        }
+    }
+
+
     public static class CardViewCategoryHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener{
         protected TextView textTitle;
         protected View selectedOverlay;
+        protected CardView cardView;
         private ClickListener clickListener;
 
         public CardViewCategoryHolder(View itemView, ClickListener clickListener) {
@@ -110,6 +129,7 @@ public class CategoriesAdapter extends SelectableAdapter<CategoriesAdapter.CardV
             this.clickListener = clickListener;
             textTitle = (TextView) itemView.findViewById(R.id.category_name_text);
             selectedOverlay = itemView.findViewById(R.id.categories_selected_overlay);
+            cardView = (CardView) itemView.findViewById(R.id.card_view_categories);
 
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);

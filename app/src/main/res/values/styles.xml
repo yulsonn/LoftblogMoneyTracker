@@ -68,9 +68,12 @@
         <item name="android:fontFamily" tools:targetApi="jelly_bean">Roboto Medium</item>
     </style>
 
-
     <style name="AlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="colorAccent">@color/primaryDark</item>
         <item name="background">@color/background</item>
+    </style>
+
+    <style name="DatePickerDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/primaryDark</item>
     </style>
 </resources>

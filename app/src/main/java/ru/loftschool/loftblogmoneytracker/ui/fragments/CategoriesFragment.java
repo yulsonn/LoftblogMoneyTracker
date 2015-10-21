@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -15,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
@@ -77,8 +77,6 @@ public class CategoriesFragment extends Fragment {
     @StringRes(R.string.category_remove_dialog_text)
     String categoryRemoveText;
 
-
-
     @Bean
     TextInputValidator validator;
 
@@ -98,15 +96,6 @@ public class CategoriesFragment extends Fragment {
         recyclerView.setLayoutManager(linearLayoutManager);
 //        to avoid an error "recyclerview No adapter attached; skipping layout" set a blank adapter for the recyclerView
         recyclerView.setAdapter(new CategoriesAdapter());
-
-        Bundle args = getArguments();
-        if (args != null){
-            Boolean showSnackbar = args.getBoolean("showSnackbar");
-            if (showSnackbar){
-                Snackbar.make(recyclerView, getActivity().getTitle() + " selected", Snackbar.LENGTH_SHORT).show();
-            }
-            args.clear();
-        }
     }
 
     @Click(R.id.categories_fab)
@@ -126,6 +115,24 @@ public class CategoriesFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        loadData();
+        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                adapter.removeItem(viewHolder.getAdapterPosition());
+            }
+        };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+    }
+
+    private void loadData() {
         getLoaderManager().restartLoader(1, null, new LoaderManager.LoaderCallbacks<List<Categories>>() {
             @Override
             public Loader<List<Categories>> onCreateLoader(int id, Bundle args) {

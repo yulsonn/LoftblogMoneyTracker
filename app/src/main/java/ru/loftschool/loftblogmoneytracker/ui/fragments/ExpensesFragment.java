@@ -3,15 +3,16 @@ package ru.loftschool.loftblogmoneytracker.ui.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,6 +48,9 @@ public class ExpensesFragment extends Fragment {
     @ViewById(R.id.fab)
     FloatingActionButton floatingActionButton;
 
+    @ViewById(R.id.swipe_refresh_expenses)
+    SwipeRefreshLayout swipeRefreshLayout;
+
     @StringRes(R.string.frag_title_expenses)
     String title;
 
@@ -63,25 +67,25 @@ public class ExpensesFragment extends Fragment {
         MainActivity.destroyActionModeIfNeeded();
         Intent openActivityIntent = new Intent(getActivity(), AddExpenseActivity_.class);
         getActivity().startActivity(openActivityIntent);
+        getActivity().overridePendingTransition(R.anim.from_middle, R.anim.to_middle);
     }
 
     @AfterViews
     void ready(){
         getActivity().setTitle(title);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), 1, false);
+        swipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.primaryDark, R.color.buttonAccent);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadData();
+            }
+        });
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(linearLayoutManager);
 //      to avoid an error "recyclerview No adapter attached; skipping layout" set a blank adapter for the recyclerView
         recyclerView.setAdapter(new ExpensesAdapter());
 
-        Bundle args = getArguments();
-        if (args != null){
-            Boolean showSnackbar = args.getBoolean("showSnackbar");
-            if (showSnackbar){
-                Snackbar.make(recyclerView, getActivity().getTitle() + " selected", Snackbar.LENGTH_SHORT).show();
-            }
-            args.clear();
-        }
     }
 
     @Override
@@ -95,6 +99,24 @@ public class ExpensesFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        loadData();
+        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                adapter.removeItem(viewHolder.getAdapterPosition());
+            }
+        };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+    }
+
+    private void loadData() {
         getLoaderManager().restartLoader(0, null, new LoaderManager.LoaderCallbacks<List<Expenses>>() {
             @Override
             public Loader<List<Expenses>> onCreateLoader(int id, Bundle args) {
@@ -112,28 +134,29 @@ public class ExpensesFragment extends Fragment {
 
             @Override
             public void onLoadFinished(Loader<List<Expenses>> loader, List<Expenses> data) {
+                swipeRefreshLayout.setRefreshing(false);
                 SparseBooleanArray savedCurrentSelectedItems = null;
                 if (adapter != null) {
                     savedCurrentSelectedItems = adapter.getSparseBooleanSelectedItems();
                 }
-                    adapter = new ExpensesAdapter(getDataList(), new ExpensesAdapter.CardViewHolder.ClickListener() {
-                        @Override
-                        public void onItemClicked(int position) {
-                            if (MainActivity.getActionMode() != null) {
-                                toggleSelection(position);
-                            }
-                        }
-
-                        @Override
-                        public boolean onItemLongClicked(int position) {
-                            if (MainActivity.getActionMode() == null) {
-                                AppCompatActivity activity = (AppCompatActivity) getActivity();
-                                MainActivity.setActionMode(activity.startSupportActionMode(actionModeCallback));
-                            }
+                adapter = new ExpensesAdapter(getDataList(), new ExpensesAdapter.CardViewHolder.ClickListener() {
+                    @Override
+                    public void onItemClicked(int position) {
+                        if (MainActivity.getActionMode() != null) {
                             toggleSelection(position);
-                            return true;
                         }
-                    });
+                    }
+
+                    @Override
+                    public boolean onItemLongClicked(int position) {
+                        if (MainActivity.getActionMode() == null) {
+                            AppCompatActivity activity = (AppCompatActivity) getActivity();
+                            MainActivity.setActionMode(activity.startSupportActionMode(actionModeCallback));
+                        }
+                        toggleSelection(position);
+                        return true;
+                    }
+                });
                 if (savedCurrentSelectedItems != null) {
                     adapter.setSelectedItems(savedCurrentSelectedItems);
                 }

@@ -3,8 +3,9 @@ package ru.loftschool.loftblogmoneytracker.ui.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -216,18 +217,13 @@ public class MainActivity extends AppCompatActivity {
 
     private void selectDrawerItem(MenuItem menuItem){
         Fragment fragment;
-        Bundle bundle = null;
 
         switch (menuItem.getItemId()){
             case R.id.drawer_item_expenses:
                 fragment = new ExpensesFragment_();
-                bundle = new Bundle();
-                bundle.putBoolean("showSnackbar",true);
                 break;
             case R.id.drawer_item_categories:
                 fragment = new CategoriesFragment_();
-                bundle = new Bundle();
-                bundle.putBoolean("showSnackbar",true);
                 break;
             case R.id.drawer_item_statistics:
                 fragment = new StatisticsFragment_();
@@ -237,18 +233,25 @@ public class MainActivity extends AppCompatActivity {
                 break;
             default:
                 fragment = new ExpensesFragment_();
-                bundle = new Bundle();
-                bundle.putBoolean("showSnackbar",true);
         }
 
-        if(bundle != null){
-            fragment.setArguments(bundle);
-        } else {
-            Snackbar.make(container, menuItem.getTitle() + " selected", Snackbar.LENGTH_SHORT).show();
-        }
-        getSupportFragmentManager().beginTransaction().replace(R.id.frame_container, fragment).addToBackStack(null).commit();
+        replaceFragment(fragment);
         menuItem.setChecked(true);
         drawerLayout.closeDrawers();
+    }
+
+    private void replaceFragment(Fragment fragment) {
+        String backStateName = fragment.getClass().getSimpleName();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        boolean fragmentPooped = fragmentManager.popBackStackImmediate(backStateName, 0);
+
+
+        if (!fragmentPooped && fragmentManager.findFragmentByTag(backStateName) == null) {
+            fragmentManager.beginTransaction().replace(R.id.frame_container, fragment, backStateName)
+                    .addToBackStack(backStateName)
+                    .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
+                    .commit();
+        }
     }
 
     @Override
