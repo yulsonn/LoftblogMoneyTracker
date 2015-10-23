@@ -1,19 +1,29 @@
 package ru.loftschool.loftblogmoneytracker.rest.models;
 
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class AllCategoriesModel {
+public class AllExpensesModel {
 
     @Expose
     private String status;
+    @Expose
+    private Integer id;
     @SerializedName("data")
     @Expose
-    private List<CategoryDetails> categories = new ArrayList<>();
+    private List<ExpenseDetails> expenses = new ArrayList<>();
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     /**
      *
@@ -38,17 +48,16 @@ public class AllCategoriesModel {
      * @return
      * The data
      */
-    public List<CategoryDetails> getCategories() {
-        return categories;
+    public List<ExpenseDetails> getExpenses() {
+        return expenses;
     }
 
     /**
      *
-     * @param categoriesItems
+     * @param expenses
      * The data
      */
-    public void setCategories(List<CategoryDetails> categoriesItems) {
-        this.categories = categoriesItems;
+    public void setExpenses(List<ExpenseDetails> expenses) {
+        this.expenses = expenses;
     }
-
 }

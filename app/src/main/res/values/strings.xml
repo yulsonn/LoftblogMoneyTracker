@@ -58,7 +58,6 @@
     <string name="error_exists_reg_name">Такое имя пользователя уже существует</string>
     <string name="error_login_no_such_name">Учетной записи с таким именем не существует</string>
     <string name="error_login_wrong_password">Неверный пароль</string>
-    <string name="error_unknown">Неизвестная ошибка при регистрации</string>
     <string name="error_no_internet">Отсутствует подключение к сети</string>
 
     <string name="reg_success">Registration successful. Login now please.</string>
@@ -74,5 +73,12 @@
     <string name="error_unauthorized">Сессия устарела. Пожалуйста, войдите в систему снова.</string>
     <string name="error_min_length">"Минимальное количество символов: "</string>
     <string name="menu_item_logout">Logout</string>
+
+    <!--Sync-->
+    <string name="content_authority">ru.loftschool.loftblogmoneytracker</string>
+    <string name="sync_account_type">loftblogmoneytracker.loftschool.ru</string>
+
+    <string name="error_unknown">Неизвестная ошибка</string>
+
 
 </resources>
