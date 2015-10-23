@@ -10,19 +10,31 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.TreeMap;
 
 import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.database.model.Categories;
 
 public class CategoriesAdapter extends SelectableAdapter<CategoriesAdapter.CardViewCategoryHolder> {
+    private static final String TAG = CategoriesAdapter.class.getSimpleName() ;
+
+    private static final long UNDO_TIMEOUT = 3600L;
+
+    private boolean multipleRemove = false;
 
     private List<Categories> categories;
+    private Map<Integer, Categories> removedCategoriesMap;
     private CardViewCategoryHolder.ClickListener clickListener;
     private Context context;
     private int lastPosition = -1;
+    private Timer undoRemoveTimer;
 
     public CategoriesAdapter() {
     }
@@ -49,6 +61,11 @@ public class CategoriesAdapter extends SelectableAdapter<CategoriesAdapter.CardV
     }
 
     public void removeItems(List<Integer> positions) {
+        if (positions.size() > 1) {
+            multipleRemove = true;
+        }
+        saveRemovedItems(positions);
+
         Collections.sort(positions, new Comparator<Integer>() {
             @Override
             public int compare(Integer lhs, Integer rhs) {
@@ -76,9 +93,13 @@ public class CategoriesAdapter extends SelectableAdapter<CategoriesAdapter.CardV
                 }
             }
         }
+        multipleRemove = false;
     }
 
     public void removeItem(int position) {
+        if (!multipleRemove) {
+            saveRemovedItem(position);
+        }
         removeCategories(position);
         notifyItemRemoved(position);
     }
@@ -92,11 +113,20 @@ public class CategoriesAdapter extends SelectableAdapter<CategoriesAdapter.CardV
 
     private void removeCategories(int position) {
         if (categories.get(position) != null) {
-            categories.get(position).delete();
+            //categories.get(position).delete();
             categories.remove(position);
         }
     }
 
+
+    private void completelyRemoveExpensesFromDB() {
+        if (removedCategoriesMap != null) {
+            for (Map.Entry<Integer, Categories> pair : removedCategoriesMap.entrySet()) {
+                pair.getValue().delete();
+            }
+            removedCategoriesMap = null;
+        }
+    }
 
     public void addCategory(Categories category) {
         category.save();
@@ -107,6 +137,56 @@ public class CategoriesAdapter extends SelectableAdapter<CategoriesAdapter.CardV
     @Override
     public int getItemCount() {
         return categories == null ? 0 : categories.size();
+    }
+
+
+    private void saveRemovedItems(List<Integer> positions) {
+        if (removedCategoriesMap != null) {
+            completelyRemoveExpensesFromDB();
+        }
+        removedCategoriesMap = new TreeMap<>();
+        for (int position : positions) {
+            removedCategoriesMap.put(position, categories.get(position));
+        }
+    }
+
+    private void saveRemovedItem(int position) {
+        if (removedCategoriesMap != null) {
+            completelyRemoveExpensesFromDB();
+        }
+        ArrayList<Integer> positions = new ArrayList<>(1);
+        positions.add(position);
+        saveRemovedItems(positions);
+    }
+
+    public void restoreRemovedItems() {
+        stopUndoTimer();
+        for (Map.Entry<Integer, Categories> pair : removedCategoriesMap.entrySet()){
+            categories.add(pair.getKey(), pair.getValue());
+            notifyItemInserted(pair.getKey());
+        }
+        removedCategoriesMap = null;
+    }
+
+    public void startUndoTimer(long timeout) {
+        stopUndoTimer();
+        this.undoRemoveTimer = new Timer();
+        this.undoRemoveTimer.schedule(new UndoTimer(), timeout > 0 ? timeout : UNDO_TIMEOUT);
+    }
+
+    private void stopUndoTimer() {
+        if (this.undoRemoveTimer != null) {
+            this.undoRemoveTimer.cancel();
+            this.undoRemoveTimer = null;
+        }
+    }
+
+    private class UndoTimer extends TimerTask {
+        @Override
+        public void run() {
+            undoRemoveTimer = null;
+            completelyRemoveExpensesFromDB();
+        }
     }
 
     private void setAnimation(View viewToAnimate, int position) {

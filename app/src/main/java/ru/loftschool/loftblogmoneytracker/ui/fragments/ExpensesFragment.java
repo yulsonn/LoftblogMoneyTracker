@@ -3,6 +3,7 @@ package ru.loftschool.loftblogmoneytracker.ui.fragments;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
@@ -16,6 +17,7 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.activeandroid.query.Select;
 
@@ -36,10 +38,6 @@ import ru.loftschool.loftblogmoneytracker.ui.activities.MainActivity;
 @EFragment(R.layout.fragment_expenses)
 public class ExpensesFragment extends Fragment {
 
-    public ActionModeCallback getActionModeCallback() {
-        return actionModeCallback;
-    }
-
     private ActionModeCallback actionModeCallback = new ActionModeCallback();
 
     @ViewById(R.id.recycler_view_content_expenses)
@@ -54,12 +52,25 @@ public class ExpensesFragment extends Fragment {
     @StringRes(R.string.frag_title_expenses)
     String title;
 
+    @StringRes(R.string.snackbar_undo)
+    String undoText;
+
+    @StringRes(R.string.snackbar_removed_expense)
+    String removedExpense;
+
+    @StringRes(R.string.snackbar_removed_expenses)
+    String removedExpenses;
+
     private static ExpensesAdapter adapter;
 
     private Bundle savedSelectedItems;
 
     public static ExpensesAdapter getAdapter() {
         return adapter;
+    }
+
+    public ActionModeCallback getActionModeCallback() {
+        return actionModeCallback;
     }
 
     @Click
@@ -108,7 +119,9 @@ public class ExpensesFragment extends Fragment {
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                MainActivity.destroyActionModeIfNeeded();
                 adapter.removeItem(viewHolder.getAdapterPosition());
+                undoSnackbarShow();
             }
         };
 
@@ -199,6 +212,18 @@ public class ExpensesFragment extends Fragment {
         return new Select().from(Expenses.class).execute();
     }
 
+    private void undoSnackbarShow() {
+        Snackbar.make(recyclerView, adapter.getSelectedItemsCount() <= 1 ? removedExpense : removedExpenses, Snackbar.LENGTH_LONG)
+                .setAction(undoText, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        adapter.restoreRemovedItems();
+                    }
+                })
+                .show();
+        adapter.startUndoTimer(3500);
+    }
+
     private class ActionModeCallback implements ActionMode.Callback {
 
         @Override
@@ -217,6 +242,7 @@ public class ExpensesFragment extends Fragment {
             switch (item.getItemId()){
                 case R.id.menu_remove:
                     adapter.removeItems(adapter.getSelectedItems());
+                    undoSnackbarShow();
                     mode.finish();
                     return true;
                 case R.id.menu_select_all:

@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -44,11 +45,10 @@ import ru.loftschool.loftblogmoneytracker.utils.TextInputValidator;
 @EFragment(R.layout.fragment_categories)
 public class CategoriesFragment extends Fragment {
 
-    public ActionModeCallback getActionModeCallback() {
-        return actionModeCallback;
-    }
+    private static CategoriesAdapter adapter;
 
     private ActionModeCallback actionModeCallback = new ActionModeCallback();
+    private Bundle savedSelectedItems;
 
     @ViewById(R.id.recycler_view_content_categories)
     RecyclerView recyclerView;
@@ -77,6 +77,15 @@ public class CategoriesFragment extends Fragment {
     @StringRes(R.string.category_remove_dialog_text)
     String categoryRemoveText;
 
+    @StringRes(R.string.snackbar_undo)
+    String undoText;
+
+    @StringRes(R.string.snackbar_removed_category)
+    String removedCategory;
+
+    @StringRes(R.string.snackbar_removed_categories)
+    String removedCategories;
+
     @Bean
     TextInputValidator validator;
 
@@ -84,8 +93,9 @@ public class CategoriesFragment extends Fragment {
         return adapter;
     }
 
-    private static CategoriesAdapter adapter;
-    private Bundle savedSelectedItems;
+    public ActionModeCallback getActionModeCallback() {
+        return actionModeCallback;
+    }
 
     @AfterViews
     void ready(){
@@ -124,7 +134,9 @@ public class CategoriesFragment extends Fragment {
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                MainActivity.destroyActionModeIfNeeded();
                 adapter.removeItem(viewHolder.getAdapterPosition());
+                undoSnackbarShow();
             }
         };
 
@@ -247,6 +259,19 @@ public class CategoriesFragment extends Fragment {
         return new Select().from(Categories.class).execute();
     }
 
+
+    private void undoSnackbarShow() {
+        Snackbar snackbar = Snackbar.make(recyclerView, adapter.getSelectedItemsCount() <= 1 ? removedCategory : removedCategories, Snackbar.LENGTH_LONG)
+                .setAction(undoText, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        adapter.restoreRemovedItems();
+                    }
+                });
+                snackbar.show();
+        adapter.startUndoTimer(3500);
+    }
+
     private class ActionModeCallback implements ActionMode.Callback {
 
         @Override
@@ -270,6 +295,7 @@ public class CategoriesFragment extends Fragment {
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     // Accept action
                                     adapter.removeItems(adapter.getSelectedItems());
+                                    undoSnackbarShow();
                                     mode.finish();
                                 }
                             })

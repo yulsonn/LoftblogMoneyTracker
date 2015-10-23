@@ -95,5 +95,12 @@
     <string name="category_remove_dialog_title">Удалить выбранные категории?</string>
     <string name="category_remove_dialog_text">Также будут удалены все траты, относящие к выбранным категориям</string>
 
+    <!--UNDO messages-->
+    <string name="snackbar_undo">Отменить</string>
+    <string name="snackbar_removed_expense">Трата удалена</string>
+    <string name="snackbar_removed_expenses">Траты удалены</string>
+    <string name="snackbar_removed_category">Категория удалена</string>
+    <string name="snackbar_removed_categories">Категории удалены</string>
+
 
 </resources>

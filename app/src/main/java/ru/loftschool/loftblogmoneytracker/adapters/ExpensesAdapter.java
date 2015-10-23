@@ -10,19 +10,30 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.TreeMap;
 
 import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.database.model.Expenses;
 
 public class ExpensesAdapter extends SelectableAdapter<ExpensesAdapter.CardViewHolder> {
 
+    private static final long UNDO_TIMEOUT = 3600L;
+
+    private boolean multipleRemove = false;
+
     private List<Expenses> expenses;
+    private Map<Integer, Expenses> removedExpensesMap;
     private CardViewHolder.ClickListener clickListener;
     private Context context;
     private int lastPosition = -1;
+    private Timer undoRemoveTimer;
 
     public ExpensesAdapter() {
     }
@@ -52,6 +63,11 @@ public class ExpensesAdapter extends SelectableAdapter<ExpensesAdapter.CardViewH
     }
 
     public void removeItems(List<Integer> positions) {
+        if (positions.size() > 1) {
+            multipleRemove = true;
+        }
+        saveRemovedItems(positions);
+
         Collections.sort(positions, new Comparator<Integer>() {
             @Override
             public int compare(Integer lhs, Integer rhs) {
@@ -79,9 +95,13 @@ public class ExpensesAdapter extends SelectableAdapter<ExpensesAdapter.CardViewH
                 }
             }
         }
+        multipleRemove = false;
     }
 
     public void removeItem(int position) {
+        if (!multipleRemove) {
+            saveRemovedItem(position);
+        }
         removeExpenses(position);
         notifyItemRemoved(position);
     }
@@ -95,8 +115,17 @@ public class ExpensesAdapter extends SelectableAdapter<ExpensesAdapter.CardViewH
 
     private void removeExpenses(int position) {
         if (expenses.get(position) != null) {
-            expenses.get(position).delete();
+            //expenses.get(position).delete();
             expenses.remove(position);
+        }
+    }
+
+    private void completelyRemoveExpensesFromDB() {
+        if (removedExpensesMap != null) {
+            for (Map.Entry<Integer, Expenses> pair : removedExpensesMap.entrySet()) {
+                pair.getValue().delete();
+            }
+            removedExpensesMap = null;
         }
     }
 
@@ -116,6 +145,56 @@ public class ExpensesAdapter extends SelectableAdapter<ExpensesAdapter.CardViewH
             Animation animation = AnimationUtils.loadAnimation(context, R.anim.slide_up);
             viewToAnimate.startAnimation(animation);
             lastPosition = position;
+        }
+    }
+
+    private void saveRemovedItems(List<Integer> positions) {
+        if (removedExpensesMap != null) {
+            completelyRemoveExpensesFromDB();
+        }
+        removedExpensesMap = new TreeMap<>();
+        for (int position : positions) {
+            removedExpensesMap.put(position, expenses.get(position));
+        }
+    }
+
+    private void saveRemovedItem(int position) {
+        if (removedExpensesMap != null) {
+            completelyRemoveExpensesFromDB();
+        }
+        ArrayList<Integer> positions = new ArrayList<>(1);
+        positions.add(position);
+        saveRemovedItems(positions);
+    }
+
+    public void restoreRemovedItems() {
+        stopUndoTimer();
+        for (Map.Entry<Integer, Expenses> pair : removedExpensesMap.entrySet()){
+            expenses.add(pair.getKey(), pair.getValue());
+            notifyItemInserted(pair.getKey());
+        }
+        removedExpensesMap = null;
+    }
+
+    public void startUndoTimer(long timeout) {
+        stopUndoTimer();
+        this.undoRemoveTimer = new Timer();
+        this.undoRemoveTimer.schedule(new UndoTimer(), timeout > 0 ? timeout : UNDO_TIMEOUT);
+    }
+
+    private void stopUndoTimer() {
+        if (this.undoRemoveTimer != null) {
+            this.undoRemoveTimer.cancel();
+            this.undoRemoveTimer = null;
+        }
+    }
+
+    private class UndoTimer extends TimerTask {
+        @Override
+        public void run() {
+            undoRemoveTimer = null;
+            completelyRemoveExpensesFromDB();
+            removedExpensesMap = null;
         }
     }
 
