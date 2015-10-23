@@ -8,9 +8,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ActionMode;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -49,7 +52,9 @@ import ru.loftschool.loftblogmoneytracker.rest.models.ExpenseDetails;
 import ru.loftschool.loftblogmoneytracker.rest.models.GoogleAccountDataModel;
 import ru.loftschool.loftblogmoneytracker.rest.status.CategoriesStatus;
 import ru.loftschool.loftblogmoneytracker.rest.status.ExpensesStatus;
+import ru.loftschool.loftblogmoneytracker.ui.fragments.CategoriesFragment;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.CategoriesFragment_;
+import ru.loftschool.loftblogmoneytracker.ui.fragments.ExpensesFragment;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.ExpensesFragment_;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.SettingsFragment_;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.StatisticsFragment_;
@@ -60,6 +65,12 @@ import ru.loftschool.loftblogmoneytracker.utils.TokenKeyStorage;
 @OptionsMenu(R.menu.menu_main)
 public class MainActivity extends AppCompatActivity {
     private final String LOG_TAG = MainActivity.class.getSimpleName();
+
+    public static ActionMode actionMode;
+
+    private ActionBarDrawerToggle mDrawerToggle;
+
+    private SparseBooleanArray currentSelectedItems;
 
     @ViewById(R.id.drawer_layout)
     DrawerLayout drawerLayout;
@@ -102,15 +113,23 @@ public class MainActivity extends AppCompatActivity {
         // methods for testing rest-queries:
 
         //addCategoriesToServer();
-        editCategoryOnServer();
-        getAllCategories();
-        getAllExpenses();
+        //editCategoryOnServer();
+        //getAllCategories();
+        //getAllExpenses();
         //addExpense();
         //getCategoryInfo();
         //getAllCategoriesInfo();
-        balanceTest();
+        //balanceTest();
 
         initDrawerHeaderWithGoogleAccInfo();
+    }
+
+    public static ActionMode getActionMode() {
+        return actionMode;
+    }
+
+    public static void setActionMode(ActionMode actionMode) {
+        MainActivity.actionMode = actionMode;
     }
 
     @Override
@@ -135,11 +154,64 @@ public class MainActivity extends AppCompatActivity {
         navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
+                destroyActionModeIfNeeded();
                 menuItem.setChecked(true);
                 selectDrawerItem(menuItem);
                 return true;
             }
         });
+
+        mDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
+            @Override
+            public void onDrawerStateChanged(int newState) {
+                super.onDrawerStateChanged(newState);
+                if(newState == DrawerLayout.STATE_DRAGGING){
+                    if(drawerLayout.isDrawerOpen(GravityCompat.START)){
+                        //closing drawer
+                        if (currentSelectedItems != null) {
+                            startActionMode();
+                        }
+                    } else {
+                        //opening drawer
+                        if (actionMode != null) {
+                            saveAndStopActionMode();
+                        }
+                    }
+                }
+            }
+        };
+
+        // set the drawer toggle as the DrawerListener
+        drawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerToggle.syncState();
+    }
+
+    // saving selected items and finishing Action Mode
+    private void saveAndStopActionMode() {
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.frame_container);
+        if (currentFragment instanceof CategoriesFragment) {
+            currentSelectedItems = CategoriesFragment.getAdapter().getSparseBooleanSelectedItems().clone();
+        } else if (currentFragment instanceof ExpensesFragment) {
+            currentSelectedItems = ExpensesFragment.getAdapter().getSparseBooleanSelectedItems().clone();
+        }
+        actionMode.finish();
+    }
+
+    // starting Action Mode and restoring selected items
+    private void startActionMode() {
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.frame_container);
+        if (currentFragment instanceof CategoriesFragment) {
+            CategoriesFragment.getAdapter().setSelectedItems(currentSelectedItems.clone());
+            CategoriesFragment.getAdapter().notifyDataSetChanged();
+            actionMode = startSupportActionMode(((CategoriesFragment) currentFragment).getActionModeCallback());
+            actionMode.setTitle(String.valueOf(CategoriesFragment.getAdapter().getSelectedItemsCount()));
+        } else if (currentFragment instanceof ExpensesFragment) {
+            ExpensesFragment.getAdapter().setSelectedItems(currentSelectedItems.clone());
+            ExpensesFragment.getAdapter().notifyDataSetChanged();
+            actionMode = startSupportActionMode(((ExpensesFragment) currentFragment).getActionModeCallback());
+            actionMode.setTitle(String.valueOf(ExpensesFragment.getAdapter().getSelectedItemsCount()));
+        }
+        currentSelectedItems = null;
     }
 
     private void selectDrawerItem(MenuItem menuItem){
@@ -182,6 +254,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            if (currentSelectedItems != null) {
+                startActionMode();
+            }
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
@@ -410,5 +485,13 @@ public class MainActivity extends AppCompatActivity {
         Picasso.with(this).load(gAccountData.getPicture()).into(avatar);
         userName.setText(gAccountData.getName());
         email.setText(gAccountData.getEmail());
+    }
+
+    public static void destroyActionModeIfNeeded() {
+        Log.e("ActionMode", String.valueOf(actionMode == null));
+        if (actionMode != null) {
+            actionMode.finish();
+            Log.e("ActionMode", "FINISH");
+        }
     }
 }
