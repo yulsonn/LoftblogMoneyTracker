@@ -191,7 +191,7 @@ public class CategoriesAdapter extends SelectableAdapter<CategoriesAdapter.CardV
 
     private void setAnimation(View viewToAnimate, int position) {
         if (position > lastPosition) {
-            Animation animation = AnimationUtils.loadAnimation(context, R.anim.slide_up);
+            Animation animation = AnimationUtils.loadAnimation(context, R.anim.slide_down);
             viewToAnimate.startAnimation(animation);
             lastPosition = position;
         }

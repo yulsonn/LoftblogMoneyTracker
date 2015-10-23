@@ -225,7 +225,7 @@ public class CategoriesFragment extends Fragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (validator.validateCategoryName(text.toString(), categoryWrapper)) {
+                if (validator.validateCategoryName(text.toString(), categoryWrapper, getContext())) {
                     Categories newCategory = new Categories(text.toString());
                     adapter.addCategory(newCategory);
                     Toast.makeText(getActivity(), categoryAdded + newCategory.name, Toast.LENGTH_SHORT).show();
@@ -241,6 +241,7 @@ public class CategoriesFragment extends Fragment {
         });
 
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        dialog.getWindow().getAttributes().windowAnimations = R.style.AddCategoryDialogAnimation;
         dialog.show();
     }
 
@@ -309,6 +310,7 @@ public class CategoriesFragment extends Fragment {
                             .setTitle(categoryRemoveTitle)
                             .setMessage(categoryRemoveText)
                             .create();
+                    alertDialog.getWindow().setWindowAnimations(R.style.AlertDialogAnimation);
                     alertDialog.show();
 
                     return true;
