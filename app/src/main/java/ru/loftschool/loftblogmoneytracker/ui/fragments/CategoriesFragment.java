@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
@@ -55,6 +56,9 @@ public class CategoriesFragment extends Fragment {
 
     @ViewById(R.id.categories_fab)
     FloatingActionButton fab;
+
+    @ViewById(R.id.swipe_refresh_expenses)
+    SwipeRefreshLayout swipeRefreshLayout;
 
     @StringRes(R.string.frag_title_categories)
     String title;
@@ -102,6 +106,13 @@ public class CategoriesFragment extends Fragment {
         getActivity().setTitle(title);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), 1, false);
+        swipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.primaryDark, R.color.buttonAccent);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadData();
+            }
+        });
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(linearLayoutManager);
 //        to avoid an error "recyclerview No adapter attached; skipping layout" set a blank adapter for the recyclerView
@@ -161,11 +172,12 @@ public class CategoriesFragment extends Fragment {
 
             @Override
             public void onLoadFinished(Loader<List<Categories>> loader, List<Categories> data) {
+                swipeRefreshLayout.setRefreshing(false);
                 SparseBooleanArray savedCurrentSelectedItems = null;
                 if (adapter != null) {
                     savedCurrentSelectedItems = adapter.getSparseBooleanSelectedItems();
                 }
-                adapter = new CategoriesAdapter(getDataList(), new CategoriesAdapter.CardViewCategoryHolder.ClickListener() {
+                adapter = new CategoriesAdapter(data, new CategoriesAdapter.CardViewCategoryHolder.ClickListener() {
                     @Override
                     public void onItemClicked(int position) {
                         if (MainActivity.getActionMode() != null) {
