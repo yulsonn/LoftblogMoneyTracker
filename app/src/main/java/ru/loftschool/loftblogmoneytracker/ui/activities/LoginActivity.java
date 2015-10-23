@@ -13,6 +13,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.AccountPicker;
+
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
@@ -32,6 +34,7 @@ import ru.loftschool.loftblogmoneytracker.rest.status.UserLoginModelStatus;
 import ru.loftschool.loftblogmoneytracker.utils.NetworkConnectionChecker;
 import ru.loftschool.loftblogmoneytracker.utils.SignInMessages;
 import ru.loftschool.loftblogmoneytracker.utils.TextInputValidator;
+import ru.loftschool.loftblogmoneytracker.utils.google.GoogleTokenUtil;
 
 @EActivity(R.layout.activity_login)
 public class LoginActivity extends AppCompatActivity {
@@ -72,6 +75,20 @@ public class LoginActivity extends AppCompatActivity {
     @Bean
     SignInMessages message;
 
+    @Bean
+    GoogleTokenUtil googleTokenUtil;
+
+    private static final String TAG = LoginActivity.class.getSimpleName();
+    private static final int REQ_CODE = 10;
+
+    private final static String G_PLUS_SCOPE =
+            "oauth2:https://www.googleapis.com/auth/plus.me";
+    private final static String USERINFO_SCOPE =
+            "https://www.googleapis.com/auth/userinfo.profile";
+    private final static String EMAIL_SCOPE =
+            "https://www.googleapis.com/auth/userinfo.email";
+    public final static String SCOPES = G_PLUS_SCOPE + " " + USERINFO_SCOPE + " " + EMAIL_SCOPE;
+
     @AfterViews
     void ready() {
         usernameWrapper.setHint(hintUser);
@@ -101,6 +118,12 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), noInternetError, Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    @Click(R.id.btn_google_login)
+    void btnGoogleLogin() {
+        Intent intent = AccountPicker.newChooseAccountIntent(null, null, new String[]{"com.google"}, false, null, null, null, null);
+        startActivityForResult(intent, REQ_CODE);
     }
 
     @Background
@@ -154,6 +177,13 @@ public class LoginActivity extends AppCompatActivity {
                     activity.etPassword.setError((String) msg.obj);
                 }
             }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQ_CODE && resultCode == RESULT_OK) {
+            googleTokenUtil.getGoogleToken(data, LoginActivity.this, this, REQ_CODE);
         }
     }
 }

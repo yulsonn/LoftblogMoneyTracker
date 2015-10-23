@@ -6,11 +6,9 @@ import android.preference.PreferenceManager;
 
 import com.activeandroid.ActiveAndroid;
 
-public class MoneyTrackerApplication extends com.activeandroid.app.Application {
+import ru.loftschool.loftblogmoneytracker.utils.TokenKeyStorage;
 
-    private final static String TOKEN_KEY = "token_key";
-    public final static String DEFAULT_TOKEN_KEY = "1";
-
+public class MoneyTrackerApplication extends com.activeandroid.app.Application implements TokenKeyStorage{
 
     @Override
     public void onCreate() {
@@ -27,7 +25,18 @@ public class MoneyTrackerApplication extends com.activeandroid.app.Application {
 
     public static String getToken(Context context) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
-
         return pref.getString(TOKEN_KEY, DEFAULT_TOKEN_KEY);
+    }
+
+    public static void setGoogleToken(Context context, String googleToken) {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(TOKEN_GOOGLE_KEY, googleToken);
+        editor.commit();
+    }
+
+    public static String getGoogleToken(Context context) {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        return pref.getString(TOKEN_GOOGLE_KEY, DEFAULT_TOKEN_GOOGLE_KEY);
     }
 }

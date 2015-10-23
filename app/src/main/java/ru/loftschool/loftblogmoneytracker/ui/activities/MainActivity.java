@@ -13,9 +13,12 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.activeandroid.query.Select;
+import com.squareup.picasso.Picasso;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -26,6 +29,8 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.StringRes;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import ru.loftschool.loftblogmoneytracker.MoneyTrackerApplication;
@@ -33,12 +38,17 @@ import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.database.model.Categories;
 import ru.loftschool.loftblogmoneytracker.rest.RestService;
 import ru.loftschool.loftblogmoneytracker.rest.exception.UnauthorizedException;
-import ru.loftschool.loftblogmoneytracker.rest.models.CategoryAddModel;
+import ru.loftschool.loftblogmoneytracker.rest.models.AllCategoriesItem;
+import ru.loftschool.loftblogmoneytracker.rest.models.AllCategoriesModel;
+import ru.loftschool.loftblogmoneytracker.rest.models.CategoryModel;
+import ru.loftschool.loftblogmoneytracker.rest.models.GoogleAccountDataModel;
 import ru.loftschool.loftblogmoneytracker.rest.status.CategoryAddModelStatus;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.CategoriesFragment_;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.ExpensesFragment_;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.SettingsFragment_;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.StatisticsFragment_;
+import ru.loftschool.loftblogmoneytracker.utils.NetworkConnectionChecker;
+import ru.loftschool.loftblogmoneytracker.utils.TokenKeyStorage;
 
 @EActivity(R.layout.activity_main)
 @OptionsMenu(R.menu.menu_main)
@@ -57,6 +67,15 @@ public class MainActivity extends AppCompatActivity {
     @ViewById
     Toolbar toolbar;
 
+    @ViewById(R.id.avatar)
+    ImageView avatar;
+
+    @ViewById(R.id.drawer_username)
+    TextView userName;
+
+    @ViewById(R.id.drawer_email)
+    TextView email;
+
     @StringRes(R.string.error_unknown)
     String unknownError;
 
@@ -73,7 +92,10 @@ public class MainActivity extends AppCompatActivity {
         initToolbar();
         setupNavigationDrawer();
         initialCategoriesFill();
-        addCategoriesToServer();
+        //addCategoriesToServer();
+        editCategoryOnServer();
+        getAllCategories();
+        initDrawerHeaderWithGoogleAccInfo();
     }
 
     @Override
@@ -175,22 +197,60 @@ public class MainActivity extends AppCompatActivity {
     @Background
     void addCategoriesToServer() {
         RestService restService = new RestService();
-        CategoryAddModel categoryAddResp = null;
+        CategoryModel categoryAddResp = null;
         List<Categories> categories = new Select().from(Categories.class).execute();
 
-        for (Categories category : categories) {
-            try {
-                categoryAddResp = restService.addCategory(category.name, MoneyTrackerApplication.getToken(this));
-                if (CategoryAddModelStatus.STATUS_OK.equals(categoryAddResp.getStatus())) {
-                    Log.e(LOG_TAG, "Category name: " + categoryAddResp.getData().getTitle() +
-                                    ", Category id: " + categoryAddResp.getData().getId());
-                } else {
-                    Toast.makeText(this, unknownError, Toast.LENGTH_LONG).show();
-                    Log.e(LOG_TAG, unknownError);
+        if (!categories.isEmpty()) {
+            for (Categories category : categories) {
+                try {
+                    categoryAddResp = restService.addCategory(category.name, MoneyTrackerApplication.getGoogleToken(this), MoneyTrackerApplication.getToken(this));
+                    if (CategoryAddModelStatus.STATUS_OK.equals(categoryAddResp.getStatus())) {
+                        Log.e(LOG_TAG, "Category name: " + categoryAddResp.getData().getTitle() +
+                                ", Category id: " + categoryAddResp.getData().getId());
+                    } else {
+                        Toast.makeText(this, unknownError, Toast.LENGTH_LONG).show();
+                        Log.e(LOG_TAG, unknownError);
+                    }
+                } catch (UnauthorizedException e) {
+                    unauthorizedErrorReaction();
+                    break;
                 }
-            } catch (UnauthorizedException e) {
-                unauthorizedErrorReaction();
-                break;
+            }
+        }
+    }
+
+    @Background
+    void editCategoryOnServer() {
+        RestService restService = new RestService();
+        if (NetworkConnectionChecker.isNetworkConnected(this)) {
+            //time added for test
+            CategoryModel categoryEditResp
+                    = restService.editCategory("Edited category " + new SimpleDateFormat("HH:mm:ss").format(new Date()),
+                    1354, MoneyTrackerApplication.getGoogleToken(this), MoneyTrackerApplication.getToken(this));
+            if (CategoryAddModelStatus.STATUS_OK.equals(categoryEditResp.getStatus())) {
+                Log.e(LOG_TAG, "Category name: " + categoryEditResp.getData().getTitle() +
+                        ", Category id: " + categoryEditResp.getData().getId());
+            } else {
+                Toast.makeText(this, unknownError, Toast.LENGTH_LONG).show();
+                Log.e(LOG_TAG, unknownError);
+            }
+        }
+    }
+
+    @Background
+    void getAllCategories() {
+        RestService restService = new RestService();
+        if (NetworkConnectionChecker.isNetworkConnected(this)) {
+            //time added for test
+            AllCategoriesModel categoriesResp = restService.getAllCategories(MoneyTrackerApplication.getGoogleToken(this), MoneyTrackerApplication.getToken(this));
+            if (CategoryAddModelStatus.STATUS_OK.equals(categoriesResp.getStatus())) {
+                for (AllCategoriesItem category : categoriesResp.getCategories()) {
+                    Log.e(LOG_TAG, "Category name: " + category.getTitle() +
+                            ", Category id: " + category.getId());
+                }
+            } else {
+                Toast.makeText(this, unknownError, Toast.LENGTH_LONG).show();
+                Log.e(LOG_TAG, unknownError);
             }
         }
     }
@@ -213,6 +273,29 @@ public class MainActivity extends AppCompatActivity {
     @Background
     public void logout(MenuItem item){
         goToLogin();
-        MoneyTrackerApplication.setToken(this, MoneyTrackerApplication.DEFAULT_TOKEN_KEY);
+        MoneyTrackerApplication.setToken(this, TokenKeyStorage.DEFAULT_TOKEN_KEY);
+    }
+
+    void initDrawerHeaderWithGoogleAccInfo() {
+        if (NetworkConnectionChecker.isNetworkConnected(this)
+                && !TokenKeyStorage.DEFAULT_TOKEN_GOOGLE_KEY.equalsIgnoreCase(MoneyTrackerApplication.getGoogleToken(this))) {
+            getGoogleAccountData();
+        }
+    }
+
+    @Background
+    void getGoogleAccountData() {
+        RestService restService = new RestService();
+        GoogleAccountDataModel gAccountData = restService.getGoogleAccountData(MoneyTrackerApplication.getGoogleToken(this));
+        if (gAccountData != null) {
+            setDrawerGoogleAccountData(gAccountData);
+        }
+    }
+
+    @UiThread
+    void setDrawerGoogleAccountData(GoogleAccountDataModel gAccountData) {
+        Picasso.with(this).load(gAccountData.getPicture()).into(avatar);
+        userName.setText(gAccountData.getName());
+        email.setText(gAccountData.getEmail());
     }
 }
