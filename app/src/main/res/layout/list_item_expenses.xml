@@ -62,8 +62,8 @@
             android:layout_marginRight="@dimen/text_margins"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:textSize="@dimen/xlarge_main_text"
-            android:text="₽" />
+            android:textSize="@dimen/medium_main_text"
+            android:text="@string/currency_RUB" />
 
         <TextView
             android:id="@+id/expense_sum_text"

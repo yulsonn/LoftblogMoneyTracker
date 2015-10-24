@@ -22,7 +22,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="fill"
             android:gravity="start|center"
-            android:text="@string/text_sum"/>
+            android:text="@string/text_sum"
+            android:textSize="@dimen/medium_main_text"/>
 
         <EditText
             android:id="@+id/etPrice"
@@ -30,21 +31,27 @@
             android:layout_height="wrap_content"
             android:layout_gravity="fill"
             android:layout_marginLeft="@dimen/add_expense_field_margin_left"
-            android:inputType="numberDecimal"/>
+            android:inputType="numberDecimal"
+            android:layout_marginRight="@dimen/add_expense_padding_right"
+            android:maxLength="10"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="fill"
             android:gravity="start|center"
-            android:text="@string/text_name"/>
+            android:text="@string/text_name"
+            android:textSize="@dimen/medium_main_text"/>
 
         <EditText
             android:id="@+id/etName"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="fill"
-            android:layout_marginLeft="@dimen/add_expense_field_margin_left"/>
+            android:layout_marginLeft="@dimen/add_expense_field_margin_left"
+            android:layout_marginRight="@dimen/add_expense_padding_right"
+            android:maxLength="30"
+            android:maxLines="2"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -52,13 +59,15 @@
             android:layout_gravity="fill"
             android:gravity="start|center"
             android:text="@string/text_category"
-            android:paddingTop="@dimen/padding_small"/>
+            android:paddingTop="@dimen/padding_small"
+            android:textSize="@dimen/medium_main_text"/>
 
         <Spinner
             android:id="@+id/spCategories"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="fill"
+            android:layout_marginRight="@dimen/add_expense_padding_right"
             android:spinnerMode="dropdown"
             android:paddingTop="@dimen/padding_small"
             android:layout_marginLeft="@dimen/add_expense_field_margin_left_small"/>
@@ -69,13 +78,16 @@
             android:layout_gravity="fill"
             android:gravity="start|center"
             android:text="@string/text_date"
-            android:paddingTop="@dimen/padding_small"/>
+            android:paddingTop="@dimen/padding_small"
+            android:textSize="@dimen/medium_main_text"/>
 
         <EditText
             android:id="@+id/etDate"
-            android:layout_width="wrap_content"
+            android:layout_width="64dp"
             android:layout_height="wrap_content"
             android:layout_gravity="fill"
+            android:focusable="false"
+            android:layout_marginRight="@dimen/add_expense_padding_right"
             android:hint="@string/hint_date"
             android:paddingTop="@dimen/padding_small"
             android:layout_marginLeft="@dimen/add_expense_field_margin_left"/>

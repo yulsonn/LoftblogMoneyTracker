@@ -105,5 +105,6 @@
     <string name="add_category_btn_cancel_txt">Отмена</string>
     <string name="add_category_btn_ok_txt">ОК</string>
     <string name="search_label">Поиск</string>
+    <string name="currency_RUB">\u20BD</string>
 
 </resources>
