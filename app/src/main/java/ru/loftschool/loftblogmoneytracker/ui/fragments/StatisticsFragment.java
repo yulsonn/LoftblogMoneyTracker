@@ -59,8 +59,9 @@ public class StatisticsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        initData();
-        configurePieChart();
+        if (initData()) {
+            configurePieChart();
+        }
     }
 
     private void configurePieChart() {
@@ -119,22 +120,30 @@ public class StatisticsFragment extends Fragment {
         legend.setYOffset(0f);
     }
 
-    private void initData() {
+    private boolean initData() {
         List<Categories> categories = new Select().from(Categories.class).execute();
 
-        xVals = new ArrayList<>();
-        yVals = new ArrayList<>();
+        if (categories != null) {
 
-        for (Categories category : categories) {
-            float sum = 0f;
-            for (Expenses expense : category.expenses()){
-                sum += expense.price;
+            xVals = new ArrayList<>();
+            yVals = new ArrayList<>();
+
+            for (Categories category : categories) {
+                float sum = 0f;
+                for (Expenses expense : category.expenses()) {
+                    sum += expense.price;
+                }
+                if (sum != 0) {
+                    xVals.add(category.name);
+                    yVals.add(new Entry(sum, xVals.size() - 1));
+                }
             }
-            if (sum != 0) {
-                xVals.add(category.name);
-                yVals.add(new Entry(sum, xVals.size()-1));
+            if (!xVals.isEmpty()){
+                return true;
             }
         }
+
+        return false;
     }
 
     private void addData() {

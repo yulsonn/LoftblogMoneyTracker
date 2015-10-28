@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/backgroundLight">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.5"
+        android:layout_height="120dp"
         android:orientation="vertical"
         android:background="@color/primary">
 
@@ -28,7 +27,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.5"
         android:paddingLeft="@dimen/registration_fields_padding"
         android:paddingRight="@dimen/registration_fields_padding"
         android:orientation="vertical">
@@ -37,7 +35,7 @@
             android:id="@+id/login_usernameWrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/registration_control_margins"
+            android:layout_marginTop="@dimen/registration_control_land_margins"
             android:paddingTop="@dimen/registration_control_padding">
 
             <EditText
@@ -51,7 +49,6 @@
             android:id="@+id/login_passwordWrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/registration_margin_top"
             android:hint="@string/reg_hint_password">
 
             <EditText
@@ -60,32 +57,40 @@
 
         </android.support.design.widget.TextInputLayout>
 
-        <Button
-            android:id="@+id/btn_login"
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/registration_control_margins"
-            android:layout_marginBottom="@dimen/registration_control_margins"
-            android:background="@color/primary"
-            android:textColor="@color/white"
-            android:gravity="center"
-            android:text="@string/login_screen_btn_login_text"/>
+            android:layout_marginTop="@dimen/registration_control_land_margins"
+            android:layout_marginBottom="@dimen/registration_control_land_margins">
 
-        <com.google.android.gms.common.SignInButton
-            android:id="@+id/btn_google_login"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/registration_control_margins"
-            android:gravity="center"/>
+            <Button
+                android:id="@+id/btn_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@color/primary"
+                android:textColor="@color/white"
+                android:gravity="center"
+                android:text="@string/login_screen_btn_login_text"/>
+
+            <com.google.android.gms.common.SignInButton
+                android:id="@+id/btn_google_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"/>
+        </LinearLayout>
+
 
         <TextView android:id="@+id/link_registration"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textColor="@color/primary"
-            android:text="@string/login_screen_new_ac_text"
-            android:textStyle="bold"
-            android:textSize="@dimen/medium_main_text" />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/primary"
+                android:text="@string/login_screen_new_ac_text"
+                android:textStyle="bold"
+                android:textSize="@dimen/medium_main_text" />
 
     </LinearLayout>
 </LinearLayout>
