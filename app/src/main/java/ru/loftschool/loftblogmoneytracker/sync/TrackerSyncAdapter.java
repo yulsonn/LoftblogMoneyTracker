@@ -79,7 +79,7 @@ public class TrackerSyncAdapter extends AbstractThreadedSyncAdapter {
             for(Expenses expense : expenses)
                 restService.expensesSync(expense.getId().intValue(),
                         expense.name,
-                        expense.price,
+                        expense.price.toString(),
                         expense.date,
                         MoneyTrackerApplication.getGoogleToken(getContext()),
                         MoneyTrackerApplication.getToken(getContext()),

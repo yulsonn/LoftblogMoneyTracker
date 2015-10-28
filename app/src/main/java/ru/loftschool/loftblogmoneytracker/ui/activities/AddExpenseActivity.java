@@ -94,7 +94,7 @@ public class AddExpenseActivity extends AppCompatActivity {
     public void addExpenseButton() {
 
         if (validator.validateNewExpense(etPrice, etName, getBaseContext())) {
-            Expenses newExpense = new Expenses(etName.getText().toString(), etPrice.getText().toString(), etDate.getText().toString(), (Categories)spCategories.getSelectedItem());
+            Expenses newExpense = new Expenses(etName.getText().toString(), Float.parseFloat(etPrice.getText().toString()), etDate.getText().toString(), (Categories)spCategories.getSelectedItem());
             ExpensesFragment.getAdapter().addExpense(newExpense);
             Toast.makeText(this, expenseAdded + newExpense.price + ", "
                     + newExpense.name + ", "
