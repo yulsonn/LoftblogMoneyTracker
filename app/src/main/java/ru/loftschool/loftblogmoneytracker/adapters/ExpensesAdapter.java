@@ -21,6 +21,7 @@ import java.util.TreeMap;
 
 import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.database.model.Expenses;
+import ru.loftschool.loftblogmoneytracker.utils.date.DateConvertUtils;
 
 public class ExpensesAdapter extends SelectableAdapter<ExpensesAdapter.CardViewHolder> {
 
@@ -54,7 +55,7 @@ public class ExpensesAdapter extends SelectableAdapter<ExpensesAdapter.CardViewH
     public void onBindViewHolder(CardViewHolder holder, int position) {
         Expenses expense = expenses.get(position);
         holder.textTitle.setText(expense.name);
-        holder.dateTitle.setText(expense.date);
+        holder.dateTitle.setText(DateConvertUtils.dateToString(expense.date, DateConvertUtils.DEFAULT_FORMAT));
         holder.sumTitle.setText(String.format("%.2f",expense.price));
         holder.categoryTitle.setText(expense.category.toString());  // for testing of Categories-Expenses relation
         holder.selectedOverlay.setVisibility(isSelected(position) ? View.VISIBLE : View.INVISIBLE);
@@ -125,14 +126,15 @@ public class ExpensesAdapter extends SelectableAdapter<ExpensesAdapter.CardViewH
             for (Map.Entry<Integer, Expenses> pair : removedExpensesMap.entrySet()) {
                 pair.getValue().delete();
             }
-            removedExpensesMap = null;
+            removedExpensesMap = null; 
         }
     }
 
-    public void addExpense(Expenses expense) {
+    public Expenses addExpense(Expenses expense) {
         expense.save();
         expenses.add(expense);
         notifyItemInserted(getItemCount() - 1);
+        return  expense;
     }
 
     @Override

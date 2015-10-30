@@ -1,13 +1,13 @@
 package ru.loftschool.loftblogmoneytracker.rest;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit.Callback;
 import ru.loftschool.loftblogmoneytracker.rest.exception.UnauthorizedException;
 import ru.loftschool.loftblogmoneytracker.rest.models.AllCategoriesModel;
 import ru.loftschool.loftblogmoneytracker.rest.models.AllExpensesModel;
 import ru.loftschool.loftblogmoneytracker.rest.models.BalanceModel;
-import ru.loftschool.loftblogmoneytracker.rest.models.CategoryDetails;
 import ru.loftschool.loftblogmoneytracker.rest.models.CategoryModel;
 import ru.loftschool.loftblogmoneytracker.rest.models.CategoryWithExpensesModel;
 import ru.loftschool.loftblogmoneytracker.rest.models.GoogleAccountDataModel;
@@ -61,12 +61,16 @@ public class RestService {
         return restClient.getExpensesAPI().addExpense(sum, comment, categoryId, trDate, gToken, token);
     }
 
-    public CategoryWithExpensesModel getCategoryWithExpenses(Integer id, String gToken, String token) {
+    public List<CategoryWithExpensesModel> getCategoryWithExpenses(Integer id, String gToken, String token) {
         return restClient.getCategoriesAPI().getCategoryWithExpenses(id, gToken, token);
     }
 
     public ArrayList<CategoryWithExpensesModel> getAllCategoriesWithExpenses(String gToken, String token) {
         return restClient.getCategoriesAPI().getAllCategoriesWithExpenses(gToken, token);
+    }
+
+    public CategoryModel deleteCategory(Integer id, String gToken, String token) {
+        return restClient.getCategoriesAPI().deleteCategory(id, gToken, token);
     }
 
     public BalanceModel getBalance(String gToken, String token) {
@@ -77,12 +81,40 @@ public class RestService {
         return restClient.getBalanceAPI().setBalance(sum, gToken, token);
     }
 
-    public void categoriesSync(Integer id, String title, String gToken, String token, Callback<CategoryDetails> cb) {
-        restClient.getCategoriesAPI().categoriesSync(id, title, gToken, token, cb);
-    }
+//    public void categoriesSync(Integer id, String title, String gToken, String token, Callback<AllCategoriesModel> cb) {
+//        restClient.getCategoriesAPI().categoriesSync(id, title, gToken, token, cb);
+//    }
 
-    public void expensesSync(Integer id, String comment, String sum, String date, String gToken, String token, Callback<CategoryDetails> cb) {
-        restClient.getExpensesAPI().expensesSync(id, comment, sum, date, gToken, token, cb);
+//    public void categoriesSync(List<Map<String, String>> data, /*String gToken,*/ String token, Callback<AllCategoriesModel> cb) {
+//        restClient.getCategoriesAPI().categoriesSync(data, /*gToken,*/ token, cb);
+//    }
+
+//    public void categoriesSync(List<Integer> id, List<String> title, /*String gToken,*/ String token, Callback<AllCategoriesModel> cb) {
+//        restClient.getCategoriesAPI().categoriesSync(id, title, /*gToken,*/ token, cb);
+//    }
+
+//    public void categoriesSync(Map<Integer, String> data, String gToken, String token, Callback<AllCategoriesModel> cb) {
+//        restClient.getCategoriesAPI().categoriesSync(data, gToken, token, cb);
+//    }
+
+//    public void categoriesSync(CategorySyncObject[] data, String gToken, String token, Callback<AllCategoriesModel> cb) {
+//        restClient.getCategoriesAPI().categoriesSync(data, gToken, token, cb);
+//    }
+
+//    public void categoriesSync(List<CategorySyncObject> data, String gToken, String token, Callback<AllCategoriesModel> cb) {
+//        restClient.getCategoriesAPI().categoriesSync(data, gToken, token, cb);
+//    }
+
+//    public AllCategoriesModel categoriesSync(SyncWrapper data, String gToken, String token) {
+//        return restClient.getCategoriesAPI().categoriesSync(data, gToken, token);
+//    }
+
+     public void categoriesSync(SyncWrapper data, String gToken, String token, Callback<AllCategoriesModel> cb) {
+            restClient.getCategoriesAPI().categoriesSync(data, gToken, token, cb);
+        }
+
+    public void expensesSync(SyncWrapper data, String gToken, String token, Callback<AllExpensesModel> cb) {
+        restClient.getExpensesAPI().expensesSync(data, gToken, token, cb);
     }
 
 }

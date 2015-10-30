@@ -108,4 +108,13 @@
     <string name="currency_RUB">\u20BD</string>
     <string name="pie_chart_title">Распределение трат по категориям</string>
 
+    <string-array name="initial_categories">
+        <item>Продукты</item>
+        <item>Одежда</item>
+        <item>Связь</item>
+        <item>Развлечения</item>
+        <item>Транспорт</item>
+        <item>Другое</item>
+    </string-array>
+
 </resources>

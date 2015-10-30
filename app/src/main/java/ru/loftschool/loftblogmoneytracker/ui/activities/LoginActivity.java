@@ -31,7 +31,7 @@ import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.rest.RestService;
 import ru.loftschool.loftblogmoneytracker.rest.models.UserLoginModel;
 import ru.loftschool.loftblogmoneytracker.rest.status.UserLoginModelStatus;
-import ru.loftschool.loftblogmoneytracker.utils.NetworkConnectionChecker;
+import ru.loftschool.loftblogmoneytracker.utils.network.NetworkConnectionChecker;
 import ru.loftschool.loftblogmoneytracker.utils.SignInMessages;
 import ru.loftschool.loftblogmoneytracker.utils.TextInputValidator;
 import ru.loftschool.loftblogmoneytracker.utils.google.GoogleTokenUtil;

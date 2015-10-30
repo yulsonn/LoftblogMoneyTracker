@@ -8,7 +8,7 @@ import ru.loftschool.loftblogmoneytracker.rest.api.GoogleAccountDataGetAPI;
 import ru.loftschool.loftblogmoneytracker.rest.api.UserLoginAPI;
 import ru.loftschool.loftblogmoneytracker.rest.api.UserLogoutAPI;
 import ru.loftschool.loftblogmoneytracker.rest.api.UserRegisterAPI;
-import ru.loftschool.loftblogmoneytracker.utils.RetrofitErrorHandler;
+import ru.loftschool.loftblogmoneytracker.utils.network.RetrofitErrorHandler;
 
 public class RestClient {
 

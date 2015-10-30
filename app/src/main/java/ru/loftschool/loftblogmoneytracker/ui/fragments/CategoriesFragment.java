@@ -47,6 +47,7 @@ import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.adapters.CategoriesAdapter;
 import ru.loftschool.loftblogmoneytracker.database.model.Categories;
 import ru.loftschool.loftblogmoneytracker.ui.activities.MainActivity;
+import ru.loftschool.loftblogmoneytracker.utils.ServerReqUtils;
 import ru.loftschool.loftblogmoneytracker.utils.TextInputValidator;
 
 @EFragment(R.layout.fragment_categories)
@@ -101,6 +102,9 @@ public class CategoriesFragment extends Fragment {
 
     @Bean
     TextInputValidator validator;
+
+    @Bean()
+    ServerReqUtils serverRequest;
 
     @OptionsMenuItem(R.id.search_action)
     MenuItem menuItem;
@@ -278,8 +282,9 @@ public class CategoriesFragment extends Fragment {
             public void onClick(View v) {
                 if (validator.validateCategoryName(text.toString(), categoryWrapper, getContext())) {
                     Categories newCategory = new Categories(text.toString());
-                    adapter.addCategory(newCategory);
+                    Categories addedCategory = adapter.addCategory(newCategory);
                     Toast.makeText(getActivity(), categoryAdded + newCategory.name, Toast.LENGTH_SHORT).show();
+                    serverRequest.addCategoryToServer(addedCategory);
                     dialog.dismiss();
                 }
             }

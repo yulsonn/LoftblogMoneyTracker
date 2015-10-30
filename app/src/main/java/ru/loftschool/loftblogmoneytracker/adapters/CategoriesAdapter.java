@@ -128,10 +128,11 @@ public class CategoriesAdapter extends SelectableAdapter<CategoriesAdapter.CardV
         }
     }
 
-    public void addCategory(Categories category) {
+    public Categories addCategory(Categories category) {
         category.save();
         categories.add(category);
         notifyItemInserted(getItemCount()-1);
+        return category;
     }
 
     @Override

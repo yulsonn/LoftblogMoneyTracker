@@ -24,7 +24,7 @@ import ru.loftschool.loftblogmoneytracker.rest.RestClient;
 import ru.loftschool.loftblogmoneytracker.rest.models.GoogleAccountDataModel;
 import ru.loftschool.loftblogmoneytracker.rest.status.GoogleAccountDataStatus;
 import ru.loftschool.loftblogmoneytracker.sync.TrackerSyncAdapter;
-import ru.loftschool.loftblogmoneytracker.utils.NetworkConnectionChecker;
+import ru.loftschool.loftblogmoneytracker.utils.network.NetworkConnectionChecker;
 import ru.loftschool.loftblogmoneytracker.utils.google.GoogleTokenUtil;
 import ru.loftschool.loftblogmoneytracker.utils.TokenKeyStorage;
 
