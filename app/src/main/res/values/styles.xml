@@ -68,9 +68,22 @@
         <item name="android:fontFamily" tools:targetApi="jelly_bean">Roboto Medium</item>
     </style>
 
-
     <style name="AlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
         <item name="colorAccent">@color/primaryDark</item>
         <item name="background">@color/background</item>
+    </style>
+
+    <style name="AlertDialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/dialog_slide_in_from_right</item>
+        <item name="android:windowExitAnimation">@anim/dialog_slide_out_lo_left</item>
+    </style>
+
+    <style name="AddCategoryDialogAnimation">
+        <item name="@android:windowEnterAnimation">@anim/grow_from_bottom_left</item>
+        <item name="@android:windowExitAnimation">@anim/decrease_to_top_right</item>
+    </style>
+
+    <style name="DatePickerDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/primaryDark</item>
     </style>
 </resources>

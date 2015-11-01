@@ -11,8 +11,8 @@
     <TextView
         style="@style/AddCategoryText"
         android:id="@+id/new_category_title"
-        android:text="Добавление категории"
-        android:textSize="18dp"
+        android:text="@string/add_category_title"
+        android:textSize="@dimen/large_main_text"
         android:textStyle="bold"
         android:textColor="@color/primaryDark" />
 
@@ -20,13 +20,13 @@
         android:id="@+id/categoryWrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp">
+        android:paddingTop="@dimen/text_padding"
+        android:paddingBottom="@dimen/text_padding">
 
         <EditText
             style="@style/AddCategoryText"
             android:id="@+id/new_category_name"
-            android:textSize="16dp"
+            android:textSize="@dimen/medium_main_text"
 />
 
     </android.support.design.widget.TextInputLayout>
@@ -37,28 +37,28 @@
 
         <Button
             android:id="@+id/btn_cancel"
-            android:layout_width="130dp"
+            android:layout_width="@dimen/add_category_btn_height"
             android:layout_height="wrap_content"
-            android:text="Cancel"
-            android:background="#E0E0E0"
+            android:background="@color/background"
+            android:text="@string/add_category_btn_cancel_txt"
             android:textColor="@color/primaryDark"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_gravity="left"
-            android:elevation="5dp"
+            android:elevation="@dimen/btn_elevation"
             android:clickable="true" />
 
         <Button
             android:id="@+id/btn_ok"
-            android:layout_width="130dp"
+            android:layout_width="@dimen/add_category_btn_height"
             android:layout_height="wrap_content"
-            android:text="ok"
-            android:background="#E0E0E0"
+            android:background="@color/background"
+            android:text="@string/add_category_btn_ok_txt"
             android:textColor="@color/primaryDark"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
             android:layout_gravity="right"
-            android:elevation="4dp" />
+            android:elevation="@dimen/btn_elevation" />
 
     </RelativeLayout>
 </LinearLayout>

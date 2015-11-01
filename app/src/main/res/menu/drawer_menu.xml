@@ -5,18 +5,22 @@
         <item
             android:id="@+id/drawer_item_expenses"
             android:title="@string/nav_drawer_expenses"
+            android:icon="@drawable/ic_expenses"
             android:checked="true">
         </item>
         <item
             android:id="@+id/drawer_item_categories"
+            android:icon="@drawable/ic_categories"
             android:title="@string/nav_drawer_categories">
         </item>
         <item
             android:id="@+id/drawer_item_statistics"
+            android:icon="@drawable/ic_statistics"
             android:title="@string/nav_drawer_statistics">
         </item>
         <item
             android:id="@+id/drawer_item_settings"
+            android:icon="@drawable/ic_settings"
             android:title="@string/nav_drawer_settings">
         </item>
     </group>

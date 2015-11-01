@@ -3,6 +3,7 @@ package ru.loftschool.loftblogmoneytracker.ui.activities;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -18,6 +19,7 @@ import org.androidannotations.annotations.res.StringRes;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -25,16 +27,19 @@ import java.util.Locale;
 import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.database.model.Categories;
 import ru.loftschool.loftblogmoneytracker.database.model.Expenses;
+import ru.loftschool.loftblogmoneytracker.ui.dialogs.DatePickerFragment;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.ExpensesFragment;
 
 @EActivity(R.layout.activity_add_expense)
 public class AddExpenseActivity extends AppCompatActivity {
 
+    private final static DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
+
     @ViewById
     Toolbar toolbar;
 
     @ViewById
-    EditText etPrice, etName;
+    EditText etPrice, etName, etDate;
 
     @ViewById
     Spinner spCategories;
@@ -51,7 +56,19 @@ public class AddExpenseActivity extends AppCompatActivity {
     @StringRes(R.string.expense_added_text)
     String expenseAdded;
 
-    private final static DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
+    @Click(R.id.etDate)
+    void dateChoose() {
+        DatePickerFragment datePicker = new DatePickerFragment(){
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                Calendar dateCalendar = Calendar.getInstance();
+                dateCalendar.set(year, monthOfYear, dayOfMonth);
+                etDate.setText(dateFormat.format(dateCalendar.getTimeInMillis()));
+            }
+        };
+        datePicker.show(getSupportFragmentManager(), DatePickerFragment.class.getSimpleName());
+    }
+
 
     @OptionsItem(android.R.id.home)
     void back() {
@@ -63,37 +80,27 @@ public class AddExpenseActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setTitle(title);
+        etDate.setText(dateFormat.format(new Date()));
 
         ArrayAdapter<Categories> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, getCategoriesList());
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spCategories.setAdapter(adapter);
 
-//        spCategories.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                Toast.makeText(getApplicationContext(), "Position: " + position, Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//
-//            }
-//        });
     }
 
     @Click(R.id.add_expense_button)
     public void addExpenseButton() {
 
         if (inputValidation()) {
-            Expenses newExpense = new Expenses(etName.getText().toString(), etPrice.getText().toString(), String.valueOf(dateFormat.format(new Date())), (Categories)spCategories.getSelectedItem());
+            Expenses newExpense = new Expenses(etName.getText().toString(), etPrice.getText().toString(), etDate.getText().toString(), (Categories)spCategories.getSelectedItem());
             ExpensesFragment.getAdapter().addExpense(newExpense);
             Toast.makeText(this, expenseAdded + newExpense.price + ", "
                                                 + newExpense.name + ", "
                                                 + String.valueOf(dateFormat.format(new Date())) + ", "
                                                 + newExpense.category.toString(), Toast.LENGTH_SHORT).show();
         }
-        etPrice.setText(null);
-        etName.setText(null);
+
+        onBackPressed();
     }
 
     private boolean inputValidation() {

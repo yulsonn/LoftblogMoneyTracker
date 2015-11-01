@@ -4,12 +4,16 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card_view_categories"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/card_height"
+    android:layout_height="@dimen/card_categories_height"
     android:layout_marginBottom="@dimen/card_margin"
     android:foreground="?attr/selectableItemBackground"
     android:clickable="true"
-    card_view:cardBackgroundColor="@color/background"
-    card_view:cardCornerRadius="@dimen/card_corner_radius">
+    card_view:cardBackgroundColor="@color/background_card"
+    card_view:cardCornerRadius="@dimen/card_corner_radius"
+    card_view:cardUseCompatPadding="true"
+    card_view:cardPreventCornerOverlap="true"
+    card_view:cardElevation="3dp" >
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,8 +23,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/text_margins"
-            android:textSize="@dimen/medium_main_text"
-            android:text="@string/item_text_name"/>
+            android:textSize="@dimen/large_main_text"
+            android:text="@string/item_text_name"
+            android:layout_centerInParent="true" />
     </RelativeLayout>
     <View
         android:id="@+id/categories_selected_overlay"

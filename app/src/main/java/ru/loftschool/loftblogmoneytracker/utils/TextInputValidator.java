@@ -1,6 +1,9 @@
 package ru.loftschool.loftblogmoneytracker.utils;
 
+import android.content.Context;
 import android.support.design.widget.TextInputLayout;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 
 import org.androidannotations.annotations.EBean;
@@ -77,15 +80,19 @@ public class TextInputValidator {
         return isValid;
     }
 
-    public boolean validateCategoryName(String categoryName, TextInputLayout wrapper) {
+    public boolean validateCategoryName(String categoryName, TextInputLayout wrapper, Context context) {
         boolean isValid = true;
 
         if (categoryName.trim().length() == 0) {
             wrapper.setError(nullCategoryName);
+            Animation shake = AnimationUtils.loadAnimation(context, R.anim.shake);
+            wrapper.startAnimation(shake);
             isValid = false;
         }
         if (!Categories.selectByNameCaseInsensitive(categoryName).isEmpty()) {
             wrapper.setError(existsCategoryName);
+            Animation shake = AnimationUtils.loadAnimation(context, R.anim.shake);
+            wrapper.startAnimation(shake);
             isValid = false;
         }
 

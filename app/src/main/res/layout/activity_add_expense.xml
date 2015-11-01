@@ -71,7 +71,8 @@
             android:text="@string/text_date"
             android:paddingTop="@dimen/padding_small"/>
 
-        <TextView
+        <EditText
+            android:id="@+id/etDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="fill"

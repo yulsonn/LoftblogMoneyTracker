@@ -15,7 +15,6 @@ import android.util.Log;
 
 import com.activeandroid.query.Select;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import retrofit.Callback;

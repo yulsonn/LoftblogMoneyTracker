@@ -10,11 +10,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
@@ -44,17 +46,19 @@ import ru.loftschool.loftblogmoneytracker.utils.TextInputValidator;
 @EFragment(R.layout.fragment_categories)
 public class CategoriesFragment extends Fragment {
 
-    public ActionModeCallback getActionModeCallback() {
-        return actionModeCallback;
-    }
+    private static CategoriesAdapter adapter;
 
     private ActionModeCallback actionModeCallback = new ActionModeCallback();
+    private Bundle savedSelectedItems;
 
     @ViewById(R.id.recycler_view_content_categories)
     RecyclerView recyclerView;
 
     @ViewById(R.id.categories_fab)
     FloatingActionButton fab;
+
+    @ViewById(R.id.swipe_refresh_expenses)
+    SwipeRefreshLayout swipeRefreshLayout;
 
     @StringRes(R.string.frag_title_categories)
     String title;
@@ -77,7 +81,14 @@ public class CategoriesFragment extends Fragment {
     @StringRes(R.string.category_remove_dialog_text)
     String categoryRemoveText;
 
+    @StringRes(R.string.snackbar_undo)
+    String undoText;
 
+    @StringRes(R.string.snackbar_removed_category)
+    String removedCategory;
+
+    @StringRes(R.string.snackbar_removed_categories)
+    String removedCategories;
 
     @Bean
     TextInputValidator validator;
@@ -86,27 +97,26 @@ public class CategoriesFragment extends Fragment {
         return adapter;
     }
 
-    private static CategoriesAdapter adapter;
-    private Bundle savedSelectedItems;
+    public ActionModeCallback getActionModeCallback() {
+        return actionModeCallback;
+    }
 
     @AfterViews
     void ready(){
         getActivity().setTitle(title);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), 1, false);
+        swipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.primaryDark, R.color.buttonAccent);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadData();
+            }
+        });
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(linearLayoutManager);
 //        to avoid an error "recyclerview No adapter attached; skipping layout" set a blank adapter for the recyclerView
         recyclerView.setAdapter(new CategoriesAdapter());
-
-        Bundle args = getArguments();
-        if (args != null){
-            Boolean showSnackbar = args.getBoolean("showSnackbar");
-            if (showSnackbar){
-                Snackbar.make(recyclerView, getActivity().getTitle() + " selected", Snackbar.LENGTH_SHORT).show();
-            }
-            args.clear();
-        }
     }
 
     @Click(R.id.categories_fab)
@@ -126,6 +136,26 @@ public class CategoriesFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        loadData();
+        ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                MainActivity.destroyActionModeIfNeeded();
+                adapter.removeItem(viewHolder.getAdapterPosition());
+                undoSnackbarShow();
+            }
+        };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
+    }
+
+    private void loadData() {
         getLoaderManager().restartLoader(1, null, new LoaderManager.LoaderCallbacks<List<Categories>>() {
             @Override
             public Loader<List<Categories>> onCreateLoader(int id, Bundle args) {
@@ -142,11 +172,12 @@ public class CategoriesFragment extends Fragment {
 
             @Override
             public void onLoadFinished(Loader<List<Categories>> loader, List<Categories> data) {
+                swipeRefreshLayout.setRefreshing(false);
                 SparseBooleanArray savedCurrentSelectedItems = null;
                 if (adapter != null) {
                     savedCurrentSelectedItems = adapter.getSparseBooleanSelectedItems();
                 }
-                adapter = new CategoriesAdapter(getDataList(), new CategoriesAdapter.CardViewCategoryHolder.ClickListener() {
+                adapter = new CategoriesAdapter(data, new CategoriesAdapter.CardViewCategoryHolder.ClickListener() {
                     @Override
                     public void onItemClicked(int position) {
                         if (MainActivity.getActionMode() != null) {
@@ -206,7 +237,7 @@ public class CategoriesFragment extends Fragment {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (validator.validateCategoryName(text.toString(), categoryWrapper)) {
+                if (validator.validateCategoryName(text.toString(), categoryWrapper, getContext())) {
                     Categories newCategory = new Categories(text.toString());
                     adapter.addCategory(newCategory);
                     Toast.makeText(getActivity(), categoryAdded + newCategory.name, Toast.LENGTH_SHORT).show();
@@ -222,6 +253,7 @@ public class CategoriesFragment extends Fragment {
         });
 
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        dialog.getWindow().getAttributes().windowAnimations = R.style.AddCategoryDialogAnimation;
         dialog.show();
     }
 
@@ -238,6 +270,19 @@ public class CategoriesFragment extends Fragment {
 
     private List<Categories> getDataList() {
         return new Select().from(Categories.class).execute();
+    }
+
+
+    private void undoSnackbarShow() {
+        Snackbar snackbar = Snackbar.make(recyclerView, adapter.getSelectedItemsCount() <= 1 ? removedCategory : removedCategories, Snackbar.LENGTH_LONG)
+                .setAction(undoText, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        adapter.restoreRemovedItems();
+                    }
+                });
+                snackbar.show();
+        adapter.startUndoTimer(3500);
     }
 
     private class ActionModeCallback implements ActionMode.Callback {
@@ -263,6 +308,7 @@ public class CategoriesFragment extends Fragment {
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     // Accept action
                                     adapter.removeItems(adapter.getSelectedItems());
+                                    undoSnackbarShow();
                                     mode.finish();
                                 }
                             })
@@ -276,6 +322,7 @@ public class CategoriesFragment extends Fragment {
                             .setTitle(categoryRemoveTitle)
                             .setMessage(categoryRemoveText)
                             .create();
+                    alertDialog.getWindow().setWindowAnimations(R.style.AlertDialogAnimation);
                     alertDialog.show();
 
                     return true;

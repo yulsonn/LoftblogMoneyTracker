@@ -4,11 +4,18 @@
     android:id="@+id/categories_content"
     style="@style/Container.Background">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view_content_categories"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_expenses"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="@dimen/relative_layout_margin"/>
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/relative_layout_margin">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view_content_categories"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/categories_fab"

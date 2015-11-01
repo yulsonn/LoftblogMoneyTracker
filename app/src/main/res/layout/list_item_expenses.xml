@@ -4,17 +4,21 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card_view_expenses"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/card_height"
+    android:layout_height="@dimen/card_expenses_height"
     android:layout_marginBottom="@dimen/card_margin"
     android:foreground="?attr/selectableItemBackground"
     android:clickable="true"
-    card_view:cardBackgroundColor="@color/background"
+    card_view:cardBackgroundColor="@color/background_card"
     card_view:cardCornerRadius="@dimen/card_corner_radius"
-    card_view:cardUseCompatPadding="true">
+    card_view:cardUseCompatPadding="true"
+    card_view:cardPreventCornerOverlap="true"
+    card_view:cardElevation="3dp" >
+
     <RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="@dimen/card_margin">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="@dimen/card_margin">
+
         <TextView
             android:id="@+id/expense_name_text"
             android:layout_width="wrap_content"
@@ -22,7 +26,8 @@
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="@dimen/text_margins"
             android:layout_marginTop="@dimen/text_margin_top"
-            android:textSize="@dimen/medium_main_text"
+            android:textSize="@dimen/xlarge_main_text"
+            android:textColor="@color/primaryDark"
             android:text="@string/item_text_name"/>
 
         <!--field Category for testing of Categories-Expenses relation-->
@@ -30,33 +35,46 @@
             android:id="@+id/expense_category_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/expense_name_text"
+            android:layout_alignParentLeft="true"
             android:layout_marginLeft="@dimen/text_margins"
             android:layout_marginTop="@dimen/text_margin_top"
             android:textSize="@dimen/medium_main_text"
-            android:textStyle="italic"
-            android:textColor="@color/primary"
-            android:text="@string/item_text_category"/>
+            android:text="@string/item_text_category"
+            android:layout_below="@id/expense_name_text"/>
 
         <TextView
             android:id="@+id/expense_date_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_marginLeft="@dimen/text_margins"
-            android:textSize="@dimen/small_main_text"
+            android:layout_alignParentLeft="true"
+            android:layout_marginTop="@dimen/text_margin_top"
+            android:textSize="@dimen/medium_main_text"
             android:text="@string/item_text_date"
-            android:layout_below="@+id/expense_name_text"/>
+            android:textColor="@color/gray"
+            android:textStyle="bold"
+            android:layout_below="@id/expense_category_text"/>
+
+        <TextView
+            android:id="@+id/currency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/text_margins"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:textSize="@dimen/xlarge_main_text"
+            android:text="₽" />
 
         <TextView
             android:id="@+id/expense_sum_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/currency"
             android:layout_marginRight="@dimen/text_margins"
-            android:textSize="@dimen/medium_main_text"
+            android:layout_centerVertical="true"
+            android:textSize="@dimen/xlarge_main_text"
             android:text="@string/item_text_sum"/>
+
     </RelativeLayout>
     <View
         android:id="@+id/expense_selected_overlay"
