@@ -27,7 +27,7 @@
     <dimen name="card_margin">2dp</dimen>
 
     <!--Relative layout dimens-->
-    <dimen name="relative_layout_margin">10dp</dimen>
+    <dimen name="relative_layout_margin">5dp</dimen>
 
     <!--FAB dimens-->
     <dimen name="fab_margin">16dp</dimen>
@@ -52,6 +52,7 @@
     <dimen name="text_padding">16dp</dimen>
     <dimen name="add_category_btn_height">130dp</dimen>
     <dimen name="btn_elevation">5dp</dimen>
+    <dimen name="add_expense_padding_right">110dp</dimen>
 
 
 </resources>

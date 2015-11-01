@@ -20,7 +20,7 @@ public interface ExpensesAPI {
                                 @Query("google_token") String gToken,
                                 @Query("auth_token") String token);
 
-    @GET("transactions/synch")
+    @GET("/transactions/synch")
     void expensesSync(@Query("data{id}") Integer id,
                       @Query("data[comment]")String comment,
                       @Query("data[sum]")String sum,

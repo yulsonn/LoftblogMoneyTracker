@@ -14,18 +14,24 @@ import android.support.v7.view.ActionMode;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.SearchView;
 
 import com.activeandroid.query.Select;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.OptionsMenuItem;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.StringRes;
+import org.androidannotations.api.BackgroundExecutor;
 
 import java.util.List;
 
@@ -36,9 +42,15 @@ import ru.loftschool.loftblogmoneytracker.ui.activities.AddExpenseActivity_;
 import ru.loftschool.loftblogmoneytracker.ui.activities.MainActivity;
 
 @EFragment(R.layout.fragment_expenses)
+@OptionsMenu(R.menu.search_menu)
 public class ExpensesFragment extends Fragment {
 
+    private static final String TAG = ExpensesFragment.class.getSimpleName();
+    private static final String FILTER_ID = "filter_id";
+
     private ActionModeCallback actionModeCallback = new ActionModeCallback();
+    private static ExpensesAdapter adapter;
+    private Bundle savedSelectedItems;
 
     @ViewById(R.id.recycler_view_content_expenses)
     RecyclerView recyclerView;
@@ -61,9 +73,8 @@ public class ExpensesFragment extends Fragment {
     @StringRes(R.string.snackbar_removed_expenses)
     String removedExpenses;
 
-    private static ExpensesAdapter adapter;
-
-    private Bundle savedSelectedItems;
+    @OptionsMenuItem(R.id.search_action)
+    MenuItem menuItem;
 
     public static ExpensesAdapter getAdapter() {
         return adapter;
@@ -89,7 +100,7 @@ public class ExpensesFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                loadData();
+                loadData("");
             }
         });
         recyclerView.setHasFixedSize(true);
@@ -97,6 +108,33 @@ public class ExpensesFragment extends Fragment {
 //      to avoid an error "recyclerview No adapter attached; skipping layout" set a blank adapter for the recyclerView
         recyclerView.setAdapter(new ExpensesAdapter());
 
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        final SearchView searchView = (SearchView) menuItem.getActionView();
+        searchView.setQueryHint(getString(R.string.search_label));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.d(TAG, "onQueryTextSubmit() called with: " + "query = [" + query + "]");
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.d(TAG, "onQueryTextChange() called with: " + "newText = [" + newText + "]");
+                BackgroundExecutor.cancelAll(FILTER_ID, true);
+                delayedSearch(newText);
+                return false;
+            }
+        });
+    }
+
+    @Background(delay = 700, id = FILTER_ID)
+    void delayedSearch(String filter) {
+        loadData(filter);
     }
 
     @Override
@@ -110,7 +148,7 @@ public class ExpensesFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        loadData();
+        loadData("");
         ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
@@ -129,7 +167,7 @@ public class ExpensesFragment extends Fragment {
         itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
-    private void loadData() {
+    private void loadData(final String filter) {
         getLoaderManager().restartLoader(0, null, new LoaderManager.LoaderCallbacks<List<Expenses>>() {
             @Override
             public Loader<List<Expenses>> onCreateLoader(int id, Bundle args) {
@@ -137,7 +175,7 @@ public class ExpensesFragment extends Fragment {
 
                     @Override
                     public List<Expenses> loadInBackground() {
-                        return getDataList();
+                        return getDataList(filter);
                     }
                 };
                 loader.forceLoad();
@@ -152,7 +190,7 @@ public class ExpensesFragment extends Fragment {
                 if (adapter != null) {
                     savedCurrentSelectedItems = adapter.getSparseBooleanSelectedItems();
                 }
-                adapter = new ExpensesAdapter(getDataList(), new ExpensesAdapter.CardViewHolder.ClickListener() {
+                adapter = new ExpensesAdapter(data, new ExpensesAdapter.CardViewHolder.ClickListener() {
                     @Override
                     public void onItemClicked(int position) {
                         if (MainActivity.getActionMode() != null) {
@@ -208,8 +246,11 @@ public class ExpensesFragment extends Fragment {
         }
     }
 
-    private List<Expenses> getDataList(){
-        return new Select().from(Expenses.class).execute();
+    private List<Expenses> getDataList(String filter){
+        return new Select()
+                .from(Expenses.class)
+                .where("Name LIKE ?", new Object[]{'%' + filter + '%'})
+                .execute();
     }
 
     private void undoSnackbarShow() {

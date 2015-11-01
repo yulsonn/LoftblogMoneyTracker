@@ -39,7 +39,7 @@ public interface CategoriesAPI {
                                                       @Query("google_token") String gToken,
                                                       @Query("auth_token") String token);
 
-    @GET("categories/synch")
+    @GET("/categories/synch")
     void categoriesSync(@Query("data{id}") Integer id,
                         @Query("data[title]")String title,
                         @Query("google_token") String gToken,

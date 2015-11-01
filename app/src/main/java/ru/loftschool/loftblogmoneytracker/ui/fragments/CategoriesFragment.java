@@ -18,22 +18,28 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.Editable;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.activeandroid.query.Select;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.OptionsMenuItem;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.StringRes;
+import org.androidannotations.api.BackgroundExecutor;
 
 import java.util.List;
 
@@ -44,11 +50,14 @@ import ru.loftschool.loftblogmoneytracker.ui.activities.MainActivity;
 import ru.loftschool.loftblogmoneytracker.utils.TextInputValidator;
 
 @EFragment(R.layout.fragment_categories)
+@OptionsMenu(R.menu.search_menu)
 public class CategoriesFragment extends Fragment {
 
-    private static CategoriesAdapter adapter;
+    private static final String TAG = CategoriesFragment.class.getSimpleName();
+    private static final String FILTER_ID = "filter_id";
 
     private ActionModeCallback actionModeCallback = new ActionModeCallback();
+    private static CategoriesAdapter adapter;
     private Bundle savedSelectedItems;
 
     @ViewById(R.id.recycler_view_content_categories)
@@ -93,6 +102,9 @@ public class CategoriesFragment extends Fragment {
     @Bean
     TextInputValidator validator;
 
+    @OptionsMenuItem(R.id.search_action)
+    MenuItem menuItem;
+
     public static CategoriesAdapter getAdapter() {
         return adapter;
     }
@@ -110,7 +122,7 @@ public class CategoriesFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                loadData();
+                loadData("");
             }
         });
         recyclerView.setHasFixedSize(true);
@@ -126,6 +138,33 @@ public class CategoriesFragment extends Fragment {
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        final SearchView searchView = (SearchView) menuItem.getActionView();
+        searchView.setQueryHint(getString(R.string.search_label));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.d(TAG, "onQueryTextSubmit() called with: " + "query = [" + query + "]");
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Log.d(TAG, "onQueryTextChange() called with: " + "newText = [" + newText + "]");
+                BackgroundExecutor.cancelAll(FILTER_ID, true);
+                delayedSearch(newText);
+                return false;
+            }
+        });
+    }
+
+    @Background(delay = 700, id = FILTER_ID)
+    void delayedSearch(String filter) {
+        loadData(filter);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
@@ -136,7 +175,7 @@ public class CategoriesFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        loadData();
+        loadData("");
         ItemTouchHelper.SimpleCallback simpleCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
@@ -155,14 +194,14 @@ public class CategoriesFragment extends Fragment {
         itemTouchHelper.attachToRecyclerView(recyclerView);
     }
 
-    private void loadData() {
+    private void loadData(final String filter) {
         getLoaderManager().restartLoader(1, null, new LoaderManager.LoaderCallbacks<List<Categories>>() {
             @Override
             public Loader<List<Categories>> onCreateLoader(int id, Bundle args) {
                 final AsyncTaskLoader<List<Categories>> loader = new AsyncTaskLoader<List<Categories>>(getActivity()) {
                     @Override
                     public List<Categories> loadInBackground() {
-                        return getDataList();
+                        return getDataList(filter);
                     }
                 };
                 loader.forceLoad();
@@ -268,8 +307,11 @@ public class CategoriesFragment extends Fragment {
         }
     }
 
-    private List<Categories> getDataList() {
-        return new Select().from(Categories.class).execute();
+    private List<Categories> getDataList(String filter) {
+        return new Select()
+                .from(Categories.class)
+                .where("Name LIKE ?", new Object[]{'%' + filter + '%'})
+                .execute();
     }
 
 

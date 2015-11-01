@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.activeandroid.query.Select;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OptionsItem;
@@ -29,6 +30,7 @@ import ru.loftschool.loftblogmoneytracker.database.model.Categories;
 import ru.loftschool.loftblogmoneytracker.database.model.Expenses;
 import ru.loftschool.loftblogmoneytracker.ui.dialogs.DatePickerFragment;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.ExpensesFragment;
+import ru.loftschool.loftblogmoneytracker.utils.TextInputValidator;
 
 @EActivity(R.layout.activity_add_expense)
 public class AddExpenseActivity extends AppCompatActivity {
@@ -50,11 +52,11 @@ public class AddExpenseActivity extends AppCompatActivity {
     @StringRes(R.string.error_null_price)
     String nullPriceError;
 
-    @StringRes(R.string.error_null_name)
-    String nullNameError;
-
     @StringRes(R.string.expense_added_text)
     String expenseAdded;
+
+    @Bean
+    TextInputValidator validator;
 
     @Click(R.id.etDate)
     void dateChoose() {
@@ -91,35 +93,25 @@ public class AddExpenseActivity extends AppCompatActivity {
     @Click(R.id.add_expense_button)
     public void addExpenseButton() {
 
-        if (inputValidation()) {
+        if (validator.validateNewExpense(etPrice, etName, getBaseContext())) {
             Expenses newExpense = new Expenses(etName.getText().toString(), etPrice.getText().toString(), etDate.getText().toString(), (Categories)spCategories.getSelectedItem());
             ExpensesFragment.getAdapter().addExpense(newExpense);
             Toast.makeText(this, expenseAdded + newExpense.price + ", "
-                                                + newExpense.name + ", "
-                                                + String.valueOf(dateFormat.format(new Date())) + ", "
-                                                + newExpense.category.toString(), Toast.LENGTH_SHORT).show();
+                    + newExpense.name + ", "
+                    + String.valueOf(dateFormat.format(new Date())) + ", "
+                    + newExpense.category.toString(), Toast.LENGTH_SHORT).show();
+            finish();
+            overridePendingTransition(R.anim.activity_open_scale,R.anim.activity_close_translate);
         }
-
-        onBackPressed();
-    }
-
-    private boolean inputValidation() {
-
-        boolean isValid = true;
-
-        if (etPrice.getText().toString().trim().length() == 0) {
-            etPrice.setError(nullPriceError);
-            isValid = false;
-        }
-        if (etName.getText().toString().trim().length() == 0) {
-            etName.setError(nullNameError);
-            isValid = false;
-        }
-
-        return isValid;
     }
 
     private List<Categories> getCategoriesList(){
         return new Select().from(Categories.class).execute();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
     }
 }

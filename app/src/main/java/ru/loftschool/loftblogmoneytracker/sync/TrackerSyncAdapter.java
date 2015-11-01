@@ -49,6 +49,7 @@ public class TrackerSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     private void categoriesSync() {
+        Log.d(TAG, "categoriesSync() called with: " + "");
         List<Categories> categories = new Select().from(Categories.class).execute();
         if (!categories.isEmpty()) {
             for (Categories category : categories) {
@@ -72,6 +73,7 @@ public class TrackerSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     private void expensesSync() {
+        Log.d(TAG, "expensesSync() called with: " + "");
         List<Expenses> expenses = new Select().from(Expenses.class).execute();
         if (!expenses.isEmpty()){
             for(Expenses expense : expenses)

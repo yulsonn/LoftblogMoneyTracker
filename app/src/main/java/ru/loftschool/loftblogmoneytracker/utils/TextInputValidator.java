@@ -37,6 +37,12 @@ public class TextInputValidator {
     @StringRes(R.string.error_exists_category_name)
     String existsCategoryName;
 
+    @StringRes(R.string.error_null_price)
+    String nullPriceError;
+
+    @StringRes(R.string.error_null_name)
+    String nullExtenseNameError;
+
     @IntegerRes(R.integer.min_field_password_length)
     Integer minPasswordLength;
 
@@ -81,18 +87,35 @@ public class TextInputValidator {
     }
 
     public boolean validateCategoryName(String categoryName, TextInputLayout wrapper, Context context) {
+        Animation shake = AnimationUtils.loadAnimation(context, R.anim.shake);
         boolean isValid = true;
 
         if (categoryName.trim().length() == 0) {
             wrapper.setError(nullCategoryName);
-            Animation shake = AnimationUtils.loadAnimation(context, R.anim.shake);
             wrapper.startAnimation(shake);
             isValid = false;
         }
         if (!Categories.selectByNameCaseInsensitive(categoryName).isEmpty()) {
             wrapper.setError(existsCategoryName);
-            Animation shake = AnimationUtils.loadAnimation(context, R.anim.shake);
             wrapper.startAnimation(shake);
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    public boolean validateNewExpense(EditText etPrice, EditText etName, Context context) {
+        Animation shake = AnimationUtils.loadAnimation(context, R.anim.shake);
+        boolean isValid = true;
+
+        if (etPrice.getText().toString().trim().length() == 0) {
+            etPrice.setError(nullPriceError);
+            etPrice.startAnimation(shake);
+            isValid = false;
+        }
+        if (etName.getText().toString().trim().length() == 0) {
+            etName.setError(nullExtenseNameError);
+            etName.startAnimation(shake);
             isValid = false;
         }
 
