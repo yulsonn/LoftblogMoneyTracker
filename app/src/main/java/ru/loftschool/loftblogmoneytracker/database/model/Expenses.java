@@ -11,7 +11,8 @@ public class Expenses extends Model {
     public String name;
 
     @Column(name = "Price")
-    public String price;
+    //public String price;
+    public Float price;
 
     @Column(name = "Date")
     public String date;
@@ -23,7 +24,7 @@ public class Expenses extends Model {
         super();
     }
 
-    public Expenses(String name, String price, String date, Categories category) {
+    public Expenses(String name, Float price, String date, Categories category) {
         super();
         this.name = name;
         this.price = price;

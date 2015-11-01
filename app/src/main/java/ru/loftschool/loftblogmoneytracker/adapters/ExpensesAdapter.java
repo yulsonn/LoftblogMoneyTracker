@@ -55,7 +55,7 @@ public class ExpensesAdapter extends SelectableAdapter<ExpensesAdapter.CardViewH
         Expenses expense = expenses.get(position);
         holder.textTitle.setText(expense.name);
         holder.dateTitle.setText(expense.date);
-        holder.sumTitle.setText(expense.price);
+        holder.sumTitle.setText(String.format("%.2f",expense.price));
         holder.categoryTitle.setText(expense.category.toString());  // for testing of Categories-Expenses relation
         holder.selectedOverlay.setVisibility(isSelected(position) ? View.VISIBLE : View.INVISIBLE);
 

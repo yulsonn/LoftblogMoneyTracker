@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Container.Background">
+    <include layout="@layout/toolbar"/>
+
+    <GridLayout
+        android:id="@+id/expense_add"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:layout_margin="@dimen/add_expense_xlarge_margins"
+        android:columnCount="@integer/column_count"
+        android:rowCount="@integer/row_count"
+        android:background="@color/background"
+        android:padding="@dimen/padding_small"
+        android:layout_below="@+id/toolbar">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"
+            android:gravity="start|center"
+            android:text="@string/text_sum"
+            android:textSize="@dimen/medium_main_text"
+            android:paddingTop="@dimen/padding_xlarge"/>
+
+        <EditText
+            android:id="@+id/etPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"
+            android:layout_marginLeft="@dimen/add_expense_field_margin_left"
+            android:paddingTop="@dimen/padding_xlarge"
+            android:inputType="numberDecimal"
+            android:layout_marginRight="@dimen/add_expense_padding_right"
+            android:maxLength="10"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"
+            android:gravity="start|center"
+            android:text="@string/text_name"
+            android:textSize="@dimen/medium_main_text"
+            android:paddingTop="@dimen/padding_xlarge"/>
+
+        <EditText
+            android:id="@+id/etName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"
+            android:layout_marginLeft="@dimen/add_expense_field_margin_left"
+            android:layout_marginRight="@dimen/add_expense_padding_right"
+            android:paddingTop="@dimen/padding_xlarge"
+            android:maxLength="30"
+            android:maxLines="2"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"
+            android:gravity="start|center"
+            android:text="@string/text_category"
+            android:paddingTop="@dimen/padding_xlarge"
+            android:textSize="@dimen/medium_main_text"/>
+
+        <Spinner
+            android:id="@+id/spCategories"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"
+            android:layout_marginRight="@dimen/add_expense_padding_right"
+            android:spinnerMode="dropdown"
+            android:paddingTop="@dimen/padding_xlarge"
+            android:layout_marginLeft="@dimen/add_expense_field_margin_left_small"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"
+            android:gravity="start|center"
+            android:text="@string/text_date"
+            android:paddingTop="@dimen/padding_xlarge"
+            android:textSize="@dimen/medium_main_text"/>
+
+        <EditText
+            android:id="@+id/etDate"
+            android:layout_width="64dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"
+            android:focusable="false"
+            android:layout_marginRight="@dimen/add_expense_padding_right"
+            android:hint="@string/hint_date"
+            android:paddingTop="@dimen/padding_xlarge"
+            android:layout_marginLeft="@dimen/add_expense_field_margin_left"/>
+
+    </GridLayout>
+
+    <Button
+        android:id="@+id/add_expense_button"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/btn_xlarge_height"
+        android:text="@string/button_add_expense_text"
+        android:layout_gravity="center_vertical"
+        android:textColor="@color/primary"
+        android:layout_below="@id/expense_add"
+        android:layout_margin="@dimen/add_expense_xlarge_margins"/>
+
+</RelativeLayout>

@@ -106,5 +106,6 @@
     <string name="add_category_btn_ok_txt">ОК</string>
     <string name="search_label">Поиск</string>
     <string name="currency_RUB">\u20BD</string>
+    <string name="pie_chart_title">Распределение трат по категориям</string>
 
 </resources>

@@ -35,16 +35,22 @@
     <!--Grid Layout dimens for Expenses add activity-->
     <dimen name="padding_medium">20dp</dimen>
     <dimen name="padding_small">18dp</dimen>
+    <dimen name="padding_xlarge">30dp</dimen>
     <dimen name="button_add_expense_margin">20dp</dimen>
+    <dimen name="button_add_expense_land_margin">8dp</dimen>
     <dimen name="add_expense_field_margin_left">10dp</dimen>
     <dimen name="add_expense_field_margin_left_small">6dp</dimen>
 
     <!--Registration & Login screens-->
     <dimen name="registration_text_size">25sp</dimen>
+    <dimen name="registration_text_xlarge_size">45sp</dimen>
     <dimen name="registration_fields_padding">50dp</dimen>
     <dimen name="registration_margin_top">4dp</dimen>
     <dimen name="registration_control_margins">24dp</dimen>
+    <dimen name="registration_control_land_margins">8dp</dimen>
+    <dimen name="registration_control_xlarge_margins">48dp</dimen>
     <dimen name="registration_control_padding">24dp</dimen>
+    <dimen name="registration_control_land_padding">12dp</dimen>
 
     <!--Add category dialog-->
     <dimen name="dialog_padding_vertical">24dp</dimen>
@@ -53,6 +59,8 @@
     <dimen name="add_category_btn_height">130dp</dimen>
     <dimen name="btn_elevation">5dp</dimen>
     <dimen name="add_expense_padding_right">110dp</dimen>
+    <dimen name="add_expense_xlarge_margins">40dp</dimen>
+    <dimen name="btn_xlarge_height">80dp</dimen>
 
 
 </resources>

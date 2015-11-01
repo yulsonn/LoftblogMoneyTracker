@@ -24,6 +24,17 @@
         <item name="android:background">@color/background</item>
     </style>
 
+    <style name="Container_land">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="Container_land.Background">
+        <item name="android:background">@color/background</item>
+    </style>
+
     <style name="DrawerText">
         <item name="android:fontFamily" tools:targetApi="jelly_bean">Roboto Medium</item>
         <item name="android:textSize">14sp</item>
