@@ -113,6 +113,7 @@ public class ExpensesFragment extends Fragment {
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
+        menuItem.setVisible(true);
         final SearchView searchView = (SearchView) menuItem.getActionView();
         searchView.setQueryHint(getString(R.string.search_label));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

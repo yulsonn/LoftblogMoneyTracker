@@ -39,6 +39,7 @@ import ru.loftschool.loftblogmoneytracker.rest.models.AllCategoriesModel;
 import ru.loftschool.loftblogmoneytracker.rest.models.AllExpensesModel;
 import ru.loftschool.loftblogmoneytracker.rest.models.GoogleAccountDataModel;
 import ru.loftschool.loftblogmoneytracker.rest.status.GoogleAccountDataStatus;
+import ru.loftschool.loftblogmoneytracker.utils.NotificationUtil;
 import ru.loftschool.loftblogmoneytracker.utils.TokenKeyStorage;
 import ru.loftschool.loftblogmoneytracker.utils.date.DateConvertUtils;
 import ru.loftschool.loftblogmoneytracker.utils.date.DateFormats;
@@ -68,6 +69,7 @@ public class TrackerSyncAdapter extends AbstractThreadedSyncAdapter implements T
         } else {
             checkTokenValid();
         }
+        NotificationUtil.UpdateNotifications(getContext());
     }
 
     public void categoriesSync() {
@@ -152,6 +154,7 @@ public class TrackerSyncAdapter extends AbstractThreadedSyncAdapter implements T
                 if (GoogleAccountDataStatus.STATUS_OK.equalsIgnoreCase(googleAccountDataModel.getStatus())) {
                     categoriesSync();
                     expensesSync();
+                    NotificationUtil.UpdateNotifications(getContext());
                 } else {
                     Log.e(TAG, "Google token is not valid. Sync failed.");
                     new GetGoogleToken().execute();
@@ -172,6 +175,7 @@ public class TrackerSyncAdapter extends AbstractThreadedSyncAdapter implements T
         if (!TokenKeyStorage.DEFAULT_TOKEN_GOOGLE_KEY.equalsIgnoreCase(MoneyTrackerApplication.getGoogleToken(getContext()))) {
             categoriesSync();
             expensesSync();
+            NotificationUtil.UpdateNotifications(getContext());
         } else {
             Log.e(TAG, "Google token is not valid. Sync failed.");
         }
@@ -203,6 +207,7 @@ public class TrackerSyncAdapter extends AbstractThreadedSyncAdapter implements T
     // this method response for creating an account
     private static void onAccountCreated(Account newAccount, Context context) {
         final int SYNC_INTERVAL = 60 * 60 * 24;     //sync once per day
+        //final int SYNC_INTERVAL = 60 * 5;     //sync once per day
         final int SYNC_FLEXTIME = SYNC_INTERVAL/3;  // if usual sync failed try again in a day/3
 
         TrackerSyncAdapter.configurePeriodicSync(context, SYNC_INTERVAL, SYNC_FLEXTIME);

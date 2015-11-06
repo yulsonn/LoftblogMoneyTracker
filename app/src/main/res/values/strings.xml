@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">LoftblogMoneyTracker</string>
 
+    <!--Sync-->
+    <string name="content_authority" translatable="false">ru.loftschool.loftblogmoneytracker</string>
+    <string name="sync_account_type" translatable="false">loftblogmoneytracker.loftschool.ru</string>
+
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
@@ -16,6 +20,8 @@
     <string name="nav_drawer_categories">Категории</string>
     <string name="nav_drawer_statistics">Статистика</string>
     <string name="nav_drawer_settings">Настройки</string>
+    <string name="nav_drawer_logout">Выйти</string>
+    <string name="nav_drawer_subtitle_account">Аккаунт</string>
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
 
@@ -77,10 +83,6 @@
     <string name="error_min_length">"Минимальное количество символов: "</string>
     <string name="menu_item_logout">Logout</string>
 
-    <!--Sync-->
-    <string name="content_authority">ru.loftschool.loftblogmoneytracker</string>
-    <string name="sync_account_type">loftblogmoneytracker.loftschool.ru</string>
-
     <string name="error_unknown">Неизвестная ошибка</string>
     <string name="delete">Удалить</string>
     <string name="select_all">Выбрать все</string>
@@ -116,5 +118,28 @@
         <item>Транспорт</item>
         <item>Другое</item>
     </string-array>
+
+    <!--Preferences screen-->
+    <string name="pref_notification_section">Notifications</string>
+
+    <string name="pref_enable_notifications_key" translatable="false">enable_notifications</string>
+    <string name="pref_enable_vibro_key" translatable="false">enable_vibro</string>
+    <string name="pref_enable_led_key" translatable="false">enable_led</string>
+    <string name="pref_enable_sound_key" translatable="false">enable_sound</string>
+
+    <string name="pref_enable_notifications_label">Updates Notification</string>
+    <string name="pref_enable_vibro_label">Vibration</string>
+    <string name="pref_enable_led_label">LED indicator</string>
+    <string name="pref_enable_sound_label">Sound</string>
+
+    <string name="pref_enable_notifications_true">Enabled</string>
+
+    <string name="pref_enable_notifications_false">Disabled</string>
+
+    <string name="pref_enable_notifications_default" translatable="false">true</string>
+
+    <!-- String for notification bar-->
+    <string name="notification_message">There is a notification!</string>
+
 
 </resources>

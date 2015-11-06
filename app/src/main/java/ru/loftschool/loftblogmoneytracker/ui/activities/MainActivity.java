@@ -40,17 +40,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 import ru.loftschool.loftblogmoneytracker.MoneyTrackerApplication;
 import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.database.model.Categories;
 import ru.loftschool.loftblogmoneytracker.database.model.Expenses;
-import ru.loftschool.loftblogmoneytracker.rest.CategorySyncObject;
-import ru.loftschool.loftblogmoneytracker.rest.ExpensesSyncObject;
 import ru.loftschool.loftblogmoneytracker.rest.RestService;
-import ru.loftschool.loftblogmoneytracker.rest.SyncWrapper;
 import ru.loftschool.loftblogmoneytracker.rest.exception.UnauthorizedException;
 import ru.loftschool.loftblogmoneytracker.rest.models.AllCategoriesModel;
 import ru.loftschool.loftblogmoneytracker.rest.models.AllExpensesModel;
@@ -66,13 +60,11 @@ import ru.loftschool.loftblogmoneytracker.ui.fragments.CategoriesFragment;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.CategoriesFragment_;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.ExpensesFragment;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.ExpensesFragment_;
-import ru.loftschool.loftblogmoneytracker.ui.fragments.SettingsFragment_;
+import ru.loftschool.loftblogmoneytracker.ui.fragments.SettingsFragment;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.StatisticsFragment_;
 import ru.loftschool.loftblogmoneytracker.utils.ServerReqUtils;
-import ru.loftschool.loftblogmoneytracker.utils.date.DateConvertUtils;
-import ru.loftschool.loftblogmoneytracker.utils.date.DateFormats;
-import ru.loftschool.loftblogmoneytracker.utils.network.NetworkConnectionChecker;
 import ru.loftschool.loftblogmoneytracker.utils.TokenKeyStorage;
+import ru.loftschool.loftblogmoneytracker.utils.network.NetworkConnectionChecker;
 
 @EActivity(R.layout.activity_main)
 @OptionsMenu(R.menu.menu_main)
@@ -175,121 +167,6 @@ public class MainActivity extends AppCompatActivity {
         MainActivity.actionMode = actionMode;
     }
 
-    @Background
-    public void categoriesSync() {
-        Log.d(LOG_TAG, "categoriesSync() called with: " + "");
-        RestService restService = new RestService();
-        List<Categories> categories = new Select().from(Categories.class).execute();
-
-//        List<Map<String, String>> data = new ArrayList<>();
-
-//        List<Categories> categories = new Select().from(Categories.class).execute();
-//        for (Categories category : categories) {
-//            Map<String, String> params = new LinkedHashMap<>();
-//            params.put("id", String.valueOf(category.sId));
-//            params.put("title", category.name);
-//            data.add(params);
-//        }
-
-//        List<Integer> id = new ArrayList<>();
-//        List<String> title = new ArrayList<>();
-//
-//        List<Categories> categories = new Select().from(Categories.class).execute();
-//        for (Categories category : categories) {
-//            id.add(category.sId);
-//            title.add(category.name);
-//        }
-
-//        Map<Integer, String> data = new HashMap<>();
-//        for (Categories category : categories) {
-//            data.put(category.sId, category.name);
-//        }
-
-//        CategorySyncObject[] data = new CategorySyncObject[categories.size()];
-//        for (int i = 0; i < categories.size(); i++) {
-//            data[i] = new CategorySyncObject(categories.get(i).sId, categories.get(i).name);
-//        }
-
-//        List<CategorySyncObject> data = new ArrayList<>();
-//        for (int i = 0; i < categories.size(); i++) {
-//            data.add(new CategorySyncObject(categories.get(i).sId, categories.get(i).name));
-//        }
-
-        List<CategorySyncObject> params = new ArrayList<>();
-        for (Categories category : categories) {
-            if (category.sId != null) {
-                params.add(new CategorySyncObject(category.sId, category.name));
-            }
-        }
-
-        SyncWrapper data = new SyncWrapper(params, null);
-
-//        AllCategoriesModel syncResponse = restService.categoriesSync(data, MoneyTrackerApplication.getGoogleToken(this), MoneyTrackerApplication.getToken(this));
-//        if (syncResponse.getStatus().equalsIgnoreCase("success")) {
-//            Log.e(LOG_TAG, "Categories synch status == success!");
-//        } else {
-//            Log.e(LOG_TAG, "Bad. Sync failed");
-//
-//        }
-
-        restService.categoriesSync(
-                data,
-                MoneyTrackerApplication.getGoogleToken(this),
-                MoneyTrackerApplication.getToken(this),
-                new Callback<AllCategoriesModel>() {
-                    @Override
-                    public void success(AllCategoriesModel allCategoriesModel, Response response) {
-                        if (allCategoriesModel.getStatus().equalsIgnoreCase("success")) {
-                            Log.e(LOG_TAG, "OK. Category sync status success");
-                        } else {
-                            Log.e(LOG_TAG, "BAD. Status != success");
-                        }
-                    }
-
-                    @Override
-                    public void failure(RetrofitError error) {
-                        Log.e(LOG_TAG, "ERROR. Category sync failed");
-                    }
-                });
-    }
-
-    @Background
-    public void expensesSync() {
-        Log.d(LOG_TAG, "expensesSync() called with: " + "");
-        RestService restService = new RestService();
-
-        List<Expenses> expenses = new Select().from(Expenses.class).execute();
-
-        List<ExpensesSyncObject> params = new ArrayList<>();
-        for (Expenses expense : expenses) {
-            params.add(new ExpensesSyncObject(expense.sId, expense.category.sId, expense.name,
-                    String.valueOf(expense.price), DateConvertUtils.dateToString(expense.date, DateFormats.INVERSE_DATE_FORMAT)));
-        }
-
-        SyncWrapper data = new SyncWrapper(null, params);
-
-        restService.expensesSync(
-                data,
-                MoneyTrackerApplication.getGoogleToken(this),
-                MoneyTrackerApplication.getToken(this),
-                new Callback<AllExpensesModel>() {
-                    @Override
-                    public void success(AllExpensesModel allExpensesModel, Response response) {
-                        if (allExpensesModel.getStatus().equalsIgnoreCase("success")) {
-                            Log.e(LOG_TAG, "OK. Expenses sync status success");
-                        } else {
-                            Log.e(LOG_TAG, "BAD. Status != success");
-                        }
-                    }
-
-                    @Override
-                    public void failure(RetrofitError error) {
-                        Log.e(LOG_TAG, "ERROR. Expenses sync failed");
-                    }
-                });
-
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -374,26 +251,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void selectDrawerItem(MenuItem menuItem){
-        Fragment fragment;
 
         switch (menuItem.getItemId()){
             case R.id.drawer_item_expenses:
-                fragment = new ExpensesFragment_();
+                replaceFragment(new ExpensesFragment_());
                 break;
             case R.id.drawer_item_categories:
-                fragment = new CategoriesFragment_();
+                replaceFragment(new CategoriesFragment_());
                 break;
             case R.id.drawer_item_statistics:
-                fragment = new StatisticsFragment_();
+                replaceFragment(new StatisticsFragment_());
                 break;
             case R.id.drawer_item_settings:
-                fragment = new SettingsFragment_();
+                getFragmentManager().beginTransaction().replace(R.id.frame_container, new SettingsFragment(), SettingsFragment.class.getSimpleName())
+                        .addToBackStack(SettingsFragment.class.getSimpleName())
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
+                        .commit();
                 break;
-            default:
-                fragment = new ExpensesFragment_();
+            case R.id.drawer_item_logout:
+                goToLogin();
+                MoneyTrackerApplication.setToken(this, TokenKeyStorage.DEFAULT_TOKEN_KEY);
+                MoneyTrackerApplication.setGoogleToken(this, TokenKeyStorage.DEFAULT_TOKEN_GOOGLE_KEY);
+                break;
         }
 
-        replaceFragment(fragment);
         menuItem.setChecked(true);
         drawerLayout.closeDrawers();
     }
@@ -402,7 +283,6 @@ public class MainActivity extends AppCompatActivity {
         String backStateName = fragment.getClass().getSimpleName();
         FragmentManager fragmentManager = getSupportFragmentManager();
         boolean fragmentPooped = fragmentManager.popBackStackImmediate(backStateName, 0);
-
 
         if (!fragmentPooped && fragmentManager.findFragmentByTag(backStateName) == null) {
             fragmentManager.beginTransaction().replace(R.id.frame_container, fragment, backStateName)
@@ -675,7 +555,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static void destroyActionModeIfNeeded() {
-        Log.e("ActionMode", String.valueOf(actionMode == null));
         if (actionMode != null) {
             actionMode.finish();
             Log.e("ActionMode", "FINISH");

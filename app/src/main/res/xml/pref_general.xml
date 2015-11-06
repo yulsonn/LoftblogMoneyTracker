@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/pref_notification_section" >
+        <CheckBoxPreference
+            android:title="@string/pref_enable_notifications_label"
+            android:key="@string/pref_enable_notifications_key"
+            android:summaryOff="@string/pref_enable_notifications_false"
+            android:summaryOn="@string/pref_enable_notifications_true"
+            android:defaultValue="@string/pref_enable_notifications_default"/>
+        <CheckBoxPreference
+            android:title="@string/pref_enable_vibro_label"
+            android:key="@string/pref_enable_vibro_key"
+            android:summaryOff="@string/pref_enable_notifications_false"
+            android:summaryOn="@string/pref_enable_notifications_true"
+            android:defaultValue="@string/pref_enable_notifications_default"/>
+        <CheckBoxPreference
+            android:title="@string/pref_enable_led_label"
+            android:key="@string/pref_enable_led_key"
+            android:summaryOff="@string/pref_enable_notifications_false"
+            android:summaryOn="@string/pref_enable_notifications_true"
+            android:defaultValue="@string/pref_enable_notifications_default"/>
+        <CheckBoxPreference
+            android:title="@string/pref_enable_sound_label"
+            android:key="@string/pref_enable_sound_key"
+            android:summaryOff="@string/pref_enable_notifications_false"
+            android:summaryOn="@string/pref_enable_notifications_true"
+            android:defaultValue="@string/pref_enable_notifications_default"/>
+        </PreferenceCategory>
+
+</PreferenceScreen>
