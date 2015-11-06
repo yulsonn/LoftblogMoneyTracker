@@ -56,7 +56,7 @@
     <dimen name="dialog_padding_vertical">24dp</dimen>
     <dimen name="dialog_padding_horizontal">24dp</dimen>
     <dimen name="text_padding">16dp</dimen>
-    <dimen name="add_category_btn_height">130dp</dimen>
+    <dimen name="add_category_btn_height">36dp</dimen>
     <dimen name="btn_elevation">5dp</dimen>
     <dimen name="add_expense_padding_right">110dp</dimen>
     <dimen name="add_expense_xlarge_margins">40dp</dimen>
