@@ -61,6 +61,7 @@ import ru.loftschool.loftblogmoneytracker.ui.fragments.CategoriesFragment_;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.ExpensesFragment;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.ExpensesFragment_;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.SettingsFragment;
+import ru.loftschool.loftblogmoneytracker.ui.fragments.StatisticsFragment;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.StatisticsFragment_;
 import ru.loftschool.loftblogmoneytracker.utils.ServerReqUtils;
 import ru.loftschool.loftblogmoneytracker.utils.TokenKeyStorage;
@@ -172,9 +173,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d(LOG_TAG, "onCreate() method called");
         initialCategoriesFill();
+        FragmentManager fm = getSupportFragmentManager();
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.frame_container, new ExpensesFragment_()).commit();
+            fm.beginTransaction().replace(R.id.frame_container, new ExpensesFragment_(), ExpensesFragment_.class.getSimpleName())
+                    .addToBackStack(ExpensesFragment_.class.getSimpleName())
+                    .commit();
         }
+
+        fm.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                if (getSupportFragmentManager().getBackStackEntryCount() == 0) finish();
+            }
+        });
     }
 
     private void initToolbar(){
@@ -300,7 +311,32 @@ public class MainActivity extends AppCompatActivity {
             }
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+                super.onBackPressed();
+            } else if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
+                super.onBackPressed();
+                navView.setCheckedItem(R.id.drawer_item_expenses);
+            } else {
+                super.onBackPressed();
+                getLastFragmentChecked();
+            }
+        }
+    }
+
+    private void getLastFragmentChecked() {
+        FragmentManager.BackStackEntry backEntry = getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount() - 1);
+        String str = backEntry.getName();
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(str);
+        updateSelectedItem(fragment);
+    }
+
+    private void updateSelectedItem(Fragment fragment) {
+        if (fragment instanceof ExpensesFragment) {
+            navView.setCheckedItem(R.id.drawer_item_expenses);
+        } else if (fragment instanceof CategoriesFragment) {
+            navView.setCheckedItem(R.id.drawer_item_categories);
+        } else if (fragment instanceof StatisticsFragment) {
+            navView.setCheckedItem(R.id.drawer_item_statistics);
         }
     }
 
