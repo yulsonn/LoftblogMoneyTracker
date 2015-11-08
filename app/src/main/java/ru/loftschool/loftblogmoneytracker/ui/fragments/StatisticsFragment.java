@@ -98,7 +98,7 @@ public class StatisticsFragment extends Fragment {
                 if (e == null)
                     return;
                 Toast.makeText(getContext(), xVals.get(e.getXIndex()) + ": " +
-                                yVals.get(e.getXIndex()).getVal() + " " +
+                                String.format("%.2f",yVals.get(e.getXIndex()).getVal()) + " " +
                                 curRub, Toast.LENGTH_SHORT).show();
             }
 

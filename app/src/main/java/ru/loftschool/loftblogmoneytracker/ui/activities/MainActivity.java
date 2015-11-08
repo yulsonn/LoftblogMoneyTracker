@@ -35,27 +35,12 @@ import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.StringArrayRes;
 import org.androidannotations.annotations.res.StringRes;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import ru.loftschool.loftblogmoneytracker.MoneyTrackerApplication;
 import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.database.model.Categories;
-import ru.loftschool.loftblogmoneytracker.database.model.Expenses;
 import ru.loftschool.loftblogmoneytracker.rest.RestService;
-import ru.loftschool.loftblogmoneytracker.rest.exception.UnauthorizedException;
-import ru.loftschool.loftblogmoneytracker.rest.models.AllCategoriesModel;
-import ru.loftschool.loftblogmoneytracker.rest.models.AllExpensesModel;
-import ru.loftschool.loftblogmoneytracker.rest.models.BalanceModel;
-import ru.loftschool.loftblogmoneytracker.rest.models.CategoryDetails;
-import ru.loftschool.loftblogmoneytracker.rest.models.CategoryModel;
-import ru.loftschool.loftblogmoneytracker.rest.models.CategoryWithExpensesModel;
-import ru.loftschool.loftblogmoneytracker.rest.models.ExpenseDetails;
 import ru.loftschool.loftblogmoneytracker.rest.models.GoogleAccountDataModel;
 import ru.loftschool.loftblogmoneytracker.rest.status.CategoriesStatus;
-import ru.loftschool.loftblogmoneytracker.rest.status.ExpensesStatus;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.CategoriesFragment;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.CategoriesFragment_;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.ExpensesFragment;
@@ -280,6 +265,7 @@ public class MainActivity extends AppCompatActivity {
                         .commit();
                 break;
             case R.id.drawer_item_logout:
+                serverRequest.logout();
                 goToLogin();
                 MoneyTrackerApplication.setToken(this, TokenKeyStorage.DEFAULT_TOKEN_KEY);
                 MoneyTrackerApplication.setGoogleToken(this, TokenKeyStorage.DEFAULT_TOKEN_GOOGLE_KEY);
@@ -362,184 +348,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Background
-    void addCategoriesToServer() {
-        RestService restService = new RestService();
-        CategoryModel categoryAddResp = null;
-        List<Categories> categories = new Select().from(Categories.class).execute();
 
-        if (!categories.isEmpty()) {
-            for (Categories category : categories) {
-                try {
-                    categoryAddResp = restService.addCategory(category.name, MoneyTrackerApplication.getGoogleToken(this), MoneyTrackerApplication.getToken(this));
-                    if (CategoriesStatus.STATUS_OK.equals(categoryAddResp.getStatus())) {
-                        Log.e(LOG_TAG, "Category name: " + categoryAddResp.getData().getTitle() +
-                                ", Category id: " + categoryAddResp.getData().getId());
-                        category.sId = categoryAddResp.getData().getId();
-                        category.save();
-                        Log.e(LOG_TAG, "New category id: " + category.sId);
-
-                    } else {
-                        unknownErrorReaction();
-                        Log.e(LOG_TAG, unknownError);
-                    }
-                } catch (UnauthorizedException e) {
-                    unauthorizedErrorReaction();
-                    break;
-                }
-            }
-        }
-    }
-
-    @Background
-    void addExpense() {
-        RestService restService = new RestService();
-        List<Expenses> expenses = Expenses.selectAll();
-        Expenses expense = expenses.get(1);
-        Log.e(LOG_TAG, "Old expense sId: " + expense.sId);
-        // hardcode just for test
-        AllExpensesModel addExpenseResp = restService.addExpense(String.valueOf(expense.price), expense.name, expense.category.sId, new SimpleDateFormat("yyyy/MM/dd").format(new Date()), MoneyTrackerApplication.getGoogleToken(this), MoneyTrackerApplication.getToken(this));
-        if (ExpensesStatus.STATUS_OK.equals(addExpenseResp.getStatus())) {
-            Log.e(LOG_TAG, "Expense id: " + addExpenseResp.getId());
-            expense.sId = addExpenseResp.getId();
-            expense.save();
-            Log.e(LOG_TAG, "New expense sId: " + expense.sId);
-        } else {
-            unknownErrorReaction();
-            Log.e(LOG_TAG, unknownError);
-        }
-    }
-
-    @Background
-    void editCategoryOnServer() {
-        RestService restService = new RestService();
-        if (NetworkConnectionChecker.isNetworkConnected(this)) {
-            //time added for test
-            Categories category = Categories.selectCategoryById(1935);
-
-            CategoryModel categoryEditResp
-                    = restService.editCategory("Edited category " + new SimpleDateFormat("HH:mm:ss").format(new Date()),
-                    category.sId, MoneyTrackerApplication.getGoogleToken(this), MoneyTrackerApplication.getToken(this));
-            if (CategoriesStatus.STATUS_OK.equals(categoryEditResp.getStatus())) {
-                Log.e(LOG_TAG, "Category edited name: " + categoryEditResp.getData().getTitle() +
-                        ", Category id: " + categoryEditResp.getData().getId());
-            } else {
-                unknownErrorReaction();
-                Log.e(LOG_TAG, unknownError);
-            }
-        }
-    }
-
-    @Background
-    void getAllCategories() {
-        RestService restService = new RestService();
-        if (NetworkConnectionChecker.isNetworkConnected(this)) {
-            //time added for test
-            AllCategoriesModel categoriesResp = restService.getAllCategories(MoneyTrackerApplication.getGoogleToken(this), MoneyTrackerApplication.getToken(this));
-            if (CategoriesStatus.STATUS_OK.equals(categoriesResp.getStatus())) {
-                for (CategoryDetails category : categoriesResp.getCategories()) {
-                    Log.e(LOG_TAG, "Category name: " + category.getTitle() +
-                            ", Category id: " + category.getId());
-                }
-            } else {
-                unknownErrorReaction();
-                Log.e(LOG_TAG, unknownError);
-            }
-        }
-    }
-
-    @Background
-    void getCategoryInfo() {
-        RestService restService = new RestService();
-        if (NetworkConnectionChecker.isNetworkConnected(this)) {
-            List<CategoryWithExpensesModel> expensesResp = restService.getCategoryWithExpenses(1935, MoneyTrackerApplication.getGoogleToken(this), MoneyTrackerApplication.getToken(this));
-            Log.e(LOG_TAG, " * Category id: " + expensesResp.get(0).getId() +
-                            " * Category name: " + expensesResp.get(0).getTitle() +
-                            " * Transactions: ");
-                for (ExpenseDetails expense : expensesResp.get(0).getTransactions()) {
-                    Log.e(LOG_TAG, "  **  Expense id: " + expense.getId() +
-                            "  **  , Expense category id: " + expense.getCategoryId() +
-                            "  **  , Expense comment: " + expense.getComment() +
-                            "  **  , Expense summ: " + expense.getSum() +
-                            "  **  , Expense date: " + expense.getTrDate());
-                }
-        }
-    }
-
-    @Background
-    void getAllCategoriesInfo() {
-        RestService restService = new RestService();
-        if (NetworkConnectionChecker.isNetworkConnected(this)) {
-            ArrayList<CategoryWithExpensesModel> expensesResp = restService.getAllCategoriesWithExpenses(MoneyTrackerApplication.getGoogleToken(this), MoneyTrackerApplication.getToken(this));
-            Log.e(LOG_TAG, " | Category id: " + expensesResp.get(expensesResp.size()-1).getId() +
-                    " | Category name: " + expensesResp.get(expensesResp.size()-1).getTitle() +
-                    " | Transactions: ");
-            for (ExpenseDetails expense : expensesResp.get(expensesResp.size()-1).getTransactions()) {
-                Log.e(LOG_TAG, "  **  Expense id: " + expense.getId() +
-                        "  ||  , Expense category id: " + expense.getCategoryId() +
-                        "  ||  , Expense comment: " + expense.getComment() +
-                        "  ||  , Expense summ: " + expense.getSum() +
-                        "  ||  , Expense date: " + expense.getTrDate());
-            }
-        }
-    }
-
-    @Background
-    void getAllExpenses() {
-        RestService restService = new RestService();
-        if (NetworkConnectionChecker.isNetworkConnected(this)) {
-            AllExpensesModel expensesResp = restService.getAllExpenses(MoneyTrackerApplication.getGoogleToken(this), MoneyTrackerApplication.getToken(this));
-            if (CategoriesStatus.STATUS_OK.equals(expensesResp.getStatus())) {
-                for (ExpenseDetails expense : expensesResp.getExpenses()) {
-                    Log.e(LOG_TAG, "Expense id: " + expense.getId() +
-                                    ", Expense category id: " + expense.getCategoryId() +
-                                    ", Expense comment: " + expense.getComment() +
-                                    ", Expense summ: " + expense.getSum() +
-                                    ", Expense date: " + expense.getTrDate());
-                }
-            } else {
-                unknownErrorReaction();
-                Log.e(LOG_TAG, unknownError);
-            }
-        }
-    }
-
-    @Background
-    void deleteCategory() {
-        RestService restService = new RestService();
-        Categories category = Categories.selectCategoryById(1935);
-        if (NetworkConnectionChecker.isNetworkConnected(this)) {
-            CategoryModel removeCaatResp = restService.deleteCategory(category.sId, MoneyTrackerApplication.getGoogleToken(this), MoneyTrackerApplication.getToken(this));
-            if (CategoriesStatus.STATUS_OK.equals(removeCaatResp.getStatus())) {
-                Log.e(LOG_TAG, category.sId + " category removed");
-            } else {
-                unknownErrorReaction();
-                Log.e(LOG_TAG, unknownError);
-            }
-        }
-    }
-
-    @Background
-    void balanceTest() {
-        RestService restService = new RestService();
-        if (NetworkConnectionChecker.isNetworkConnected(this)) {
-            BalanceModel balanceResp = restService.getBalance(MoneyTrackerApplication.getGoogleToken(this), MoneyTrackerApplication.getToken(this));
-            if ("success".equalsIgnoreCase(balanceResp.getStatus())) {
-                Log.e(LOG_TAG, "Old balance: " + balanceResp.getBalance());
-            } else {
-                unknownErrorReaction();
-                Log.e(LOG_TAG, unknownError);
-            }
-
-            balanceResp = restService.setBalance("7777", MoneyTrackerApplication.getGoogleToken(this), MoneyTrackerApplication.getToken(this));
-            if ("success".equalsIgnoreCase(balanceResp.getStatus())) {
-                Log.e(LOG_TAG, "New balance: " + balanceResp.getBalance());
-            } else {
-                unknownErrorReaction();
-                Log.e(LOG_TAG, unknownError);
-            }
-        }
-    }
 
     @UiThread
     void unauthorizedErrorReaction() {

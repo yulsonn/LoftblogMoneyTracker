@@ -135,6 +135,15 @@ public class CategoriesAdapter extends SelectableAdapter<CategoriesAdapter.CardV
         return category;
     }
 
+    public void updateCategory(int position, Categories category) {
+        category.save();
+        notifyItemChanged(position);
+    }
+
+    public Categories getCategory(int position) {
+        return categories.get(position);
+    }
+
     @Override
     public int getItemCount() {
         return categories == null ? 0 : categories.size();

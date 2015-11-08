@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    style="@style/AppTheme.DialogMetrics"
+    android:orientation="vertical"
+    android:background="@color/background"
+    android:layout_centerInParent="true">
+
+    <TextView
+        style="@style/AddCategoryText"
+        android:id="@+id/edit_category_title"
+        android:text="@string/edit_expense_title"
+        android:textSize="@dimen/large_main_text"
+        android:textColor="@color/primaryDark"
+        android:textStyle="bold"
+        android:paddingBottom="@dimen/padding_small"/>
+
+    <GridLayout
+        android:id="@+id/edit_expense"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:columnCount="@integer/column_count"
+        android:rowCount="@integer/row_count"
+        android:paddingTop="@dimen/padding_medium"
+        android:paddingBottom="@dimen/padding_medium">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"
+            android:gravity="start|center"
+            android:text="@string/text_sum"
+            android:textSize="@dimen/medium_main_text"/>
+
+        <EditText
+            android:id="@+id/edit_expense_etPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"
+            android:layout_marginLeft="@dimen/add_expense_field_margin_left"
+            android:inputType="numberDecimal"
+            android:layout_marginRight="@dimen/add_expense_padding_right"
+            android:maxLength="10"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"
+            android:gravity="start|center"
+            android:text="@string/text_name"
+            android:textSize="@dimen/medium_main_text"/>
+
+        <EditText
+            android:id="@+id/edit_expense_etName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"
+            android:layout_marginLeft="@dimen/add_expense_field_margin_left"
+            android:layout_marginRight="@dimen/add_expense_padding_right"
+            android:maxLength="30"
+            android:maxLines="2"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"
+            android:gravity="start|center"
+            android:text="@string/text_category"
+            android:paddingTop="@dimen/padding_small"
+            android:textSize="@dimen/medium_main_text"/>
+
+        <Spinner
+            android:id="@+id/edit_expense_spCategories"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"
+            android:layout_marginRight="@dimen/add_expense_padding_right"
+            android:spinnerMode="dropdown"
+            android:paddingTop="@dimen/padding_small"
+            android:layout_marginLeft="@dimen/add_expense_field_margin_left_small"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"
+            android:gravity="start|center"
+            android:text="@string/text_date"
+            android:paddingTop="@dimen/padding_small"
+            android:textSize="@dimen/medium_main_text"/>
+
+        <EditText
+            android:id="@+id/edit_expense_etDate"
+            android:layout_width="64dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"
+            android:focusable="false"
+            android:layout_marginRight="@dimen/add_expense_padding_right"
+            android:hint="@string/hint_date"
+            android:paddingTop="@dimen/padding_small"
+            android:layout_marginLeft="@dimen/add_expense_field_margin_left"/>
+
+    </GridLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
+
+        <Button
+            android:id="@+id/edit_expense_btn_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/action_btn_height"
+            android:background="?android:attr/selectableItemBackground"
+            android:text="@string/edit_expense_save_btn_txt"
+            android:textColor="@color/primaryDark"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginLeft="8dp"
+            android:padding="8dp"
+            android:layout_gravity="end"
+            android:gravity="end|center_vertical"
+            android:shadowColor="@android:color/transparent"/>
+
+        <Button
+            android:id="@+id/edit_expense_btn_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/action_btn_height"
+            android:background="?android:attr/selectableItemBackground"
+            android:text="@string/edit_expense_cancel_btn_txt"
+            android:textColor="@color/primaryDark"
+            android:layout_toLeftOf="@id/edit_expense_btn_ok"
+            android:layout_gravity="end"
+            android:padding="8dp"
+            android:gravity="end|center_vertical"
+            android:shadowColor="@android:color/transparent"/>
+
+    </RelativeLayout>
+</LinearLayout>

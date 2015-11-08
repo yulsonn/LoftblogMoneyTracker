@@ -9,7 +9,7 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.res.StringRes;
 
 import ru.loftschool.loftblogmoneytracker.R;
-import ru.loftschool.loftblogmoneytracker.rest.status.UserLoginModelStatus;
+import ru.loftschool.loftblogmoneytracker.rest.status.UserStatus;
 
 @EBean
 public class SignInMessages {
@@ -33,12 +33,12 @@ public class SignInMessages {
         Message msg = new Message();
 
         switch (status) {
-            case UserLoginModelStatus.STATUS_WRONG_LOGIN:
+            case UserStatus.STATUS_WRONG_LOGIN:
                 msg.obj = noSuchNameError;
                 msg.what = MESSAGE_USER;
                 handler.sendMessage(msg);
                 break;
-            case UserLoginModelStatus.STATUS_WRONG_PASSWORD:
+            case UserStatus.STATUS_WRONG_PASSWORD:
                 msg.obj = wrongPasswordError;
                 msg.what = MESSAGE_PASSWORD;
                 handler.sendMessage(msg);

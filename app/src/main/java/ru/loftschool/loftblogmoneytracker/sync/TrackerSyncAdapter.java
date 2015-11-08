@@ -147,7 +147,7 @@ public class TrackerSyncAdapter extends AbstractThreadedSyncAdapter implements T
 
     void checkTokenValid() {
         RestClient restClient = new RestClient();
-        restClient.getGoogleAccountDataGetAPI().tokenStatus(googleToken, new Callback<GoogleAccountDataModel>() {
+        restClient.getGoogleAccountDataAPI().tokenStatus(googleToken, new Callback<GoogleAccountDataModel>() {
             @Override
             public void success(GoogleAccountDataModel googleAccountDataModel, Response response) {
                 Log.e(TAG, "Google token status: " + googleAccountDataModel.getStatus());

@@ -47,4 +47,8 @@ public class Categories extends Model {
     public static Categories selectCategoryById(int serverId){
         return new Select().from(Categories.class).where("sId = ?", serverId).executeSingle();
     }
+
+    public static List<Categories> selectAll() {
+        return new Select().from(Categories.class).orderBy("Id").execute();
+    }
 }

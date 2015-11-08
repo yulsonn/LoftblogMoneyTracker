@@ -94,7 +94,7 @@ public class AddExpenseActivity extends AppCompatActivity implements DateFormats
     @Click(R.id.add_expense_button)
     public void addExpenseButton() {
 
-        if (validator.validateNewExpense(etPrice, etName, getBaseContext())) {
+        if (validator.validateNewExpense(etPrice, etName, this)) {
             Expenses newExpense = new Expenses(etName.getText().toString(), Float.parseFloat(etPrice.getText().toString()),
                     DateConvertUtils.stringToDate(etDate.getText().toString(), DEFAULT_FORMAT), (Categories)spCategories.getSelectedItem());
             Expenses addedExpense = ExpensesFragment.getAdapter().addExpense(newExpense);
@@ -106,10 +106,6 @@ public class AddExpenseActivity extends AppCompatActivity implements DateFormats
             finish();
             overridePendingTransition(R.anim.activity_open_scale,R.anim.activity_close_translate);
         }
-    }
-
-    private void addExpenseToDB() {
-
     }
 
     private List<Categories> getCategoriesList(){

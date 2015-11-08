@@ -87,7 +87,7 @@ public class SplashActivity extends AppCompatActivity implements TokenKeyStorage
 
     @Background
     void checkTokenValid() {
-        restClient.getGoogleAccountDataGetAPI().tokenStatus(googleToken, new Callback<GoogleAccountDataModel>() {
+        restClient.getGoogleAccountDataAPI().tokenStatus(googleToken, new Callback<GoogleAccountDataModel>() {
             @Override
             public void success(GoogleAccountDataModel googleAccountDataModel, Response response) {
                 Log.e(TAG, "STATUS: " + googleAccountDataModel.getStatus());

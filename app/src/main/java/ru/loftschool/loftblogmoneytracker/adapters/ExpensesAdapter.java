@@ -57,7 +57,7 @@ public class ExpensesAdapter extends SelectableAdapter<ExpensesAdapter.CardViewH
         holder.textTitle.setText(expense.name);
         holder.dateTitle.setText(DateConvertUtils.dateToString(expense.date, DateConvertUtils.DEFAULT_FORMAT));
         holder.sumTitle.setText(String.format("%.2f",expense.price));
-        holder.categoryTitle.setText(expense.category.toString());  // for testing of Categories-Expenses relation
+        holder.categoryTitle.setText(expense.category.toString());
         holder.selectedOverlay.setVisibility(isSelected(position) ? View.VISIBLE : View.INVISIBLE);
 
         setAnimation(holder.cardView, position);
@@ -135,6 +135,15 @@ public class ExpensesAdapter extends SelectableAdapter<ExpensesAdapter.CardViewH
         expenses.add(expense);
         notifyItemInserted(getItemCount() - 1);
         return  expense;
+    }
+
+    public Expenses getExpense(int position) {
+        return expenses.get(position);
+    }
+
+    public void updateExpense(int position, Expenses expense) {
+        expense.save();
+        notifyItemChanged(position);
     }
 
     @Override

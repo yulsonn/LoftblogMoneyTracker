@@ -27,10 +27,10 @@ import java.lang.ref.WeakReference;
 import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.rest.RestService;
 import ru.loftschool.loftblogmoneytracker.rest.models.UserRegisterModel;
-import ru.loftschool.loftblogmoneytracker.rest.status.UserRegisterModelStatus;
-import ru.loftschool.loftblogmoneytracker.utils.network.NetworkConnectionChecker;
+import ru.loftschool.loftblogmoneytracker.rest.status.UserStatus;
 import ru.loftschool.loftblogmoneytracker.utils.SignInMessages;
 import ru.loftschool.loftblogmoneytracker.utils.TextInputValidator;
+import ru.loftschool.loftblogmoneytracker.utils.network.NetworkConnectionChecker;
 
 @EActivity(R.layout.activity_registration)
 public class RegistrationActivity extends AppCompatActivity {
@@ -104,9 +104,9 @@ public class RegistrationActivity extends AppCompatActivity {
         RestService restService = new RestService();
         UserRegisterModel response = restService.register(etUser.getText().toString(), etPassword.getText().toString());
 
-        if (UserRegisterModelStatus.STATUS_OK.equals(response.getStatus())) {
+        if (UserStatus.STATUS_OK.equals(response.getStatus())) {
             completeRegistration();
-        } else if (UserRegisterModelStatus.STATUS_ERROR.equals(response.getStatus())) {
+        } else if (UserStatus.STATUS_ERROR_LOGIN_EXISTS.equals(response.getStatus())) {
             message.showErrorRegistrationMessage(true, getCurrentFocus(), handler);
         } else {
             message.showErrorRegistrationMessage(false, getCurrentFocus(), handler);

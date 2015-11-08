@@ -26,20 +26,18 @@
         <EditText
             style="@style/AddCategoryText"
             android:id="@+id/new_category_name"
-            android:textSize="@dimen/medium_main_text"
-/>
+            android:textSize="@dimen/medium_main_text" />
 
     </android.support.design.widget.TextInputLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
+        android:layout_height="wrap_content">
 
         <Button
             android:id="@+id/btn_ok"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/add_category_btn_height"
+            android:layout_height="@dimen/action_btn_height"
             android:background="?android:attr/selectableItemBackground"
             android:text="@string/add_category_btn_ok_txt"
             android:textColor="@color/primaryDark"
@@ -54,7 +52,7 @@
         <Button
             android:id="@+id/btn_cancel"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/add_category_btn_height"
+            android:layout_height="@dimen/action_btn_height"
             android:background="?android:attr/selectableItemBackground"
             android:text="@string/add_category_btn_cancel_txt"
             android:textColor="@color/primaryDark"
@@ -63,8 +61,5 @@
             android:padding="8dp"
             android:gravity="end|center_vertical"
             android:shadowColor="@android:color/transparent"/>
-
-
-
     </RelativeLayout>
 </LinearLayout>

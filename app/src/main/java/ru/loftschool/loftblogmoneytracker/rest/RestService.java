@@ -26,15 +26,15 @@ public class RestService {
     }
 
     public UserRegisterModel register(String login, String password) {
-        return restClient.getUserRegisterAPI().registerUser(login, password, FLAG);
+        return restClient.getUserAPI().registerUser(login, password, FLAG);
     }
 
     public UserLoginModel login(String login, String password) {
-        return restClient.getUserLoginAPI().loginUser(login, password);
+        return restClient.getUserAPI().loginUser(login, password);
     }
 
     public UserLogoutModel logout() {
-        return restClient.getUserLogoutAPI().logoutUser();
+        return restClient.getUserAPI().logoutUser();
     }
 
     public CategoryModel addCategory(String title, String gToken, String token) throws UnauthorizedException{
@@ -50,7 +50,7 @@ public class RestService {
     }
 
     public GoogleAccountDataModel getGoogleAccountData(String gToken) {
-        return restClient.getGoogleAccountDataGetAPI().googleJson(gToken);
+        return restClient.getGoogleAccountDataAPI().googleJson(gToken);
     }
 
     public AllExpensesModel getAllExpenses(String gToken, String token) {
@@ -80,34 +80,6 @@ public class RestService {
     public BalanceModel setBalance(String sum, String gToken, String token) {
         return restClient.getBalanceAPI().setBalance(sum, gToken, token);
     }
-
-//    public void categoriesSync(Integer id, String title, String gToken, String token, Callback<AllCategoriesModel> cb) {
-//        restClient.getCategoriesAPI().categoriesSync(id, title, gToken, token, cb);
-//    }
-
-//    public void categoriesSync(List<Map<String, String>> data, /*String gToken,*/ String token, Callback<AllCategoriesModel> cb) {
-//        restClient.getCategoriesAPI().categoriesSync(data, /*gToken,*/ token, cb);
-//    }
-
-//    public void categoriesSync(List<Integer> id, List<String> title, /*String gToken,*/ String token, Callback<AllCategoriesModel> cb) {
-//        restClient.getCategoriesAPI().categoriesSync(id, title, /*gToken,*/ token, cb);
-//    }
-
-//    public void categoriesSync(Map<Integer, String> data, String gToken, String token, Callback<AllCategoriesModel> cb) {
-//        restClient.getCategoriesAPI().categoriesSync(data, gToken, token, cb);
-//    }
-
-//    public void categoriesSync(CategorySyncObject[] data, String gToken, String token, Callback<AllCategoriesModel> cb) {
-//        restClient.getCategoriesAPI().categoriesSync(data, gToken, token, cb);
-//    }
-
-//    public void categoriesSync(List<CategorySyncObject> data, String gToken, String token, Callback<AllCategoriesModel> cb) {
-//        restClient.getCategoriesAPI().categoriesSync(data, gToken, token, cb);
-//    }
-
-//    public AllCategoriesModel categoriesSync(SyncWrapper data, String gToken, String token) {
-//        return restClient.getCategoriesAPI().categoriesSync(data, gToken, token);
-//    }
 
      public void categoriesSync(SyncWrapper data, String gToken, String token, Callback<AllCategoriesModel> cb) {
             restClient.getCategoriesAPI().categoriesSync(data, gToken, token, cb);

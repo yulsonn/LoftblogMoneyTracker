@@ -26,6 +26,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.activeandroid.query.Select;
@@ -100,6 +101,15 @@ public class CategoriesFragment extends Fragment {
     @StringRes(R.string.snackbar_removed_categories)
     String removedCategories;
 
+    @StringRes(R.string.edit_category_title)
+    String editCategoryTitle;
+
+    @StringRes(R.string.edit_category_btn_ok_txt)
+    String editCategoryBtnOk;
+
+    @StringRes(R.string.edit_category_changed)
+    String categoryChanged;
+
     @Bean
     TextInputValidator validator;
 
@@ -138,7 +148,7 @@ public class CategoriesFragment extends Fragment {
     @Click(R.id.categories_fab)
     void fab() {
         MainActivity.destroyActionModeIfNeeded();
-        alertDialog();
+        addCategoryDialog();
     }
 
     @Override
@@ -226,6 +236,8 @@ public class CategoriesFragment extends Fragment {
                     public void onItemClicked(int position) {
                         if (MainActivity.getActionMode() != null) {
                             toggleSelection(position);
+                        } else {
+                            editCategoryDialog(position);
                         }
                     }
 
@@ -268,9 +280,9 @@ public class CategoriesFragment extends Fragment {
         });
     }
 
-    private void alertDialog() {
+    private void addCategoryDialog() {
         final Dialog dialog = new Dialog(getActivity());
-        dialog.setContentView(R.layout.dialog_add_category);
+        dialog.setContentView(R.layout.dialog_category);
         final EditText editText = (EditText) dialog.findViewById(R.id.new_category_name);
         final TextInputLayout categoryWrapper = (TextInputLayout) dialog.findViewById(R.id.categoryWrapper);
         final Button okButton = (Button) dialog.findViewById(R.id.btn_ok);
@@ -286,6 +298,47 @@ public class CategoriesFragment extends Fragment {
                     Categories addedCategory = adapter.addCategory(newCategory);
                     Toast.makeText(getActivity(), categoryAdded + newCategory.name, Toast.LENGTH_SHORT).show();
                     serverRequest.addCategoryToServer(addedCategory);
+                    dialog.dismiss();
+                }
+            }
+        });
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        dialog.getWindow().getAttributes().windowAnimations = R.style.AddCategoryDialogAnimation;
+        dialog.show();
+    }
+
+    private void editCategoryDialog(final int position) {
+        final Categories category = adapter.getCategory(position);
+
+        final Dialog dialog = new Dialog(getActivity());
+        dialog.setContentView(R.layout.dialog_category);
+        final TextView title = (TextView) dialog.findViewById(R.id.new_category_title);
+        final EditText editText = (EditText) dialog.findViewById(R.id.new_category_name);
+        final TextInputLayout categoryWrapper = (TextInputLayout) dialog.findViewById(R.id.categoryWrapper);
+        final Button okButton = (Button) dialog.findViewById(R.id.btn_ok);
+
+        editText.setText(category.name);
+        title.setText(editCategoryTitle);
+        okButton.setText(editCategoryBtnOk);
+        categoryWrapper.setHint(categoryEnter);
+
+        final Editable text = editText.getText();
+        Button cancelButton = (Button) dialog.findViewById(R.id.btn_cancel);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (validator.validateCategoryName(text.toString(), categoryWrapper, getContext())) {
+                    category.name = text.toString();
+                    adapter.updateCategory(position, category);
+                    Toast.makeText(getActivity(), categoryChanged + category.name, Toast.LENGTH_SHORT).show();
+                    serverRequest.editCategoryOnServer(category);
                     dialog.dismiss();
                 }
             }
