@@ -3,8 +3,8 @@ package ru.loftschool.loftblogmoneytracker.rest.api;
 import retrofit.Callback;
 import retrofit.http.GET;
 import retrofit.http.Query;
+import ru.loftschool.loftblogmoneytracker.rest.SyncWrapper;
 import ru.loftschool.loftblogmoneytracker.rest.models.AllExpensesModel;
-import ru.loftschool.loftblogmoneytracker.rest.models.CategoryDetails;
 
 public interface ExpensesAPI {
 
@@ -21,11 +21,8 @@ public interface ExpensesAPI {
                                 @Query("auth_token") String token);
 
     @GET("/transactions/synch")
-    void expensesSync(@Query("data{id}") Integer id,
-                      @Query("data[comment]")String comment,
-                      @Query("data[sum]")String sum,
-                      @Query("data[tr_date]")String date,
+    void expensesSync(@Query("data") SyncWrapper data,
                       @Query("google_token") String gToken,
                       @Query("auth_token") String token,
-                      Callback<CategoryDetails> cb);
+                      Callback<AllExpensesModel> cb);
 }

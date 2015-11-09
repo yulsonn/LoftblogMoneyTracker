@@ -1,14 +1,15 @@
 package ru.loftschool.loftblogmoneytracker.rest.api;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit.Callback;
 import retrofit.http.GET;
 import retrofit.http.Path;
 import retrofit.http.Query;
+import ru.loftschool.loftblogmoneytracker.rest.SyncWrapper;
 import ru.loftschool.loftblogmoneytracker.rest.exception.UnauthorizedException;
 import ru.loftschool.loftblogmoneytracker.rest.models.AllCategoriesModel;
-import ru.loftschool.loftblogmoneytracker.rest.models.CategoryDetails;
 import ru.loftschool.loftblogmoneytracker.rest.models.CategoryModel;
 import ru.loftschool.loftblogmoneytracker.rest.models.CategoryWithExpensesModel;
 
@@ -28,23 +29,22 @@ public interface CategoriesAPI {
     @GET("/categories/del")
     CategoryModel deleteCategory(@Query("id") Integer id,
                                  @Query("google_token") String gToken,
-                                 @Query("auth_token") String token) throws UnauthorizedException;
+                                 @Query("auth_token") String token);
 
     @GET("/categories")
     AllCategoriesModel getAllCategories(@Query("google_token") String gToken,
                                         @Query("auth_token") String token);
 
     @GET("/categories/{id}")
-    CategoryWithExpensesModel getCategoryWithExpenses(@Path("id") Integer id,
+    List<CategoryWithExpensesModel> getCategoryWithExpenses(@Path("id") Integer id,
                                                       @Query("google_token") String gToken,
                                                       @Query("auth_token") String token);
 
     @GET("/categories/synch")
-    void categoriesSync(@Query("data{id}") Integer id,
-                        @Query("data[title]")String title,
+    void categoriesSync(@Query("data") SyncWrapper data,
                         @Query("google_token") String gToken,
                         @Query("auth_token") String token,
-                        Callback<CategoryDetails> cb);
+                        Callback<AllCategoriesModel> cb);
 
     @GET("/transcat")
     ArrayList<CategoryWithExpensesModel> getAllCategoriesWithExpenses(@Query("google_token") String gToken,

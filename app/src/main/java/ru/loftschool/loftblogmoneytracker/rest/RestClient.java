@@ -4,22 +4,18 @@ import retrofit.RestAdapter;
 import ru.loftschool.loftblogmoneytracker.rest.api.BalanceAPI;
 import ru.loftschool.loftblogmoneytracker.rest.api.CategoriesAPI;
 import ru.loftschool.loftblogmoneytracker.rest.api.ExpensesAPI;
-import ru.loftschool.loftblogmoneytracker.rest.api.GoogleAccountDataGetAPI;
-import ru.loftschool.loftblogmoneytracker.rest.api.UserLoginAPI;
-import ru.loftschool.loftblogmoneytracker.rest.api.UserLogoutAPI;
-import ru.loftschool.loftblogmoneytracker.rest.api.UserRegisterAPI;
-import ru.loftschool.loftblogmoneytracker.utils.RetrofitErrorHandler;
+import ru.loftschool.loftblogmoneytracker.rest.api.GoogleAccountDataAPI;
+import ru.loftschool.loftblogmoneytracker.rest.api.UserAPI;
+import ru.loftschool.loftblogmoneytracker.utils.network.RetrofitErrorHandler;
 
 public class RestClient {
 
     //private static final String BASE_URL = "http://62.109.17.114";
     private static final String BASE_URL = "http://lmt.loftblog.tmweb.ru";
 
-    private UserRegisterAPI userRegisterAPI;
-    private UserLoginAPI userLoginAPI;
-    private UserLogoutAPI userLogoutAPI;
+    private UserAPI userAPI;
     private CategoriesAPI categoriesAPI;
-    private GoogleAccountDataGetAPI googleAccountDataGetAPI;
+    private GoogleAccountDataAPI googleAccountDataAPI;
     private ExpensesAPI expensesAPI;
     private final BalanceAPI balanceAPI;
 
@@ -30,33 +26,23 @@ public class RestClient {
                 .setErrorHandler(new RetrofitErrorHandler())
                 .build();
 
-        userRegisterAPI = restAdapter.create(UserRegisterAPI.class);
-        userLoginAPI    = restAdapter.create(UserLoginAPI.class);
-        userLogoutAPI   = restAdapter.create(UserLogoutAPI.class);
+        userAPI         = restAdapter.create(UserAPI.class);
         categoriesAPI   = restAdapter.create(CategoriesAPI.class);
-        googleAccountDataGetAPI = restAdapter.create(GoogleAccountDataGetAPI.class);
+        googleAccountDataAPI = restAdapter.create(GoogleAccountDataAPI.class);
         expensesAPI     = restAdapter.create(ExpensesAPI.class);
         balanceAPI      = restAdapter.create(BalanceAPI.class);
     }
 
-    public UserRegisterAPI getUserRegisterAPI() {
-        return userRegisterAPI;
-    }
-
-    public UserLoginAPI getUserLoginAPI() {
-        return userLoginAPI;
-    }
-
-    public UserLogoutAPI getUserLogoutAPI() {
-        return userLogoutAPI;
+    public UserAPI getUserAPI() {
+        return userAPI;
     }
 
     public CategoriesAPI getCategoriesAPI() {
         return categoriesAPI;
     }
 
-    public GoogleAccountDataGetAPI getGoogleAccountDataGetAPI() {
-        return googleAccountDataGetAPI;
+    public GoogleAccountDataAPI getGoogleAccountDataAPI() {
+        return googleAccountDataAPI;
     }
 
     public ExpensesAPI getExpensesAPI() {

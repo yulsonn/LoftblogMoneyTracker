@@ -1,8 +1,9 @@
 <resources>
     <string name="app_name">LoftblogMoneyTracker</string>
 
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <!--Sync-->
+    <string name="content_authority" translatable="false">ru.loftschool.loftblogmoneytracker</string>
+    <string name="sync_account_type" translatable="false">loftblogmoneytracker.loftschool.ru</string>
 
     <!--Строки для списка транзакций-->
     <string name="item_text_name">Name</string>
@@ -16,13 +17,10 @@
     <string name="nav_drawer_categories">Категории</string>
     <string name="nav_drawer_statistics">Статистика</string>
     <string name="nav_drawer_settings">Настройки</string>
+    <string name="nav_drawer_logout">Выйти</string>
+    <string name="nav_drawer_subtitle_account">Аккаунт</string>
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
-
-    <!--Временный текст для фрагментов-->
-    <string name="categories_text">Здесь будут категории...</string>
-    <string name="statistics_text">Здесь будет статистика...</string>
-    <string name="settings_text">Здесь будут настройки...</string>
 
     <!--Заголовки фрагментов-->
     <string name="frag_title_expenses">Траты</string>
@@ -77,10 +75,6 @@
     <string name="error_min_length">"Минимальное количество символов: "</string>
     <string name="menu_item_logout">Logout</string>
 
-    <!--Sync-->
-    <string name="content_authority">ru.loftschool.loftblogmoneytracker</string>
-    <string name="sync_account_type">loftblogmoneytracker.loftschool.ru</string>
-
     <string name="error_unknown">Неизвестная ошибка</string>
     <string name="delete">Удалить</string>
     <string name="select_all">Выбрать все</string>
@@ -101,11 +95,53 @@
     <string name="snackbar_removed_expenses">Траты удалены</string>
     <string name="snackbar_removed_category">Категория удалена</string>
     <string name="snackbar_removed_categories">Категории удалены</string>
+
+    <!--Add/edit category-->
     <string name="add_category_title">Добавление категории</string>
     <string name="add_category_btn_cancel_txt">Отмена</string>
-    <string name="add_category_btn_ok_txt">ОК</string>
+    <string name="add_category_btn_ok_txt">Добавить</string>
+    <string name="edit_category_title">Редактирование категории</string>
+    <string name="edit_category_btn_ok_txt">Сохранить</string>
+    <string name="edit_category_changed">"Категория изменена: "</string>
+
+    <!--Search-->
     <string name="search_label">Поиск</string>
     <string name="currency_RUB">\u20BD</string>
     <string name="pie_chart_title">Распределение трат по категориям</string>
+
+    <string-array name="initial_categories">
+        <item>Продукты</item>
+        <item>Одежда</item>
+        <item>Связь</item>
+        <item>Развлечения</item>
+        <item>Транспорт</item>
+        <item>Другое</item>
+    </string-array>
+
+    <!--Preferences screen-->
+    <string name="pref_notification_section">Уведомления</string>
+
+    <string name="pref_enable_notifications_key" translatable="false">enable_notifications</string>
+    <string name="pref_enable_vibro_key" translatable="false">enable_vibro</string>
+    <string name="pref_enable_led_key" translatable="false">enable_led</string>
+    <string name="pref_enable_sound_key" translatable="false">enable_sound</string>
+
+    <string name="pref_enable_notifications_label">Уведомления о синхронизации</string>
+    <string name="pref_enable_vibro_label">Вибрация</string>
+    <string name="pref_enable_led_label">Световой индикатор</string>
+    <string name="pref_enable_sound_label">Звук</string>
+
+    <string name="pref_enable_notifications_true">Enabled</string>
+    <string name="pref_enable_notifications_false">Disabled</string>
+    <string name="pref_enable_notifications_default" translatable="false">true</string>
+
+    <!-- String for notification bar-->
+    <string name="notification_message">Данные синхронизированы</string>
+
+    <!--Edit category-->
+    <string name="edit_expense_title">Редактирование траты</string>
+    <string name="edit_expense_save_btn_txt">Сохранить</string>
+    <string name="edit_expense_cancel_btn_txt">Отмена</string>
+    <string name="edit_expense_changed">"Трата изменена: "</string>
 
 </resources>

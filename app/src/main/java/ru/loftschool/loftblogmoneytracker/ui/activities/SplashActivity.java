@@ -24,7 +24,7 @@ import ru.loftschool.loftblogmoneytracker.rest.RestClient;
 import ru.loftschool.loftblogmoneytracker.rest.models.GoogleAccountDataModel;
 import ru.loftschool.loftblogmoneytracker.rest.status.GoogleAccountDataStatus;
 import ru.loftschool.loftblogmoneytracker.sync.TrackerSyncAdapter;
-import ru.loftschool.loftblogmoneytracker.utils.NetworkConnectionChecker;
+import ru.loftschool.loftblogmoneytracker.utils.network.NetworkConnectionChecker;
 import ru.loftschool.loftblogmoneytracker.utils.google.GoogleTokenUtil;
 import ru.loftschool.loftblogmoneytracker.utils.TokenKeyStorage;
 
@@ -87,7 +87,7 @@ public class SplashActivity extends AppCompatActivity implements TokenKeyStorage
 
     @Background
     void checkTokenValid() {
-        restClient.getGoogleAccountDataGetAPI().tokenStatus(googleToken, new Callback<GoogleAccountDataModel>() {
+        restClient.getGoogleAccountDataAPI().tokenStatus(googleToken, new Callback<GoogleAccountDataModel>() {
             @Override
             public void success(GoogleAccountDataModel googleAccountDataModel, Response response) {
                 Log.e(TAG, "STATUS: " + googleAccountDataModel.getStatus());

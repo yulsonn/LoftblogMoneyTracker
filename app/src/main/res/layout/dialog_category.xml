@@ -26,8 +26,7 @@
         <EditText
             style="@style/AddCategoryText"
             android:id="@+id/new_category_name"
-            android:textSize="@dimen/medium_main_text"
-/>
+            android:textSize="@dimen/medium_main_text" />
 
     </android.support.design.widget.TextInputLayout>
 
@@ -36,29 +35,31 @@
         android:layout_height="wrap_content">
 
         <Button
-            android:id="@+id/btn_cancel"
-            android:layout_width="@dimen/add_category_btn_height"
-            android:layout_height="wrap_content"
-            android:background="@color/background"
-            android:text="@string/add_category_btn_cancel_txt"
-            android:textColor="@color/primaryDark"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_gravity="left"
-            android:elevation="@dimen/btn_elevation"
-            android:clickable="true" />
-
-        <Button
             android:id="@+id/btn_ok"
-            android:layout_width="@dimen/add_category_btn_height"
-            android:layout_height="wrap_content"
-            android:background="@color/background"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/action_btn_height"
+            android:background="?android:attr/selectableItemBackground"
             android:text="@string/add_category_btn_ok_txt"
             android:textColor="@color/primaryDark"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:layout_gravity="right"
-            android:elevation="@dimen/btn_elevation" />
+            android:layout_marginLeft="8dp"
+            android:padding="8dp"
+            android:layout_gravity="end"
+            android:gravity="end|center_vertical"
+            android:shadowColor="@android:color/transparent"/>
 
+        <Button
+            android:id="@+id/btn_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/action_btn_height"
+            android:background="?android:attr/selectableItemBackground"
+            android:text="@string/add_category_btn_cancel_txt"
+            android:textColor="@color/primaryDark"
+            android:layout_toLeftOf="@id/btn_ok"
+            android:layout_gravity="end"
+            android:padding="8dp"
+            android:gravity="end|center_vertical"
+            android:shadowColor="@android:color/transparent"/>
     </RelativeLayout>
 </LinearLayout>

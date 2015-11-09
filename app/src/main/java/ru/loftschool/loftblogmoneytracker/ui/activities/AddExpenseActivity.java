@@ -18,24 +18,22 @@ import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.StringRes;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.database.model.Categories;
 import ru.loftschool.loftblogmoneytracker.database.model.Expenses;
 import ru.loftschool.loftblogmoneytracker.ui.dialogs.DatePickerFragment;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.ExpensesFragment;
+import ru.loftschool.loftblogmoneytracker.utils.ServerReqUtils;
+import ru.loftschool.loftblogmoneytracker.utils.date.DateConvertUtils;
+import ru.loftschool.loftblogmoneytracker.utils.date.DateFormats;
 import ru.loftschool.loftblogmoneytracker.utils.TextInputValidator;
 
 @EActivity(R.layout.activity_add_expense)
-public class AddExpenseActivity extends AppCompatActivity {
-
-    private final static DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
+public class AddExpenseActivity extends AppCompatActivity implements DateFormats {
 
     @ViewById
     Toolbar toolbar;
@@ -58,6 +56,9 @@ public class AddExpenseActivity extends AppCompatActivity {
     @Bean
     TextInputValidator validator;
 
+    @Bean
+    ServerReqUtils serverRequest;
+
     @Click(R.id.etDate)
     void dateChoose() {
         DatePickerFragment datePicker = new DatePickerFragment(){
@@ -65,7 +66,7 @@ public class AddExpenseActivity extends AppCompatActivity {
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                 Calendar dateCalendar = Calendar.getInstance();
                 dateCalendar.set(year, monthOfYear, dayOfMonth);
-                etDate.setText(dateFormat.format(dateCalendar.getTimeInMillis()));
+                etDate.setText(DateConvertUtils.dateToString(dateCalendar.getTimeInMillis(), DEFAULT_FORMAT));
             }
         };
         datePicker.show(getSupportFragmentManager(), DatePickerFragment.class.getSimpleName());
@@ -82,7 +83,7 @@ public class AddExpenseActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setTitle(title);
-        etDate.setText(dateFormat.format(new Date()));
+        etDate.setText(DateConvertUtils.dateToString(new Date(), DEFAULT_FORMAT));
 
         ArrayAdapter<Categories> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, getCategoriesList());
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -93,13 +94,15 @@ public class AddExpenseActivity extends AppCompatActivity {
     @Click(R.id.add_expense_button)
     public void addExpenseButton() {
 
-        if (validator.validateNewExpense(etPrice, etName, getBaseContext())) {
-            Expenses newExpense = new Expenses(etName.getText().toString(), Float.parseFloat(etPrice.getText().toString()), etDate.getText().toString(), (Categories)spCategories.getSelectedItem());
-            ExpensesFragment.getAdapter().addExpense(newExpense);
+        if (validator.validateNewExpense(etPrice, etName, this)) {
+            Expenses newExpense = new Expenses(etName.getText().toString(), Float.parseFloat(etPrice.getText().toString()),
+                    DateConvertUtils.stringToDate(etDate.getText().toString(), DEFAULT_FORMAT), (Categories)spCategories.getSelectedItem());
+            Expenses addedExpense = ExpensesFragment.getAdapter().addExpense(newExpense);
             Toast.makeText(this, expenseAdded + newExpense.price + ", "
                     + newExpense.name + ", "
-                    + String.valueOf(dateFormat.format(new Date())) + ", "
+                    + DateConvertUtils.dateToString(new Date(), DEFAULT_FORMAT) + ", "
                     + newExpense.category.toString(), Toast.LENGTH_SHORT).show();
+            serverRequest.addExpenseToServer(addedExpense);
             finish();
             overridePendingTransition(R.anim.activity_open_scale,R.anim.activity_close_translate);
         }

@@ -22,8 +22,8 @@ import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.ui.activities.LoginActivity;
 import ru.loftschool.loftblogmoneytracker.ui.activities.LoginActivity_;
 import ru.loftschool.loftblogmoneytracker.ui.activities.MainActivity_;
-import ru.loftschool.loftblogmoneytracker.utils.NetworkConnectionChecker;
 import ru.loftschool.loftblogmoneytracker.utils.TokenKeyStorage;
+import ru.loftschool.loftblogmoneytracker.utils.network.NetworkConnectionChecker;
 
 @EBean
 public class GoogleTokenUtil {

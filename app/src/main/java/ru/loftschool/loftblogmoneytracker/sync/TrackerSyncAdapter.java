@@ -9,12 +9,18 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SyncRequest;
 import android.content.SyncResult;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.activeandroid.query.Select;
+import com.google.android.gms.auth.GoogleAuthException;
+import com.google.android.gms.auth.GoogleAuthUtil;
+import com.google.android.gms.auth.UserRecoverableAuthException;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit.Callback;
@@ -24,13 +30,25 @@ import ru.loftschool.loftblogmoneytracker.MoneyTrackerApplication;
 import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.database.model.Categories;
 import ru.loftschool.loftblogmoneytracker.database.model.Expenses;
+import ru.loftschool.loftblogmoneytracker.rest.CategorySyncObject;
+import ru.loftschool.loftblogmoneytracker.rest.ExpensesSyncObject;
+import ru.loftschool.loftblogmoneytracker.rest.RestClient;
 import ru.loftschool.loftblogmoneytracker.rest.RestService;
-import ru.loftschool.loftblogmoneytracker.rest.models.CategoryDetails;
+import ru.loftschool.loftblogmoneytracker.rest.SyncWrapper;
+import ru.loftschool.loftblogmoneytracker.rest.models.AllCategoriesModel;
+import ru.loftschool.loftblogmoneytracker.rest.models.AllExpensesModel;
+import ru.loftschool.loftblogmoneytracker.rest.models.GoogleAccountDataModel;
+import ru.loftschool.loftblogmoneytracker.rest.status.GoogleAccountDataStatus;
+import ru.loftschool.loftblogmoneytracker.utils.NotificationUtil;
+import ru.loftschool.loftblogmoneytracker.utils.TokenKeyStorage;
+import ru.loftschool.loftblogmoneytracker.utils.date.DateConvertUtils;
+import ru.loftschool.loftblogmoneytracker.utils.date.DateFormats;
+import ru.loftschool.loftblogmoneytracker.utils.google.GoogleScopes;
 
-public class TrackerSyncAdapter extends AbstractThreadedSyncAdapter {
+public class TrackerSyncAdapter extends AbstractThreadedSyncAdapter implements TokenKeyStorage, GoogleScopes {
 
     private static final String TAG = TrackerSyncAdapter.class.getSimpleName();
-    RestService restService;
+    private String googleToken;
 
     public TrackerSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
@@ -43,57 +61,122 @@ public class TrackerSyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
         Log.d(TAG, "onPerformSync() starts");
-        restService = new RestService();
-        categoriesSync();
-        expensesSync();
+        googleToken = MoneyTrackerApplication.getGoogleToken(getContext());
+        if(DEFAULT_TOKEN_GOOGLE_KEY.equalsIgnoreCase(googleToken)) {
+            if (DEFAULT_TOKEN_KEY.equals(MoneyTrackerApplication.getToken(getContext()))) {
+                Log.e(TAG, "Wrong token. Sync failed.");
+            }
+        } else {
+            checkTokenValid();
+        }
     }
 
-    private void categoriesSync() {
+    public void categoriesSync() {
         Log.d(TAG, "categoriesSync() called with: " + "");
+        RestService restService = new RestService();
         List<Categories> categories = new Select().from(Categories.class).execute();
-        if (!categories.isEmpty()) {
-            for (Categories category : categories) {
-                restService.categoriesSync(category.getId().intValue(),
-                        category.name,
-                        MoneyTrackerApplication.getGoogleToken(getContext()),
-                        MoneyTrackerApplication.getToken(getContext()),
-                        new Callback<CategoryDetails>() {
-                            @Override
-                            public void success(CategoryDetails categoryDetails, Response response) {
-                                Log.e(TAG, "OK. Category sync success");
-                            }
 
-                            @Override
-                            public void failure(RetrofitError error) {
-                                Log.e(TAG, "ERROR. Category sync failed");
-                            }
-                        });
+        List<CategorySyncObject> params = new ArrayList<>();
+        for (Categories category : categories) {
+            if (category.sId != null) {
+                params.add(new CategorySyncObject(category.sId, category.name));
             }
         }
+
+        SyncWrapper data = new SyncWrapper(params, null);
+
+        restService.categoriesSync(
+                data,
+                MoneyTrackerApplication.getGoogleToken(getContext()),
+                MoneyTrackerApplication.getToken(getContext()),
+                new Callback<AllCategoriesModel>() {
+                    @Override
+                    public void success(AllCategoriesModel allCategoriesModel, Response response) {
+                        if (allCategoriesModel.getStatus().equalsIgnoreCase("success")) {
+                            Log.e(TAG, "OK. Category sync status success");
+                        } else {
+                            Log.e(TAG, "BAD. Something went wrong");
+                        }
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        Log.e(TAG, "ERROR. Category sync failed");
+                    }
+                });
     }
 
     private void expensesSync() {
         Log.d(TAG, "expensesSync() called with: " + "");
-        List<Expenses> expenses = new Select().from(Expenses.class).execute();
-        if (!expenses.isEmpty()){
-            for(Expenses expense : expenses)
-                restService.expensesSync(expense.getId().intValue(),
-                        expense.name,
-                        expense.price.toString(),
-                        expense.date,
-                        MoneyTrackerApplication.getGoogleToken(getContext()),
-                        MoneyTrackerApplication.getToken(getContext()),
-                        new Callback<CategoryDetails>() {
-                            @Override
-                            public void success(CategoryDetails categoryDetails, Response response) {
-                                Log.e(TAG, "OK. Expenses sync success");
-                            }
+        RestService restService = new RestService();
 
-                            @Override
-                            public void failure(RetrofitError error) {
-                                Log.e(TAG, "ERROR. Expenses sync failed");
-                            }
-                        });
+        List<Expenses> expenses = new Select().from(Expenses.class).execute();
+
+        List<ExpensesSyncObject> params = new ArrayList<>();
+        for (Expenses expense : expenses) {
+            if (expense.sId != null) {
+                params.add(new ExpensesSyncObject(expense.sId, expense.category.sId, expense.name,
+                        String.valueOf(expense.price), DateConvertUtils.dateToString(expense.date, DateFormats.INVERSE_DATE_FORMAT)));
+            }
+        }
+
+        SyncWrapper data = new SyncWrapper(null, params);
+
+        restService.expensesSync(
+                data,
+                MoneyTrackerApplication.getGoogleToken(getContext()),
+                MoneyTrackerApplication.getToken(getContext()),
+                new Callback<AllExpensesModel>() {
+                    @Override
+                    public void success(AllExpensesModel allExpensesModel, Response response) {
+                        if (allExpensesModel.getStatus().equalsIgnoreCase("success")) {
+                            Log.e(TAG, "OK. Expenses sync status success");
+                        } else {
+                            Log.e(TAG, "BAD. Something went wrong");
+                        }
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        Log.e(TAG, "ERROR. Expenses sync failed");
+                    }
+                });
+
+    }
+
+    void checkTokenValid() {
+        RestClient restClient = new RestClient();
+        restClient.getGoogleAccountDataAPI().tokenStatus(googleToken, new Callback<GoogleAccountDataModel>() {
+            @Override
+            public void success(GoogleAccountDataModel googleAccountDataModel, Response response) {
+                Log.e(TAG, "Google token status: " + googleAccountDataModel.getStatus());
+                if (GoogleAccountDataStatus.STATUS_OK.equalsIgnoreCase(googleAccountDataModel.getStatus())) {
+                    categoriesSync();
+                    expensesSync();
+                    NotificationUtil.UpdateNotifications(getContext());
+                } else {
+                    Log.e(TAG, "Google token is not valid. Sync failed.");
+                    new GetGoogleToken().execute();
+                }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Log.e(TAG, "Google token is not valid. Sync failed.");
+            }
+        });
+    }
+
+    void doubleCheck() {
+        Log.d(TAG, "doubleCheck() called with: " + "");
+        Log.e(TAG, "new Google token: " + MoneyTrackerApplication.getGoogleToken(getContext()));
+
+        if (!TokenKeyStorage.DEFAULT_TOKEN_GOOGLE_KEY.equalsIgnoreCase(MoneyTrackerApplication.getGoogleToken(getContext()))) {
+            categoriesSync();
+            expensesSync();
+            NotificationUtil.UpdateNotifications(getContext());
+        } else {
+            Log.e(TAG, "Google token is not valid. Sync failed.");
         }
     }
 
@@ -123,6 +206,7 @@ public class TrackerSyncAdapter extends AbstractThreadedSyncAdapter {
     // this method response for creating an account
     private static void onAccountCreated(Account newAccount, Context context) {
         final int SYNC_INTERVAL = 60 * 60 * 24;     //sync once per day
+        //final int SYNC_INTERVAL = 60 * 5;     //sync once per day
         final int SYNC_FLEXTIME = SYNC_INTERVAL/3;  // if usual sync failed try again in a day/3
 
         TrackerSyncAdapter.configurePeriodicSync(context, SYNC_INTERVAL, SYNC_FLEXTIME);
@@ -145,6 +229,37 @@ public class TrackerSyncAdapter extends AbstractThreadedSyncAdapter {
             ContentResolver.requestSync(request);
         } else {
             ContentResolver.addPeriodicSync(account, authority, new Bundle(), syncInterval);
+        }
+    }
+
+    private class GetGoogleToken extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            Log.d(TAG, "GetGoogleToken.execute" + "");
+            AccountManager accountManager = AccountManager.get(getContext());
+            Account[] accounts = accountManager.getAccountsByType("com.google");
+            String accountName = accounts[0].name; // you can retrieve using google account chooser way also
+
+            try {
+                googleToken = GoogleAuthUtil.getToken(getContext(), accountName, SCOPES);
+            } catch (final UserRecoverableAuthException authEx) {
+                Log.d(TAG, "UserRecoverableAuthException");
+                doubleCheck();
+            } catch (IOException e) {
+                Log.d(TAG, "Google auth: IOException");
+            } catch (GoogleAuthException e) {
+                Log.d(TAG, "Google auth: Fatal Authorization Exception " + e.getLocalizedMessage());
+            }
+
+            MoneyTrackerApplication.setGoogleToken(getContext(), googleToken);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            Log.d(TAG, "onPostExecute() called with: " + "aVoid = [" + aVoid + "]");
+            super.onPostExecute(aVoid);
+            doubleCheck();
         }
     }
 }

@@ -30,11 +30,11 @@ import ru.loftschool.loftblogmoneytracker.MoneyTrackerApplication;
 import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.rest.RestService;
 import ru.loftschool.loftblogmoneytracker.rest.models.UserLoginModel;
-import ru.loftschool.loftblogmoneytracker.rest.status.UserLoginModelStatus;
-import ru.loftschool.loftblogmoneytracker.utils.NetworkConnectionChecker;
+import ru.loftschool.loftblogmoneytracker.rest.status.UserStatus;
 import ru.loftschool.loftblogmoneytracker.utils.SignInMessages;
 import ru.loftschool.loftblogmoneytracker.utils.TextInputValidator;
 import ru.loftschool.loftblogmoneytracker.utils.google.GoogleTokenUtil;
+import ru.loftschool.loftblogmoneytracker.utils.network.NetworkConnectionChecker;
 
 @EActivity(R.layout.activity_login)
 public class LoginActivity extends AppCompatActivity {
@@ -134,7 +134,7 @@ public class LoginActivity extends AppCompatActivity {
         MoneyTrackerApplication.setToken(this, response.getAuthToken());
         String status = response.getStatus();
 
-        if (UserLoginModelStatus.STATUS_OK.equals(status)) {
+        if (UserStatus.STATUS_OK.equals(status)) {
             completeLogin();
         } else {
             message.showErrorLoginMessage(status, this.getCurrentFocus(), handler);

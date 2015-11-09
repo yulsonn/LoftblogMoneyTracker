@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -21,56 +22,50 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.activeandroid.query.Select;
 import com.squareup.picasso.Picasso;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.Receiver;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
+import org.androidannotations.annotations.res.StringArrayRes;
 import org.androidannotations.annotations.res.StringRes;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import ru.loftschool.loftblogmoneytracker.MoneyTrackerApplication;
 import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.database.model.Categories;
+import ru.loftschool.loftblogmoneytracker.database.model.Expenses;
 import ru.loftschool.loftblogmoneytracker.rest.RestService;
-import ru.loftschool.loftblogmoneytracker.rest.exception.UnauthorizedException;
-import ru.loftschool.loftblogmoneytracker.rest.models.AllCategoriesModel;
-import ru.loftschool.loftblogmoneytracker.rest.models.AllExpensesModel;
-import ru.loftschool.loftblogmoneytracker.rest.models.BalanceModel;
-import ru.loftschool.loftblogmoneytracker.rest.models.CategoryDetails;
-import ru.loftschool.loftblogmoneytracker.rest.models.CategoryModel;
-import ru.loftschool.loftblogmoneytracker.rest.models.CategoryWithExpensesModel;
-import ru.loftschool.loftblogmoneytracker.rest.models.ExpenseDetails;
 import ru.loftschool.loftblogmoneytracker.rest.models.GoogleAccountDataModel;
 import ru.loftschool.loftblogmoneytracker.rest.status.CategoriesStatus;
-import ru.loftschool.loftblogmoneytracker.rest.status.ExpensesStatus;
+import ru.loftschool.loftblogmoneytracker.services.InitialDataLoadService_;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.CategoriesFragment;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.CategoriesFragment_;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.ExpensesFragment;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.ExpensesFragment_;
-import ru.loftschool.loftblogmoneytracker.ui.fragments.SettingsFragment_;
+import ru.loftschool.loftblogmoneytracker.ui.fragments.SettingsFragment;
+import ru.loftschool.loftblogmoneytracker.ui.fragments.StatisticsFragment;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.StatisticsFragment_;
-import ru.loftschool.loftblogmoneytracker.utils.NetworkConnectionChecker;
+import ru.loftschool.loftblogmoneytracker.utils.ServerReqUtils;
 import ru.loftschool.loftblogmoneytracker.utils.TokenKeyStorage;
+import ru.loftschool.loftblogmoneytracker.utils.network.NetworkConnectionChecker;
 
 @EActivity(R.layout.activity_main)
 @OptionsMenu(R.menu.menu_main)
 public class MainActivity extends AppCompatActivity {
+
+    public static final String LOAD_START_ACTION = "start_load";
+    public static final String LOAD_STOP_ACTION = "stop_load";
+
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
     public static ActionMode actionMode;
-
     private ActionBarDrawerToggle mDrawerToggle;
-
     private SparseBooleanArray currentSelectedItems;
 
     @ViewById(R.id.drawer_layout)
@@ -100,6 +95,12 @@ public class MainActivity extends AppCompatActivity {
     @StringRes(R.string.error_unauthorized)
     String unauthorizedError;
 
+    @StringArrayRes(R.array.initial_categories)
+    String[] initCategories;
+
+    @Bean
+    ServerReqUtils serverRequest;
+
     @OptionsItem(android.R.id.home)
     void settings(){
         drawerLayout.openDrawer(GravityCompat.START);
@@ -109,20 +110,57 @@ public class MainActivity extends AppCompatActivity {
     void ready(){
         initToolbar();
         setupNavigationDrawer();
-        initialCategoriesFill();
 
-        // methods for testing rest-queries:
+       /* methods for testing rest-queries: */
 
+        /* 1. add new category - OK */
         //addCategoriesToServer();
+
+        /* 2. edit category - OK */
         //editCategoryOnServer();
+
+        /* 3. get all categories info - OK */
         //getAllCategories();
-        //getAllExpenses();
-        //addExpense();
+
+        /* 4. get one category with expenses info - OK
+        * bug: returns List<Object> instead of one Object*/
         //getCategoryInfo();
+
+        /* 5. get all expenses info - OK */
+        //getAllExpenses();
+
+        /* 6. get one expense info - OK */
+        //addExpense();
+
+        /* 7. get all categories with expenses info - OK*/
         //getAllCategoriesInfo();
+
+        /* 8. get balance / set balance - OK*/
         //balanceTest();
 
+        /* 9. remove category - FAIL */
+        //deleteCategory();
+
+        /* 10. categories synch - OK */
+        //categoriesSync();
+
+        /* 11. expenses synch - ? */
+        //expensesSync();
+
         initDrawerHeaderWithGoogleAccInfo();
+    }
+
+    @Receiver(actions = LOAD_START_ACTION)
+    protected void startLoadData() {
+        swipeRefreshVisible(true);
+    }
+
+    @Receiver(actions = LOAD_STOP_ACTION)
+    protected void stopLoadData() {
+        if (ExpensesFragment.getAdapter() != null) {
+            ExpensesFragment.getAdapter().refreshAdapter(Expenses.selectAll(), Expenses.rowCount());
+        }
+        swipeRefreshVisible(false);
     }
 
     public static ActionMode getActionMode() {
@@ -137,8 +175,26 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(LOG_TAG, "onCreate() method called");
+        initialCategoriesFill();
+        FragmentManager fm = getSupportFragmentManager();
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.frame_container, new ExpensesFragment_()).commit();
+            fm.beginTransaction().replace(R.id.frame_container, new ExpensesFragment_(), ExpensesFragment_.class.getSimpleName())
+                    .addToBackStack(ExpensesFragment_.class.getSimpleName())
+                    .commit();
+        }
+
+        fm.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                if (getSupportFragmentManager().getBackStackEntryCount() == 0) finish();
+            }
+        });
+    }
+
+    void swipeRefreshVisible(boolean isVisible) {
+        SwipeRefreshLayout swipe = ((ExpensesFragment) this.getSupportFragmentManager().findFragmentById(R.id.frame_container)).getSwipeRefreshLayout();
+        if (swipe != null) {
+            swipe.setRefreshing(isVisible);
         }
     }
 
@@ -216,26 +272,31 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void selectDrawerItem(MenuItem menuItem){
-        Fragment fragment;
 
         switch (menuItem.getItemId()){
             case R.id.drawer_item_expenses:
-                fragment = new ExpensesFragment_();
+                replaceFragment(new ExpensesFragment_());
                 break;
             case R.id.drawer_item_categories:
-                fragment = new CategoriesFragment_();
+                replaceFragment(new CategoriesFragment_());
                 break;
             case R.id.drawer_item_statistics:
-                fragment = new StatisticsFragment_();
+                replaceFragment(new StatisticsFragment_());
                 break;
             case R.id.drawer_item_settings:
-                fragment = new SettingsFragment_();
+                getFragmentManager().beginTransaction().replace(R.id.frame_container, new SettingsFragment(), SettingsFragment.class.getSimpleName())
+                        .addToBackStack(SettingsFragment.class.getSimpleName())
+                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
+                        .commit();
                 break;
-            default:
-                fragment = new ExpensesFragment_();
+            case R.id.drawer_item_logout:
+                serverRequest.logout();
+                goToLogin();
+                MoneyTrackerApplication.setToken(this, TokenKeyStorage.DEFAULT_TOKEN_KEY);
+                MoneyTrackerApplication.setGoogleToken(this, TokenKeyStorage.DEFAULT_TOKEN_GOOGLE_KEY);
+                break;
         }
 
-        replaceFragment(fragment);
         menuItem.setChecked(true);
         drawerLayout.closeDrawers();
     }
@@ -244,7 +305,6 @@ public class MainActivity extends AppCompatActivity {
         String backStateName = fragment.getClass().getSimpleName();
         FragmentManager fragmentManager = getSupportFragmentManager();
         boolean fragmentPooped = fragmentManager.popBackStackImmediate(backStateName, 0);
-
 
         if (!fragmentPooped && fragmentManager.findFragmentByTag(backStateName) == null) {
             fragmentManager.beginTransaction().replace(R.id.frame_container, fragment, backStateName)
@@ -262,7 +322,32 @@ public class MainActivity extends AppCompatActivity {
             }
             drawerLayout.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+                super.onBackPressed();
+            } else if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
+                super.onBackPressed();
+                navView.setCheckedItem(R.id.drawer_item_expenses);
+            } else {
+                super.onBackPressed();
+                getLastFragmentChecked();
+            }
+        }
+    }
+
+    private void getLastFragmentChecked() {
+        FragmentManager.BackStackEntry backEntry = getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount() - 1);
+        String str = backEntry.getName();
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(str);
+        updateSelectedItem(fragment);
+    }
+
+    private void updateSelectedItem(Fragment fragment) {
+        if (fragment instanceof ExpensesFragment) {
+            navView.setCheckedItem(R.id.drawer_item_expenses);
+        } else if (fragment instanceof CategoriesFragment) {
+            navView.setCheckedItem(R.id.drawer_item_categories);
+        } else if (fragment instanceof StatisticsFragment) {
+            navView.setCheckedItem(R.id.drawer_item_statistics);
         }
     }
 
@@ -279,165 +364,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initialCategoriesFill() {
-        if (new Select().from(Categories.class).execute().size() == 0) {
-            new Categories("Social").save();
-            new Categories("Fun").save();
-            new Categories("Clothes").save();
-            new Categories("Food").save();
-            new Categories("Transport").save();
-
-        }
-    }
-
-    @Background
-    void addCategoriesToServer() {
-        RestService restService = new RestService();
-        CategoryModel categoryAddResp = null;
-        List<Categories> categories = new Select().from(Categories.class).execute();
-
-        if (!categories.isEmpty()) {
-            for (Categories category : categories) {
-                try {
-                    categoryAddResp = restService.addCategory(category.name, MoneyTrackerApplication.getGoogleToken(this), MoneyTrackerApplication.getToken(this));
-                    if (CategoriesStatus.STATUS_OK.equals(categoryAddResp.getStatus())) {
-                        Log.e(LOG_TAG, "Category name: " + categoryAddResp.getData().getTitle() +
-                                ", Category id: " + categoryAddResp.getData().getId());
-                    } else {
-                        unknownErrorReaction();
-                        Log.e(LOG_TAG, unknownError);
-                    }
-                } catch (UnauthorizedException e) {
-                    unauthorizedErrorReaction();
-                    break;
-                }
-            }
-        }
-    }
-
-    @Background
-    void addExpense() {
-        RestService restService = new RestService();
-        // hardcode just for test
-        AllExpensesModel addExpenseResp = restService.addExpense("100", "TestExpense Cafe", 1084, new SimpleDateFormat("yyyy/MM/dd").format(new Date()), MoneyTrackerApplication.getGoogleToken(this), MoneyTrackerApplication.getToken(this));
-        if (ExpensesStatus.STATUS_OK.equals(addExpenseResp.getStatus())) {
-            Log.e(LOG_TAG, "Expense id: " + addExpenseResp.getId());
-        } else {
-            unknownErrorReaction();
-            Log.e(LOG_TAG, unknownError);
-        }
-    }
-
-    @Background
-    void editCategoryOnServer() {
-        RestService restService = new RestService();
-        if (NetworkConnectionChecker.isNetworkConnected(this)) {
-            //time added for test
-            CategoryModel categoryEditResp
-                    = restService.editCategory("Edited category " + new SimpleDateFormat("HH:mm:ss").format(new Date()),
-                    1354, MoneyTrackerApplication.getGoogleToken(this), MoneyTrackerApplication.getToken(this));
-            if (CategoriesStatus.STATUS_OK.equals(categoryEditResp.getStatus())) {
-                Log.e(LOG_TAG, "Category edited name: " + categoryEditResp.getData().getTitle() +
-                        ", Category id: " + categoryEditResp.getData().getId());
-            } else {
-                unknownErrorReaction();
-                Log.e(LOG_TAG, unknownError);
-            }
-        }
-    }
-
-    @Background
-    void getAllCategories() {
-        RestService restService = new RestService();
-        if (NetworkConnectionChecker.isNetworkConnected(this)) {
-            //time added for test
-            AllCategoriesModel categoriesResp = restService.getAllCategories(MoneyTrackerApplication.getGoogleToken(this), MoneyTrackerApplication.getToken(this));
-            if (CategoriesStatus.STATUS_OK.equals(categoriesResp.getStatus())) {
-                for (CategoryDetails category : categoriesResp.getCategories()) {
-                    Log.e(LOG_TAG, "Category name: " + category.getTitle() +
-                            ", Category id: " + category.getId());
-                }
-            } else {
-                unknownErrorReaction();
-                Log.e(LOG_TAG, unknownError);
-            }
-        }
-    }
-
-    @Background
-    void getCategoryInfo() {
-        RestService restService = new RestService();
-        if (NetworkConnectionChecker.isNetworkConnected(this)) {
-            CategoryWithExpensesModel expensesResp = restService.getCategoryWithExpenses(1084, MoneyTrackerApplication.getGoogleToken(this), MoneyTrackerApplication.getToken(this));
-            Log.e(LOG_TAG, " * Category id: " + expensesResp.getId() +
-                            " * Category name: " + expensesResp.getTitle() +
-                            " * Transactions: ");
-                for (ExpenseDetails expense : expensesResp.getTransactions()) {
-                    Log.e(LOG_TAG, "  **  Expense id: " + expense.getId() +
-                            "  **  , Expense category id: " + expense.getCategoryId() +
-                            "  **  , Expense comment: " + expense.getComment() +
-                            "  **  , Expense summ: " + expense.getSum() +
-                            "  **  , Expense date: " + expense.getTrDate());
-                }
-        }
-    }
-
-    @Background
-    void getAllCategoriesInfo() {
-        RestService restService = new RestService();
-        if (NetworkConnectionChecker.isNetworkConnected(this)) {
-            ArrayList<CategoryWithExpensesModel> expensesResp = restService.getAllCategoriesWithExpenses(MoneyTrackerApplication.getGoogleToken(this), MoneyTrackerApplication.getToken(this));
-            Log.e(LOG_TAG, " | Category id: " + expensesResp.get(1).getId() +
-                    " | Category name: " + expensesResp.get(1).getTitle() +
-                    " | Transactions: ");
-            for (ExpenseDetails expense : expensesResp.get(1).getTransactions()) {
-                Log.e(LOG_TAG, "  **  Expense id: " + expense.getId() +
-                        "  ||  , Expense category id: " + expense.getCategoryId() +
-                        "  ||  , Expense comment: " + expense.getComment() +
-                        "  ||  , Expense summ: " + expense.getSum() +
-                        "  ||  , Expense date: " + expense.getTrDate());
-            }
-        }
-    }
-
-    @Background
-    void getAllExpenses() {
-        RestService restService = new RestService();
-        if (NetworkConnectionChecker.isNetworkConnected(this)) {
-            AllExpensesModel expensesResp = restService.getAllExpenses(MoneyTrackerApplication.getGoogleToken(this), MoneyTrackerApplication.getToken(this));
-            if (CategoriesStatus.STATUS_OK.equals(expensesResp.getStatus())) {
-                for (ExpenseDetails expense : expensesResp.getExpenses()) {
-                    Log.e(LOG_TAG, "Expense id: " + expense.getId() +
-                                    ", Expense category id: " + expense.getCategoryId() +
-                                    ", Expense comment: " + expense.getComment() +
-                                    ", Expense summ: " + expense.getSum() +
-                                    ", Expense date: " + expense.getTrDate());
-                }
-            } else {
-                unknownErrorReaction();
-                Log.e(LOG_TAG, unknownError);
-            }
-        }
-    }
-
-    @Background
-    void balanceTest() {
-        RestService restService = new RestService();
-        if (NetworkConnectionChecker.isNetworkConnected(this)) {
-            BalanceModel balanceResp = restService.getBalance(MoneyTrackerApplication.getGoogleToken(this), MoneyTrackerApplication.getToken(this));
-            if ("success".equalsIgnoreCase(balanceResp.getStatus())) {
-                Log.e(LOG_TAG, "Old balance: " + balanceResp.getBalance());
-            } else {
-                unknownErrorReaction();
-                Log.e(LOG_TAG, unknownError);
-            }
-
-            balanceResp = restService.setBalance("7777", MoneyTrackerApplication.getGoogleToken(this), MoneyTrackerApplication.getToken(this));
-            if ("success".equalsIgnoreCase(balanceResp.getStatus())) {
-                Log.e(LOG_TAG, "New balance: " + balanceResp.getBalance());
-            } else {
-                unknownErrorReaction();
-                Log.e(LOG_TAG, unknownError);
-            }
+        if (Categories.selectAll().isEmpty()) {
+            InitialDataLoadService_.intent(this).start();
         }
     }
 
@@ -491,7 +419,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static void destroyActionModeIfNeeded() {
-        Log.e("ActionMode", String.valueOf(actionMode == null));
         if (actionMode != null) {
             actionMode.finish();
             Log.e("ActionMode", "FINISH");

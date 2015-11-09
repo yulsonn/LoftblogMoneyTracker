@@ -5,5 +5,6 @@
         android:id="@+id/search_action"
         android:title="@string/search_label"
         app:showAsAction="ifRoom"
-        app:actionViewClass="android.widget.SearchView" />
+        app:actionViewClass="android.widget.SearchView"
+        android:visible="false"/>
 </menu>

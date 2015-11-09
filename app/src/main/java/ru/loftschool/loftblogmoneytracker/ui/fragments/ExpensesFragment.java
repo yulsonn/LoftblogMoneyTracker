@@ -1,5 +1,6 @@
 package ru.loftschool.loftblogmoneytracker.ui.fragments;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -19,12 +20,19 @@ import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.SearchView;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.activeandroid.query.Select;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.OptionsMenu;
@@ -33,17 +41,24 @@ import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.StringRes;
 import org.androidannotations.api.BackgroundExecutor;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.adapters.ExpensesAdapter;
+import ru.loftschool.loftblogmoneytracker.database.model.Categories;
 import ru.loftschool.loftblogmoneytracker.database.model.Expenses;
 import ru.loftschool.loftblogmoneytracker.ui.activities.AddExpenseActivity_;
 import ru.loftschool.loftblogmoneytracker.ui.activities.MainActivity;
+import ru.loftschool.loftblogmoneytracker.ui.dialogs.DatePickerFragment;
+import ru.loftschool.loftblogmoneytracker.utils.TextInputValidator;
+import ru.loftschool.loftblogmoneytracker.utils.date.DateConvertUtils;
+import ru.loftschool.loftblogmoneytracker.utils.date.DateFormats;
 
 @EFragment(R.layout.fragment_expenses)
 @OptionsMenu(R.menu.search_menu)
-public class ExpensesFragment extends Fragment {
+public class ExpensesFragment extends Fragment implements DateFormats{
 
     private static final String TAG = ExpensesFragment.class.getSimpleName();
     private static final String FILTER_ID = "filter_id";
@@ -73,8 +88,14 @@ public class ExpensesFragment extends Fragment {
     @StringRes(R.string.snackbar_removed_expenses)
     String removedExpenses;
 
+    @StringRes(R.string.edit_expense_changed)
+    String expenseChanged;
+
     @OptionsMenuItem(R.id.search_action)
     MenuItem menuItem;
+
+    @Bean
+    TextInputValidator validator;
 
     public static ExpensesAdapter getAdapter() {
         return adapter;
@@ -82,6 +103,10 @@ public class ExpensesFragment extends Fragment {
 
     public ActionModeCallback getActionModeCallback() {
         return actionModeCallback;
+    }
+
+    public SwipeRefreshLayout getSwipeRefreshLayout() {
+        return swipeRefreshLayout;
     }
 
     @Click
@@ -113,6 +138,7 @@ public class ExpensesFragment extends Fragment {
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
+        menuItem.setVisible(true);
         final SearchView searchView = (SearchView) menuItem.getActionView();
         searchView.setQueryHint(getString(R.string.search_label));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -195,6 +221,8 @@ public class ExpensesFragment extends Fragment {
                     public void onItemClicked(int position) {
                         if (MainActivity.getActionMode() != null) {
                             toggleSelection(position);
+                        } else {
+                            editExpenseDialog(position);
                         }
                     }
 
@@ -233,6 +261,76 @@ public class ExpensesFragment extends Fragment {
             public void onLoaderReset(Loader<List<Expenses>> loader) {
             }
         });
+    }
+
+    private void editExpenseDialog(final int position) {
+        final Expenses expense = adapter.getExpense(position);
+
+        final Dialog dialog = new Dialog(getActivity());
+        dialog.setContentView(R.layout.dialog_edit_expense);
+
+        final EditText etPrice = (EditText) dialog.findViewById(R.id.edit_expense_etPrice);
+        final EditText etName = (EditText) dialog.findViewById(R.id.edit_expense_etName);
+        final Spinner spCategories = (Spinner) dialog.findViewById(R.id.edit_expense_spCategories);
+        final EditText etDate = (EditText) dialog.findViewById(R.id.edit_expense_etDate);
+
+        ArrayAdapter<Categories> categoriesAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, Categories.selectAll());
+        categoriesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spCategories.setAdapter(categoriesAdapter);
+        int spinnerPosition = categoriesAdapter.getPosition(expense.category);
+
+        etPrice.setText(String.valueOf(expense.price));
+        etName.setText(expense.name);
+        spCategories.setSelection(spinnerPosition);
+        etDate.setText(DateConvertUtils.dateToString(expense.date, DEFAULT_FORMAT));
+
+        etDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerFragment datePicker = new DatePickerFragment() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        Calendar dateCalendar = Calendar.getInstance();
+                        dateCalendar.set(year, monthOfYear, dayOfMonth);
+                        etDate.setText(DateConvertUtils.dateToString(dateCalendar.getTimeInMillis(), DEFAULT_FORMAT));
+                    }
+                };
+                datePicker.show(getActivity().getSupportFragmentManager(), DatePickerFragment.class.getSimpleName());
+            }
+        });
+
+        Button okButton = (Button) dialog.findViewById(R.id.edit_expense_btn_ok);
+        Button cancelButton = (Button) dialog.findViewById(R.id.edit_expense_btn_cancel);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (validator.validateNewExpense(etPrice, etName, getActivity())) {
+
+                    expense.name = etName.getText().toString();
+                    expense.price = Float.parseFloat(etPrice.getText().toString());
+                    expense.date = DateConvertUtils.stringToDate(etDate.getText().toString(), DEFAULT_FORMAT);
+                    expense.category = (Categories)spCategories.getSelectedItem();
+
+                    adapter.updateExpense(position, expense);
+
+                    Toast.makeText(getActivity(), expenseChanged + expense.price + ", "
+                            + expense.name + ", "
+                            + DateConvertUtils.dateToString(new Date(), DEFAULT_FORMAT) + ", "
+                            + expense.category.toString(), Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                }
+            }
+        });
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        dialog.getWindow().getAttributes().windowAnimations = R.style.AddCategoryDialogAnimation;
+        dialog.show();
     }
 
     private void toggleSelection(int position){

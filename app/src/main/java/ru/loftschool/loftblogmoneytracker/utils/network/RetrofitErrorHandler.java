@@ -1,4 +1,4 @@
-package ru.loftschool.loftblogmoneytracker.utils;
+package ru.loftschool.loftblogmoneytracker.utils.network;
 
 import retrofit.ErrorHandler;
 import retrofit.RetrofitError;
