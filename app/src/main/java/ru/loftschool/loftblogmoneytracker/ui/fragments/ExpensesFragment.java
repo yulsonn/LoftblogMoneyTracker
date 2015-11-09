@@ -105,6 +105,10 @@ public class ExpensesFragment extends Fragment implements DateFormats{
         return actionModeCallback;
     }
 
+    public SwipeRefreshLayout getSwipeRefreshLayout() {
+        return swipeRefreshLayout;
+    }
+
     @Click
     void fab() {
         MainActivity.destroyActionModeIfNeeded();

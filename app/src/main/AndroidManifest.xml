@@ -79,6 +79,10 @@
                 android:resource="@xml/syncadapter"/>
         </service>
 
+        <service
+            android:name=".services.InitialDataLoadService_"
+            android:exported="false"/>
+
     </application>
 
 </manifest>

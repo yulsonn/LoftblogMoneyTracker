@@ -10,7 +10,6 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.UiThread;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import ru.loftschool.loftblogmoneytracker.MoneyTrackerApplication;
@@ -122,9 +121,7 @@ public class ServerReqUtils implements DateFormats{
 
     @Background
     void getAllCategories() {
-        RestService restService = new RestService();
         if (NetworkConnectionChecker.isNetworkConnected(context)) {
-            //time added for test
             AllCategoriesModel categoriesResp = restService.getAllCategories(MoneyTrackerApplication.getGoogleToken(context), MoneyTrackerApplication.getToken(context));
             if (CategoriesStatus.STATUS_OK.equals(categoriesResp.getStatus())) {
                 for (CategoryDetails category : categoriesResp.getCategories()) {
@@ -152,24 +149,6 @@ public class ServerReqUtils implements DateFormats{
                         "  **  , Expense comment: " + expense.getComment() +
                         "  **  , Expense summ: " + expense.getSum() +
                         "  **  , Expense date: " + expense.getTrDate());
-            }
-        }
-    }
-
-    @Background
-    void getAllCategoriesInfo() {
-        RestService restService = new RestService();
-        if (NetworkConnectionChecker.isNetworkConnected(context)) {
-            ArrayList<CategoryWithExpensesModel> expensesResp = restService.getAllCategoriesWithExpenses(MoneyTrackerApplication.getGoogleToken(context), MoneyTrackerApplication.getToken(context));
-            Log.e(LOG_TAG, " | Category id: " + expensesResp.get(expensesResp.size()-1).getId() +
-                    " | Category name: " + expensesResp.get(expensesResp.size()-1).getTitle() +
-                    " | Transactions: ");
-            for (ExpenseDetails expense : expensesResp.get(expensesResp.size()-1).getTransactions()) {
-                Log.e(LOG_TAG, "  **  Expense id: " + expense.getId() +
-                        "  ||  , Expense category id: " + expense.getCategoryId() +
-                        "  ||  , Expense comment: " + expense.getComment() +
-                        "  ||  , Expense summ: " + expense.getSum() +
-                        "  ||  , Expense date: " + expense.getTrDate());
             }
         }
     }
@@ -259,7 +238,7 @@ public class ServerReqUtils implements DateFormats{
     }
 
     @UiThread
-    void noInternetReaction() {
+    public void noInternetReaction() {
         Toast.makeText(context, noInternetError, Toast.LENGTH_LONG).show();
     }
 

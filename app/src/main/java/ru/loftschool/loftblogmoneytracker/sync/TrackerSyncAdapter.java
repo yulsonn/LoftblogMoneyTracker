@@ -69,7 +69,6 @@ public class TrackerSyncAdapter extends AbstractThreadedSyncAdapter implements T
         } else {
             checkTokenValid();
         }
-        NotificationUtil.UpdateNotifications(getContext());
     }
 
     public void categoriesSync() {

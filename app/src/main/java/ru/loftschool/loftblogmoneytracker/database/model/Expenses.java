@@ -4,6 +4,7 @@ import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
 import com.activeandroid.query.Select;
+import com.activeandroid.util.SQLiteUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -50,5 +51,9 @@ public class Expenses extends Model {
 
     public static List<Expenses> selectAll() {
         return new Select().from(Expenses.class).execute();
+    }
+
+    public static int rowCount() {
+        return SQLiteUtils.intQuery("SELECT count(*) from Categories", new String[]{});
     }
 }

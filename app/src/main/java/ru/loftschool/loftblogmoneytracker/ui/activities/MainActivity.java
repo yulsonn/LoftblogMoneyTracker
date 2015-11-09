@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -21,7 +22,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.activeandroid.query.Select;
 import com.squareup.picasso.Picasso;
 
 import org.androidannotations.annotations.AfterViews;
@@ -30,6 +30,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.OptionsItem;
 import org.androidannotations.annotations.OptionsMenu;
+import org.androidannotations.annotations.Receiver;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.androidannotations.annotations.res.StringArrayRes;
@@ -38,9 +39,11 @@ import org.androidannotations.annotations.res.StringRes;
 import ru.loftschool.loftblogmoneytracker.MoneyTrackerApplication;
 import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.database.model.Categories;
+import ru.loftschool.loftblogmoneytracker.database.model.Expenses;
 import ru.loftschool.loftblogmoneytracker.rest.RestService;
 import ru.loftschool.loftblogmoneytracker.rest.models.GoogleAccountDataModel;
 import ru.loftschool.loftblogmoneytracker.rest.status.CategoriesStatus;
+import ru.loftschool.loftblogmoneytracker.services.InitialDataLoadService_;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.CategoriesFragment;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.CategoriesFragment_;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.ExpensesFragment;
@@ -55,12 +58,14 @@ import ru.loftschool.loftblogmoneytracker.utils.network.NetworkConnectionChecker
 @EActivity(R.layout.activity_main)
 @OptionsMenu(R.menu.menu_main)
 public class MainActivity extends AppCompatActivity {
+
+    public static final String LOAD_START_ACTION = "start_load";
+    public static final String LOAD_STOP_ACTION = "stop_load";
+
     private final String LOG_TAG = MainActivity.class.getSimpleName();
 
     public static ActionMode actionMode;
-
     private ActionBarDrawerToggle mDrawerToggle;
-
     private SparseBooleanArray currentSelectedItems;
 
     @ViewById(R.id.drawer_layout)
@@ -145,6 +150,19 @@ public class MainActivity extends AppCompatActivity {
         initDrawerHeaderWithGoogleAccInfo();
     }
 
+    @Receiver(actions = LOAD_START_ACTION)
+    protected void startLoadData() {
+        swipeRefreshVisible(true);
+    }
+
+    @Receiver(actions = LOAD_STOP_ACTION)
+    protected void stopLoadData() {
+        if (ExpensesFragment.getAdapter() != null) {
+            ExpensesFragment.getAdapter().refreshAdapter(Expenses.selectAll(), Expenses.rowCount());
+        }
+        swipeRefreshVisible(false);
+    }
+
     public static ActionMode getActionMode() {
         return actionMode;
     }
@@ -171,6 +189,13 @@ public class MainActivity extends AppCompatActivity {
                 if (getSupportFragmentManager().getBackStackEntryCount() == 0) finish();
             }
         });
+    }
+
+    void swipeRefreshVisible(boolean isVisible) {
+        SwipeRefreshLayout swipe = ((ExpensesFragment) this.getSupportFragmentManager().findFragmentById(R.id.frame_container)).getSwipeRefreshLayout();
+        if (swipe != null) {
+            swipe.setRefreshing(isVisible);
+        }
     }
 
     private void initToolbar(){
@@ -339,16 +364,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initialCategoriesFill() {
-        if (new Select().from(Categories.class).execute().size() == 0) {
-            for (int i = 0; i < initCategories.length; i++) {
-                Categories category = new Categories(initCategories[i]);
-                category.save();
-                serverRequest.addCategoryToServer(category);
-            }
+        if (Categories.selectAll().isEmpty()) {
+            InitialDataLoadService_.intent(this).start();
         }
     }
-
-
 
     @UiThread
     void unauthorizedErrorReaction() {

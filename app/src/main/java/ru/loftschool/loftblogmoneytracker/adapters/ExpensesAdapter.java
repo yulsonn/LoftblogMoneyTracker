@@ -146,6 +146,15 @@ public class ExpensesAdapter extends SelectableAdapter<ExpensesAdapter.CardViewH
         notifyItemChanged(position);
     }
 
+    public void refreshAdapter(List<Expenses> data, int rowCount) {
+        if (data != null && !data.isEmpty()){
+            for (Expenses expense : data) {
+                expenses.add(expense);
+            }
+        }
+        notifyItemRangeInserted(0, rowCount);
+    }
+
     @Override
     public int getItemCount() {
         return expenses == null ? 0 : expenses.size();
