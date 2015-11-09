@@ -6,6 +6,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -57,7 +58,7 @@ import ru.loftschool.loftblogmoneytracker.utils.network.NetworkConnectionChecker
 
 @EActivity(R.layout.activity_main)
 @OptionsMenu(R.menu.menu_main)
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements TokenKeyStorage{
 
     public static final String LOAD_START_ACTION = "start_load";
     public static final String LOAD_STOP_ACTION = "stop_load";
@@ -110,44 +111,11 @@ public class MainActivity extends AppCompatActivity {
     void ready(){
         initToolbar();
         setupNavigationDrawer();
-
-       /* methods for testing rest-queries: */
-
-        /* 1. add new category - OK */
-        //addCategoriesToServer();
-
-        /* 2. edit category - OK */
-        //editCategoryOnServer();
-
-        /* 3. get all categories info - OK */
-        //getAllCategories();
-
-        /* 4. get one category with expenses info - OK
-        * bug: returns List<Object> instead of one Object*/
-        //getCategoryInfo();
-
-        /* 5. get all expenses info - OK */
-        //getAllExpenses();
-
-        /* 6. get one expense info - OK */
-        //addExpense();
-
-        /* 7. get all categories with expenses info - OK*/
-        //getAllCategoriesInfo();
-
-        /* 8. get balance / set balance - OK*/
-        //balanceTest();
-
-        /* 9. remove category - FAIL */
-        //deleteCategory();
-
-        /* 10. categories synch - OK */
-        //categoriesSync();
-
-        /* 11. expenses synch - ? */
-        //expensesSync();
-
-        initDrawerHeaderWithGoogleAccInfo();
+        if (!MoneyTrackerApplication.getGoogleToken(this).equalsIgnoreCase(DEFAULT_TOKEN_GOOGLE_KEY)) {
+            initDrawerHeaderWithGoogleAccInfo();
+        } else {
+            initDrawerHeaderInfo();
+        }
     }
 
     @Receiver(actions = LOAD_START_ACTION)
@@ -290,10 +258,13 @@ public class MainActivity extends AppCompatActivity {
                         .commit();
                 break;
             case R.id.drawer_item_logout:
-                serverRequest.logout();
+                if (!DEFAULT_TOKEN_KEY.equalsIgnoreCase(MoneyTrackerApplication.getToken(this))) {
+                    serverRequest.logout();
+                }
+                MoneyTrackerApplication.setToken(this, DEFAULT_TOKEN_KEY);
+                MoneyTrackerApplication.setGoogleToken(this, DEFAULT_TOKEN_GOOGLE_KEY);
+                MoneyTrackerApplication.setUserName(this, MoneyTrackerApplication.DEFAULT_USER_NAME);
                 goToLogin();
-                MoneyTrackerApplication.setToken(this, TokenKeyStorage.DEFAULT_TOKEN_KEY);
-                MoneyTrackerApplication.setGoogleToken(this, TokenKeyStorage.DEFAULT_TOKEN_GOOGLE_KEY);
                 break;
         }
 
@@ -400,6 +371,12 @@ public class MainActivity extends AppCompatActivity {
                 && !TokenKeyStorage.DEFAULT_TOKEN_GOOGLE_KEY.equalsIgnoreCase(MoneyTrackerApplication.getGoogleToken(this))) {
             getGoogleAccountData();
         }
+    }
+
+    void initDrawerHeaderInfo() {
+        avatar.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.noname_avatar));
+        userName.setText(MoneyTrackerApplication.getUserName(this));
+        email.setText("");
     }
 
     @Background

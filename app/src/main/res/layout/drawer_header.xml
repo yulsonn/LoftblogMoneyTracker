@@ -14,7 +14,7 @@
         android:layout_height="@dimen/drawer_avatar_size"
         android:layout_margin="@dimen/drawer_margin_large"
         android:elevation="@dimen/drawer_avatar_elevation"
-        android:src="@drawable/drawer_avatar"
+        android:src="@drawable/noname_avatar"
         app:border_width="@dimen/drawer_avatar_border"/>
 
     <TextView

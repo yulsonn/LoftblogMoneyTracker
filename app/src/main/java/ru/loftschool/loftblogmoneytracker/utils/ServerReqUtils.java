@@ -28,6 +28,7 @@ import ru.loftschool.loftblogmoneytracker.rest.models.ExpenseDetails;
 import ru.loftschool.loftblogmoneytracker.rest.models.UserLogoutModel;
 import ru.loftschool.loftblogmoneytracker.rest.status.CategoriesStatus;
 import ru.loftschool.loftblogmoneytracker.rest.status.ExpensesStatus;
+import ru.loftschool.loftblogmoneytracker.rest.status.UserStatus;
 import ru.loftschool.loftblogmoneytracker.ui.activities.LoginActivity_;
 import ru.loftschool.loftblogmoneytracker.utils.date.DateConvertUtils;
 import ru.loftschool.loftblogmoneytracker.utils.date.DateFormats;
@@ -214,7 +215,7 @@ public class ServerReqUtils implements DateFormats{
     public void logout() {
         if (NetworkConnectionChecker.isNetworkConnected(context)) {
             UserLogoutModel logoutResp = restService.logout();
-            if (!ExpensesStatus.STATUS_OK.equals(logoutResp.getStatus())) {
+            if (UserStatus.STATUS_ERROR.equals(logoutResp.getStatus())) {
                 unknownErrorReaction();
                 Log.e(LOG_TAG, unknownError);
             }

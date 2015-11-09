@@ -32,8 +32,8 @@
     <string name="act_title_add_expense">Добавить трату</string>
 
     <!--Стркоки для Drawer header-->
-    <string name="drawer_header_username">Yulia Sadovskaya</string>
-    <string name="drawer_header_email">yulsonn@gmail.com</string>
+    <string name="drawer_header_username">User</string>
+    <string name="drawer_header_email">user@gmail.com</string>
 
     <!--Строки для экрана добавления трат-->
     <string name="text_sum">Сумма</string>

@@ -10,6 +10,9 @@ import ru.loftschool.loftblogmoneytracker.utils.TokenKeyStorage;
 
 public class MoneyTrackerApplication extends com.activeandroid.app.Application implements TokenKeyStorage{
 
+    public final static String USER_NAME = "user_name";
+    public final static String DEFAULT_USER_NAME = "User";
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -38,5 +41,17 @@ public class MoneyTrackerApplication extends com.activeandroid.app.Application i
     public static String getGoogleToken(Context context) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
         return pref.getString(TOKEN_GOOGLE_KEY, DEFAULT_TOKEN_GOOGLE_KEY);
+    }
+
+    public static void setUserName(Context context, String userName) {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString(USER_NAME, userName);
+        editor.commit();
+    }
+
+    public static String getUserName(Context context) {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        return pref.getString(USER_NAME, DEFAULT_USER_NAME);
     }
 }
