@@ -11,6 +11,7 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.UiThread;
 
 import java.util.List;
+import java.util.Map;
 
 import ru.loftschool.loftblogmoneytracker.MoneyTrackerApplication;
 import ru.loftschool.loftblogmoneytracker.R;
@@ -21,6 +22,7 @@ import ru.loftschool.loftblogmoneytracker.rest.exception.UnauthorizedException;
 import ru.loftschool.loftblogmoneytracker.rest.models.AllCategoriesModel;
 import ru.loftschool.loftblogmoneytracker.rest.models.AllExpensesModel;
 import ru.loftschool.loftblogmoneytracker.rest.models.BalanceModel;
+import ru.loftschool.loftblogmoneytracker.rest.models.CategoryDeleteModel;
 import ru.loftschool.loftblogmoneytracker.rest.models.CategoryDetails;
 import ru.loftschool.loftblogmoneytracker.rest.models.CategoryModel;
 import ru.loftschool.loftblogmoneytracker.rest.models.CategoryWithExpensesModel;
@@ -121,6 +123,27 @@ public class ServerReqUtils implements DateFormats{
     }
 
     @Background
+    public void deleteCategories(Map<Integer, Categories> categories) {
+        if (categories != null && !categories.isEmpty()) {
+            if (NetworkConnectionChecker.isNetworkConnected(context)) {
+                for (Map.Entry<Integer, Categories> pair : categories.entrySet()) {
+                    Categories category = pair.getValue();
+                    CategoryDeleteModel removeCategoryResp = restService.deleteCategory(category.sId, MoneyTrackerApplication.getGoogleToken(context), MoneyTrackerApplication.getToken(context));
+                    if (CategoriesStatus.STATUS_OK.equals(removeCategoryResp.getStatus())) {
+                        Log.e(LOG_TAG, category.sId + " category removed");
+                    } else {
+                        unknownErrorReaction();
+                        Log.e(LOG_TAG, unknownError);
+                    }
+                }
+            } else {
+                    noInternetReaction();
+                    Log.e(LOG_TAG, noInternetError);
+            }
+        }
+    }
+
+    @Background
     void getAllCategories() {
         if (NetworkConnectionChecker.isNetworkConnected(context)) {
             AllCategoriesModel categoriesResp = restService.getAllCategories(MoneyTrackerApplication.getGoogleToken(context), MoneyTrackerApplication.getToken(context));
@@ -167,21 +190,6 @@ public class ServerReqUtils implements DateFormats{
                             ", Expense summ: " + expense.getSum() +
                             ", Expense date: " + expense.getTrDate());
                 }
-            } else {
-                unknownErrorReaction();
-                Log.e(LOG_TAG, unknownError);
-            }
-        }
-    }
-
-    @Background
-    void deleteCategory() {
-        RestService restService = new RestService();
-        Categories category = Categories.selectCategoryById(1935);
-        if (NetworkConnectionChecker.isNetworkConnected(context)) {
-            CategoryModel removeCaatResp = restService.deleteCategory(category.sId, MoneyTrackerApplication.getGoogleToken(context), MoneyTrackerApplication.getToken(context));
-            if (CategoriesStatus.STATUS_OK.equals(removeCaatResp.getStatus())) {
-                Log.e(LOG_TAG, category.sId + " category removed");
             } else {
                 unknownErrorReaction();
                 Log.e(LOG_TAG, unknownError);

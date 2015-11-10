@@ -21,12 +21,12 @@ import java.util.TreeMap;
 
 import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.database.model.Categories;
+import ru.loftschool.loftblogmoneytracker.utils.ServerReqUtils;
 
 public class CategoriesAdapter extends SelectableAdapter<CategoriesAdapter.CardViewCategoryHolder> {
     private static final String TAG = CategoriesAdapter.class.getSimpleName() ;
 
     private static final long UNDO_TIMEOUT = 3600L;
-
     private boolean multipleRemove = false;
 
     private List<Categories> categories;
@@ -63,8 +63,8 @@ public class CategoriesAdapter extends SelectableAdapter<CategoriesAdapter.CardV
     public void removeItems(List<Integer> positions) {
         if (positions.size() > 1) {
             multipleRemove = true;
+            saveRemovedItems(positions);
         }
-        saveRemovedItems(positions);
 
         Collections.sort(positions, new Comparator<Integer>() {
             @Override
@@ -113,7 +113,6 @@ public class CategoriesAdapter extends SelectableAdapter<CategoriesAdapter.CardV
 
     private void removeCategories(int position) {
         if (categories.get(position) != null) {
-            //categories.get(position).delete();
             categories.remove(position);
         }
     }
@@ -124,6 +123,7 @@ public class CategoriesAdapter extends SelectableAdapter<CategoriesAdapter.CardV
             for (Map.Entry<Integer, Categories> pair : removedCategoriesMap.entrySet()) {
                 pair.getValue().delete();
             }
+            new ServerReqUtils(context).deleteCategories(removedCategoriesMap);
             removedCategoriesMap = null;
         }
     }
