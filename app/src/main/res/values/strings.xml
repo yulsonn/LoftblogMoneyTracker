@@ -18,6 +18,7 @@
     <string name="nav_drawer_statistics">Статистика</string>
     <string name="nav_drawer_settings">Настройки</string>
     <string name="nav_drawer_logout">Выйти</string>
+    <string name="nav_drawer_sync">Синхронизировать</string>
     <string name="nav_drawer_subtitle_account">Аккаунт</string>
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
@@ -61,15 +62,15 @@
     <string name="error_login_wrong_password">Неверный пароль</string>
     <string name="error_no_internet">Отсутствует подключение к сети</string>
 
-    <string name="reg_success">Registration successful. Login now please.</string>
+    <string name="reg_success">Регистрация успешно завершена</string>
 
-    <string name="login_screen_header_text">Login</string>
-    <string name="login_screen_btn_login_text">login</string>
-    <string name="login_screen_new_ac_text">No account yet? Create one</string>
+    <string name="login_screen_header_text">Войти</string>
+    <string name="login_screen_btn_login_text">Войти</string>
+    <string name="login_screen_new_ac_text">Нет аккаунта? Создать…</string>
 
-    <string name="reg_screen_header_text">Register</string>
-    <string name="reg_screen_btn_reg_text">create account</string>
-    <string name="reg_screen_login_text">Already a member? Login</string>
+    <string name="reg_screen_header_text">Регистрация</string>
+    <string name="reg_screen_btn_reg_text">Создать аккаутнт</string>
+    <string name="reg_screen_login_text">Уже есть аккаунт? Войти…</string>
 
     <string name="error_unauthorized">Сессия устарела. Пожалуйста, войдите в систему снова.</string>
     <string name="error_min_length">"Минимальное количество символов: "</string>
@@ -107,7 +108,6 @@
     <!--Search-->
     <string name="search_label">Поиск</string>
     <string name="currency_RUB">\u20BD</string>
-    <string name="pie_chart_title">Распределение трат по категориям</string>
 
     <string-array name="initial_categories">
         <item>Продукты</item>
@@ -131,8 +131,8 @@
     <string name="pref_enable_led_label">Световой индикатор</string>
     <string name="pref_enable_sound_label">Звук</string>
 
-    <string name="pref_enable_notifications_true">Enabled</string>
-    <string name="pref_enable_notifications_false">Disabled</string>
+    <string name="pref_enable_notifications_true">ВКЛ.</string>
+    <string name="pref_enable_notifications_false">ВЫКЛ.</string>
     <string name="pref_enable_notifications_default" translatable="false">true</string>
 
     <!-- String for notification bar-->
@@ -143,5 +143,15 @@
     <string name="edit_expense_save_btn_txt">Сохранить</string>
     <string name="edit_expense_cancel_btn_txt">Отмена</string>
     <string name="edit_expense_changed">"Трата изменена: "</string>
+
+    <!--Statistics-->
+    <string name="pie_chart_description">Распределение трат по категориям</string>
+    <string name="pie_chart_title">ВСЕГО:</string>
+
+    <!--Synchronization-->
+    <string name="sync_categories_ok">Синхронизация категорий успешно завершена</string>
+    <string name="sync_categories_failed">При синхронизации категорий возникла ошибка</string>
+    <string name="sync_expenses_ok">Синхронизация трат успешно завершена</string>
+    <string name="sync_expenses_failed">При синхронизации трат возникла ошибка</string>
 
 </resources>

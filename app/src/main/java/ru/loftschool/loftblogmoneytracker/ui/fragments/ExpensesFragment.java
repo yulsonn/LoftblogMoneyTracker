@@ -348,6 +348,7 @@ public class ExpensesFragment extends Fragment implements DateFormats{
         return new Select()
                 .from(Expenses.class)
                 .where("Name LIKE ?", new Object[]{'%' + filter + '%'})
+                .orderBy("Date DESC")
                 .execute();
     }
 

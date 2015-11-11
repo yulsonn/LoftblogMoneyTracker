@@ -22,6 +22,7 @@ public class Categories extends Model {
     }
 
     public Categories(String name, Integer sId) {
+        super();
         this.name = name;
         this.sId = sId;
     }

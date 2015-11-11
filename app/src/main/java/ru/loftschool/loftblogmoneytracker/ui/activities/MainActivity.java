@@ -53,12 +53,13 @@ import ru.loftschool.loftblogmoneytracker.ui.fragments.SettingsFragment;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.StatisticsFragment;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.StatisticsFragment_;
 import ru.loftschool.loftblogmoneytracker.utils.ServerReqUtils;
+import ru.loftschool.loftblogmoneytracker.utils.SyncTypes;
 import ru.loftschool.loftblogmoneytracker.utils.TokenKeyStorage;
 import ru.loftschool.loftblogmoneytracker.utils.network.NetworkConnectionChecker;
 
 @EActivity(R.layout.activity_main)
 @OptionsMenu(R.menu.menu_main)
-public class MainActivity extends AppCompatActivity implements TokenKeyStorage{
+public class MainActivity extends AppCompatActivity implements TokenKeyStorage, SyncTypes {
 
     public static final String LOAD_START_ACTION = "start_load";
     public static final String LOAD_STOP_ACTION = "stop_load";
@@ -256,6 +257,9 @@ public class MainActivity extends AppCompatActivity implements TokenKeyStorage{
                         .addToBackStack(SettingsFragment.class.getSimpleName())
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
                         .commit();
+                break;
+            case R.id.drawer_item_sync:
+                serverRequest.synchronize(SYNC_MANUAL);
                 break;
             case R.id.drawer_item_logout:
                 if (!DEFAULT_TOKEN_KEY.equalsIgnoreCase(MoneyTrackerApplication.getToken(this))) {

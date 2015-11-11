@@ -48,6 +48,9 @@ public class StatisticsFragment extends Fragment {
     @StringRes(R.string.pie_chart_title)
     String chartTitleText;
 
+    @StringRes(R.string.pie_chart_description)
+    String chartDescription;
+
     @StringRes(R.string.currency_RUB)
     String curRub;
 
@@ -66,9 +69,11 @@ public class StatisticsFragment extends Fragment {
 
     private void configurePieChart() {
         pieChart.setUsePercentValues(true);
-        pieChart.setDescription("");
         pieChart.setDrawCenterText(true);
         pieChart.setCenterText(generateCenterSpannableText());
+        pieChart.setDescription(chartDescription);
+        pieChart.setDescriptionTextSize(20f);
+        pieChart.setDescriptionColor(ContextCompat.getColor(getContext(), R.color.primaryDark));
 
         pieChart.setExtraOffsets(5, 10, 5, 5);
         pieChart.setDragDecelerationFrictionCoef(0.95f);
@@ -191,11 +196,22 @@ public class StatisticsFragment extends Fragment {
     }
 
     private SpannableString generateCenterSpannableText() {
-        SpannableString s = new SpannableString(chartTitleText);
+        SpannableString s = new SpannableString(chartTitleText + '\n' + String.format("%.2f", countExpensesSum()) + " " +curRub);
         s.setSpan(new ForegroundColorSpan(ContextCompat.getColor(getActivity(), R.color.primaryDark)), 0, s.length(), 0);
-        s.setSpan(new StyleSpan(Typeface.BOLD), 0, s.length(), 0);
-        s.setSpan(new RelativeSizeSpan(1.3f), 0, s.length(), 0);
+        s.setSpan(new StyleSpan(Typeface.BOLD), 0, 6, 0);
+        s.setSpan(new RelativeSizeSpan(1.5f), 0, s.length(), 0);
 
         return s;
+    }
+
+    private Float countExpensesSum() {
+        Float sum = 0f;
+        List<Expenses> expenses = Expenses.selectAll();
+        if (!expenses.isEmpty()) {
+            for (Expenses expense : expenses) {
+                sum += expense.price;
+            }
+        }
+        return sum;
     }
 }

@@ -21,6 +21,7 @@ import java.util.TreeMap;
 
 import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.database.model.Categories;
+import ru.loftschool.loftblogmoneytracker.database.model.Expenses;
 import ru.loftschool.loftblogmoneytracker.utils.ServerReqUtils;
 
 public class CategoriesAdapter extends SelectableAdapter<CategoriesAdapter.CardViewCategoryHolder> {
@@ -55,6 +56,7 @@ public class CategoriesAdapter extends SelectableAdapter<CategoriesAdapter.CardV
     public void onBindViewHolder(CardViewCategoryHolder holder, int position) {
         Categories category = categories.get(position);
         holder.textTitle.setText(category.name);
+        holder.textSum.setText(String.format("%.2f", sumCategoryExpenses(position)));
         holder.selectedOverlay.setVisibility(isSelected(position) ? View.VISIBLE : View.INVISIBLE);
 
         setAnimation(holder.cardView, position);
@@ -140,6 +142,17 @@ public class CategoriesAdapter extends SelectableAdapter<CategoriesAdapter.CardV
         notifyItemChanged(position);
     }
 
+    private float sumCategoryExpenses(int position) {
+        Categories category = categories.get(position);
+        float sum = 0f;
+        if (category != null) {
+            for (Expenses expense : category.expenses()) {
+                sum += expense.price;
+            }
+        }
+        return sum;
+    }
+
     public Categories getCategory(int position) {
         return categories.get(position);
     }
@@ -212,6 +225,7 @@ public class CategoriesAdapter extends SelectableAdapter<CategoriesAdapter.CardV
         protected TextView textTitle;
         protected View selectedOverlay;
         protected CardView cardView;
+        protected TextView textSum;
         private ClickListener clickListener;
 
         public CardViewCategoryHolder(View itemView, ClickListener clickListener) {
@@ -220,6 +234,7 @@ public class CategoriesAdapter extends SelectableAdapter<CategoriesAdapter.CardV
             textTitle = (TextView) itemView.findViewById(R.id.category_name_text);
             selectedOverlay = itemView.findViewById(R.id.categories_selected_overlay);
             cardView = (CardView) itemView.findViewById(R.id.card_view_categories);
+            textSum = (TextView) itemView.findViewById(R.id.category_sum_text);
 
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);

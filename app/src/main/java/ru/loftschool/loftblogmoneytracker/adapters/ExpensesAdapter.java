@@ -55,7 +55,7 @@ public class ExpensesAdapter extends SelectableAdapter<ExpensesAdapter.CardViewH
     public void onBindViewHolder(CardViewHolder holder, int position) {
         Expenses expense = expenses.get(position);
         holder.textTitle.setText(expense.name);
-        holder.dateTitle.setText(DateConvertUtils.dateToString(expense.date, DateConvertUtils.DEFAULT_FORMAT));
+        holder.dateTitle.setText(DateConvertUtils.dateToString(expense.date, DateConvertUtils.FULL_DATE_FORMAT));
         holder.sumTitle.setText(String.format("%.2f",expense.price));
         holder.categoryTitle.setText(expense.category.toString());
         holder.selectedOverlay.setVisibility(isSelected(position) ? View.VISIBLE : View.INVISIBLE);

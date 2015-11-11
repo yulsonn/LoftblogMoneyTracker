@@ -50,7 +50,7 @@ public class InitialDataLoadService extends IntentService implements DateFormats
                     if (!category.getTransactions().isEmpty()) {
                         for (ExpenseDetails expense : category.getTransactions()) {
                             Expenses newExpense = new Expenses(expense.getComment(), Float.parseFloat(expense.getSum()),
-                                    DateConvertUtils.stringToDate(expense.getTrDate(), INVERSE_DATE_FORMAT_LOAD), newCategory);
+                                    DateConvertUtils.stringToDate(expense.getTrDate(), INVERSE_DATE_FORMAT_LOAD), Integer.parseInt(expense.getId()), newCategory);
                             newExpense.save();
                         }
                     }

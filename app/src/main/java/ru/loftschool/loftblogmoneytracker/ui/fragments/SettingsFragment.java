@@ -66,7 +66,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
         //Тут можно подключать наши списки настроек, например:
         //bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_frequency_of_updates_key)));
 
-        view.setBackgroundColor(getResources().getColor(R.color.fragment_background));
+        view.setBackgroundColor(getResources().getColor(R.color.background));
         super.onViewCreated(view, savedInstanceState);
     }
 

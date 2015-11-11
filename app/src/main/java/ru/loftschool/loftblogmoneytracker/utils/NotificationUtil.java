@@ -12,7 +12,6 @@ import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.ui.activities.MainActivity_;
@@ -42,18 +41,15 @@ public class NotificationUtil {
             PendingIntent intent = PendingIntent.getActivity(context, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
             builder.setContentIntent(intent);
 
-            builder.setSmallIcon(R.mipmap.ic_launcher);
+            builder.setSmallIcon(R.drawable.notification);
 
             if (ledNotifications) {
-                Log.d("Noteification", "led == " + ledNotifications);
                 builder.setLights(Color.CYAN, 300, 1500);
             }
             if (vibroNotifications) {
-                Log.d("Noteification", "vibro == " + ledNotifications);
                 builder.setVibrate(new long[]{500, 500});
             }
             if (soundNotifications) {
-                Log.d("Noteification", "sound == " + ledNotifications);
                 builder.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
             }
 
@@ -62,7 +58,7 @@ public class NotificationUtil {
 
             String title = context.getString(R.string.app_name);
             String contentText = context.getResources().getString(R.string.notification_message);
-            Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.mipmap.ic_launcher);
+            Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.notification);
             builder.setLargeIcon(largeIcon);
             builder.setContentTitle(title);
             builder.setContentText(contentText);
