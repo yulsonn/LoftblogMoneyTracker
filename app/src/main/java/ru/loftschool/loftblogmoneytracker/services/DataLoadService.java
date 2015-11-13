@@ -56,6 +56,11 @@ public class DataLoadService extends IntentService implements DateFormats {
         }
 
         checkData();
+
+        if (Categories.selectAll().isEmpty()) {
+            insertDefaultCategories();
+        }
+
         stopLoadData();
     }
 
@@ -76,12 +81,7 @@ public class DataLoadService extends IntentService implements DateFormats {
                         }
                     }
                 } else {
-                    String[] initCategories = getResources().getStringArray(R.array.initial_categories);
-                    for (int i = 0; i < initCategories.length; i++) {
-                        Categories category = new Categories(initCategories[i]);
-                        category.save();
-                        serverRequest.addCategoryToServer(category);
-                    }
+                    insertDefaultCategories();
                 }
             } catch (UnauthorizedException e) {
                 serverRequest.unauthorizedErrorReaction();
@@ -90,6 +90,15 @@ public class DataLoadService extends IntentService implements DateFormats {
             }
         } else {
             serverRequest.noInternetReaction();
+        }
+    }
+
+    private void insertDefaultCategories() {
+        String[] initCategories = getResources().getStringArray(R.array.initial_categories);
+        for (int i = 0; i < initCategories.length; i++) {
+            Categories category = new Categories(initCategories[i]);
+            category.save();
+            serverRequest.addCategoryToServer(category);
         }
     }
 

@@ -131,9 +131,13 @@ public class MainActivity extends AppCompatActivity implements TokenKeyStorage, 
     protected void stopLoadData() {
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.frame_container);
         if (currentFragment instanceof CategoriesFragment && CategoriesFragment.getAdapter() != null) {
-            CategoriesFragment.getAdapter().refreshAdapter(Categories.selectAll(), Categories.rowCount());
+            if (CategoriesFragment.getAdapter() != null) {
+                CategoriesFragment.getAdapter().refreshAdapter(Categories.selectAll(), Categories.rowCount());
+            }
         } else if (currentFragment instanceof ExpensesFragment && ExpensesFragment.getAdapter() != null) {
-            ExpensesFragment.getAdapter().refreshAdapter(Expenses.selectAll(), Expenses.rowCount());
+            if (ExpensesFragment.getAdapter() != null) {
+                ExpensesFragment.getAdapter().refreshAdapter(Expenses.selectAll(), Expenses.rowCount());
+            }
         }
         swipeRefreshVisible(false);
     }

@@ -109,7 +109,7 @@ public class AddExpenseActivity extends AppCompatActivity implements DateFormats
     }
 
     private List<Categories> getCategoriesList(){
-        return new Select().from(Categories.class).execute();
+        return new Select().from(Categories.class).orderBy("Id").execute();
     }
 
     @Override

@@ -69,7 +69,7 @@
     <string name="login_screen_new_ac_text">Нет аккаунта? Создать…</string>
 
     <string name="reg_screen_header_text">Регистрация</string>
-    <string name="reg_screen_btn_reg_text">Создать аккаутнт</string>
+    <string name="reg_screen_btn_reg_text">Создать аккаунт</string>
     <string name="reg_screen_login_text">Уже есть аккаунт? Войти…</string>
 
     <string name="error_unauthorized">Сессия устарела. Пожалуйста, войдите в систему снова.</string>
