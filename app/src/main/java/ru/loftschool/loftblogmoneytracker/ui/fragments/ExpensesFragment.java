@@ -49,6 +49,7 @@ import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.adapters.ExpensesAdapter;
 import ru.loftschool.loftblogmoneytracker.database.model.Categories;
 import ru.loftschool.loftblogmoneytracker.database.model.Expenses;
+import ru.loftschool.loftblogmoneytracker.services.DataLoadService_;
 import ru.loftschool.loftblogmoneytracker.ui.activities.AddExpenseActivity_;
 import ru.loftschool.loftblogmoneytracker.ui.activities.MainActivity;
 import ru.loftschool.loftblogmoneytracker.ui.dialogs.DatePickerFragment;
@@ -125,12 +126,11 @@ public class ExpensesFragment extends Fragment implements DateFormats{
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                loadData("");
+                DataLoadService_.intent(getContext()).start();
             }
         });
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(linearLayoutManager);
-//      to avoid an error "recyclerview No adapter attached; skipping layout" set a blank adapter for the recyclerView
         recyclerView.setAdapter(new ExpensesAdapter());
 
     }

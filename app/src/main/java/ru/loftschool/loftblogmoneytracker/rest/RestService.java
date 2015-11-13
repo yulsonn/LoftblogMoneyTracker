@@ -38,7 +38,7 @@ public class RestService {
         return restClient.getUserAPI().logoutUser();
     }
 
-    public CategoryModel addCategory(String title, String gToken, String token) throws UnauthorizedException{
+    public CategoryModel addCategory(String title, String gToken, String token){
         return restClient.getCategoriesAPI().addCategory(title, gToken, token);
     }
 
@@ -66,7 +66,7 @@ public class RestService {
         return restClient.getCategoriesAPI().getCategoryWithExpenses(id, gToken, token);
     }
 
-    public ArrayList<CategoryWithExpensesModel> getAllCategoriesWithExpenses(String gToken, String token) {
+    public ArrayList<CategoryWithExpensesModel> getAllCategoriesWithExpenses(String gToken, String token)  throws UnauthorizedException {
         return restClient.getCategoriesAPI().getAllCategoriesWithExpenses(gToken, token);
     }
 

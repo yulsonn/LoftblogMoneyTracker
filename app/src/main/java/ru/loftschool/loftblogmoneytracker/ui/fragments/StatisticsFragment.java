@@ -113,10 +113,8 @@ public class StatisticsFragment extends Fragment {
             }
         });
 
-        // add data
         addData();
 
-        // customize legends
         Legend legend = pieChart.getLegend();
         legend.setPosition(Legend.LegendPosition.RIGHT_OF_CHART);
         legend.setTextSize(13f);
@@ -187,11 +185,7 @@ public class StatisticsFragment extends Fragment {
         data.setValueTextColor(Color.DKGRAY);
 
         pieChart.setData(data);
-
-        // undo all highlights
         pieChart.highlightValues(null);
-
-        // update chart
         pieChart.invalidate();
     }
 

@@ -63,9 +63,7 @@ public class SettingsFragment extends PreferenceFragment implements Preference.O
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        //Тут можно подключать наши списки настроек, например:
         //bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_frequency_of_updates_key)));
-
         view.setBackgroundColor(getResources().getColor(R.color.background));
         super.onViewCreated(view, savedInstanceState);
     }

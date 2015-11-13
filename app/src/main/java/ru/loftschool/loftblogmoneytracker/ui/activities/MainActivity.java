@@ -43,8 +43,7 @@ import ru.loftschool.loftblogmoneytracker.database.model.Categories;
 import ru.loftschool.loftblogmoneytracker.database.model.Expenses;
 import ru.loftschool.loftblogmoneytracker.rest.RestService;
 import ru.loftschool.loftblogmoneytracker.rest.models.GoogleAccountDataModel;
-import ru.loftschool.loftblogmoneytracker.rest.status.CategoriesStatus;
-import ru.loftschool.loftblogmoneytracker.services.InitialDataLoadService_;
+import ru.loftschool.loftblogmoneytracker.services.DataLoadService_;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.CategoriesFragment;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.CategoriesFragment_;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.ExpensesFragment;
@@ -97,6 +96,9 @@ public class MainActivity extends AppCompatActivity implements TokenKeyStorage, 
     @StringRes(R.string.error_unauthorized)
     String unauthorizedError;
 
+    @StringRes(R.string.update_data_text)
+    String updateDataText;
+
     @StringArrayRes(R.array.initial_categories)
     String[] initCategories;
 
@@ -122,11 +124,15 @@ public class MainActivity extends AppCompatActivity implements TokenKeyStorage, 
     @Receiver(actions = LOAD_START_ACTION)
     protected void startLoadData() {
         swipeRefreshVisible(true);
+        Toast.makeText(MainActivity.this, updateDataText, Toast.LENGTH_SHORT).show();
     }
 
     @Receiver(actions = LOAD_STOP_ACTION)
     protected void stopLoadData() {
-        if (ExpensesFragment.getAdapter() != null) {
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.frame_container);
+        if (currentFragment instanceof CategoriesFragment && CategoriesFragment.getAdapter() != null) {
+            CategoriesFragment.getAdapter().refreshAdapter(Categories.selectAll(), Categories.rowCount());
+        } else if (currentFragment instanceof ExpensesFragment && ExpensesFragment.getAdapter() != null) {
             ExpensesFragment.getAdapter().refreshAdapter(Expenses.selectAll(), Expenses.rowCount());
         }
         swipeRefreshVisible(false);
@@ -144,7 +150,6 @@ public class MainActivity extends AppCompatActivity implements TokenKeyStorage, 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(LOG_TAG, "onCreate() method called");
-        initialCategoriesFill();
         FragmentManager fm = getSupportFragmentManager();
         if (savedInstanceState == null) {
             fm.beginTransaction().replace(R.id.frame_container, new ExpensesFragment_(), ExpensesFragment_.class.getSimpleName())
@@ -158,10 +163,18 @@ public class MainActivity extends AppCompatActivity implements TokenKeyStorage, 
                 if (getSupportFragmentManager().getBackStackEntryCount() == 0) finish();
             }
         });
+
+        initialCategoriesFill();
     }
 
     void swipeRefreshVisible(boolean isVisible) {
-        SwipeRefreshLayout swipe = ((ExpensesFragment) this.getSupportFragmentManager().findFragmentById(R.id.frame_container)).getSwipeRefreshLayout();
+        SwipeRefreshLayout swipe = null;
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.frame_container);
+        if (currentFragment instanceof CategoriesFragment) {
+            swipe = ((CategoriesFragment) this.getSupportFragmentManager().findFragmentById(R.id.frame_container)).getSwipeRefreshLayout();
+        } else if (currentFragment instanceof ExpensesFragment) {
+            swipe = ((ExpensesFragment) this.getSupportFragmentManager().findFragmentById(R.id.frame_container)).getSwipeRefreshLayout();
+        }
         if (swipe != null) {
             swipe.setRefreshing(isVisible);
         }
@@ -339,22 +352,7 @@ public class MainActivity extends AppCompatActivity implements TokenKeyStorage, 
     }
 
     private void initialCategoriesFill() {
-        if (Categories.selectAll().isEmpty()) {
-            InitialDataLoadService_.intent(this).start();
-        }
-    }
-
-    @UiThread
-    void unauthorizedErrorReaction() {
-        Toast.makeText(this, unauthorizedError, Toast.LENGTH_LONG).show();
-        Log.e(LOG_TAG, CategoriesStatus.STATUS_WRONG_TOKEN);
-        goToLogin();
-        finish();
-    }
-
-    @UiThread
-    void unknownErrorReaction() {
-        Toast.makeText(this, unknownError, Toast.LENGTH_LONG).show();
+        DataLoadService_.intent(this).start();
     }
 
     @UiThread
@@ -362,12 +360,6 @@ public class MainActivity extends AppCompatActivity implements TokenKeyStorage, 
         Intent intent = new Intent(this, LoginActivity_.class);
         startActivity(intent);
         finish();
-    }
-
-    @Background
-    public void logout(MenuItem item){
-        goToLogin();
-        MoneyTrackerApplication.setToken(this, TokenKeyStorage.DEFAULT_TOKEN_KEY);
     }
 
     void initDrawerHeaderWithGoogleAccInfo() {
@@ -402,7 +394,6 @@ public class MainActivity extends AppCompatActivity implements TokenKeyStorage, 
     public static void destroyActionModeIfNeeded() {
         if (actionMode != null) {
             actionMode.finish();
-            Log.e("ActionMode", "FINISH");
         }
     }
 }

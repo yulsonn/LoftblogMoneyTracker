@@ -147,12 +147,22 @@ public class ExpensesAdapter extends SelectableAdapter<ExpensesAdapter.CardViewH
     }
 
     public void refreshAdapter(List<Expenses> data, int rowCount) {
+        int size = expenses.size();
         if (data != null && !data.isEmpty()){
+            expenses.clear();
             for (Expenses expense : data) {
                 expenses.add(expense);
             }
         }
-        notifyItemRangeInserted(0, rowCount);
+        if (size == rowCount) {
+            notifyItemRangeChanged(0, size);
+        } else if (size < rowCount) {
+            notifyItemRangeInserted(0, rowCount-size);
+            notifyItemRangeChanged(0,rowCount);
+        } else if (size > rowCount) {
+            notifyItemRangeRemoved(0, size-rowCount);
+            notifyItemRangeChanged(0,rowCount);
+        }
     }
 
     @Override

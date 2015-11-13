@@ -19,7 +19,7 @@ public interface CategoriesAPI {
     @GET("/categories/add")
     CategoryModel addCategory(@Query("title") String title,
                               @Query("google_token") String gToken,
-                              @Query("auth_token") String token) throws UnauthorizedException;
+                              @Query("auth_token") String token);
 
     @GET("/categories/edit")
     CategoryModel editCategory(@Query("title") String title,
@@ -49,5 +49,5 @@ public interface CategoriesAPI {
 
     @GET("/transcat")
     ArrayList<CategoryWithExpensesModel> getAllCategoriesWithExpenses(@Query("google_token") String gToken,
-                                                                      @Query("auth_token") String token);
+                                                                      @Query("auth_token") String token)  throws UnauthorizedException;
 }

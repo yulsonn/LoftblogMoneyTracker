@@ -27,7 +27,6 @@ import ru.loftschool.loftblogmoneytracker.rest.CategorySyncObject;
 import ru.loftschool.loftblogmoneytracker.rest.ExpensesSyncObject;
 import ru.loftschool.loftblogmoneytracker.rest.RestService;
 import ru.loftschool.loftblogmoneytracker.rest.SyncWrapper;
-import ru.loftschool.loftblogmoneytracker.rest.exception.UnauthorizedException;
 import ru.loftschool.loftblogmoneytracker.rest.models.AllCategoriesModel;
 import ru.loftschool.loftblogmoneytracker.rest.models.AllExpensesModel;
 import ru.loftschool.loftblogmoneytracker.rest.models.CategoryDeleteModel;
@@ -54,6 +53,8 @@ public class ServerReqUtils implements DateFormats, SyncTypes{
     private String syncCategoriesFailed;
     private String syncExpensesOk;
     private String syncExpensesFailed;
+    private String errorTroubleConnect;
+    private String errorTroubleServer;
 
     public ServerReqUtils(Context context) {
         this.context = context;
@@ -64,6 +65,8 @@ public class ServerReqUtils implements DateFormats, SyncTypes{
         syncCategoriesFailed = context.getResources().getString(R.string.sync_categories_failed);
         syncExpensesOk = context.getResources().getString(R.string.sync_expenses_ok);
         syncExpensesFailed = context.getResources().getString(R.string.sync_expenses_failed);
+        errorTroubleConnect = context.getResources().getString(R.string.error_troubles_connection);
+        errorTroubleServer = context.getResources().getString(R.string.error_troubles_server);
     }
 
     @Background
@@ -72,18 +75,19 @@ public class ServerReqUtils implements DateFormats, SyncTypes{
             if (NetworkConnectionChecker.isNetworkConnected(context)) {
                 try {
                     CategoryModel categoryAddResp = restService.addCategory(category.name, MoneyTrackerApplication.getGoogleToken(context), MoneyTrackerApplication.getToken(context));
-                    if (CategoriesStatus.STATUS_OK.equals(categoryAddResp.getStatus())) {
-                        Log.e(LOG_TAG, "Category name: " + categoryAddResp.getData().getTitle() +
-                                ", Category id: " + categoryAddResp.getData().getId());
+                    String status = categoryAddResp.getStatus();
+                    if (CategoriesStatus.STATUS_OK.equals(status)) {
                         category.sId = categoryAddResp.getData().getId();
                         category.save();
-                        Log.e(LOG_TAG, "id: " + category.getId() + " server id: " + category.sId);
+                        Log.e(LOG_TAG, "Category name: " + category.name + ", id: " + category.getId() + ", server id: " + category.sId);
+                    } else if (CategoriesStatus.STATUS_UNAUTHORIZED.equalsIgnoreCase(status) || CategoriesStatus.STATUS_WRONG_TOKEN.equalsIgnoreCase(status)) {
+                        unauthorizedErrorReaction();
                     } else {
                         unknownErrorReaction();
                         Log.e(LOG_TAG, unknownError);
                     }
-                } catch (UnauthorizedException e) {
-                    unauthorizedErrorReaction();
+                } catch (RetrofitError e) {
+                    retrofitErrorMessageShow(e.getKind(), e);
                 }
             } else {
                 noInternetReaction();
@@ -96,17 +100,23 @@ public class ServerReqUtils implements DateFormats, SyncTypes{
     public void addExpenseToServer(Expenses expense) {
         if (expense != null) {
             if (NetworkConnectionChecker.isNetworkConnected(context)) {
-                AllExpensesModel addExpenseResp = restService.addExpense(String.valueOf(expense.price), expense.name,
-                        expense.category.sId, DateConvertUtils.dateToString(expense.date, INVERSE_DATE_FORMAT),
-                        MoneyTrackerApplication.getGoogleToken(context), MoneyTrackerApplication.getToken(context));
-                if (ExpensesStatus.STATUS_OK.equals(addExpenseResp.getStatus())) {
-                    Log.e(LOG_TAG, "Expense id: " + addExpenseResp.getId());
-                    expense.sId = addExpenseResp.getId();
-                    expense.save();
-                    Log.e(LOG_TAG, "New expense sId: " + expense.sId);
-                } else {
-                    unknownErrorReaction();
-                    Log.e(LOG_TAG, unknownError);
+                try {
+                    AllExpensesModel addExpenseResp = restService.addExpense(String.valueOf(expense.price), expense.name,
+                            expense.category.sId, DateConvertUtils.dateToString(expense.date, INVERSE_DATE_FORMAT),
+                            MoneyTrackerApplication.getGoogleToken(context), MoneyTrackerApplication.getToken(context));
+                    String status = addExpenseResp.getStatus();
+                    if (ExpensesStatus.STATUS_OK.equals(status)) {
+                        expense.sId = addExpenseResp.getId();
+                        expense.save();
+                        Log.e(LOG_TAG, "Expense sId: " + expense.sId);
+                    } else if (ExpensesStatus.STATUS_UNAUTHORIZED.equalsIgnoreCase(status) || ExpensesStatus.STATUS_WRONG_TOKEN.equalsIgnoreCase(status)) {
+                        unauthorizedErrorReaction();
+                    } else {
+                        unknownErrorReaction();
+                        Log.e(LOG_TAG, unknownError);
+                    }
+                } catch (RetrofitError e) {
+                    retrofitErrorMessageShow(e.getKind(), e);
                 }
             } else {
                 noInternetReaction();
@@ -119,14 +129,21 @@ public class ServerReqUtils implements DateFormats, SyncTypes{
     public void editCategoryOnServer(Categories category) {
         if (category != null) {
             if (NetworkConnectionChecker.isNetworkConnected(context)) {
-                CategoryModel categoryEditResp
-                        = restService.editCategory(category.name, category.sId, MoneyTrackerApplication.getGoogleToken(context), MoneyTrackerApplication.getToken(context));
-                if (CategoriesStatus.STATUS_OK.equals(categoryEditResp.getStatus())) {
-                    Log.e(LOG_TAG, "Category edited name: " + categoryEditResp.getData().getTitle() +
-                            ", Category id: " + categoryEditResp.getData().getId());
-                } else {
-                    unknownErrorReaction();
-                    Log.e(LOG_TAG, unknownError);
+                try {
+                    CategoryModel categoryEditResp
+                            = restService.editCategory(category.name, category.sId, MoneyTrackerApplication.getGoogleToken(context), MoneyTrackerApplication.getToken(context));
+                    String status = categoryEditResp.getStatus();
+                    if (CategoriesStatus.STATUS_OK.equals(categoryEditResp.getStatus())) {
+                        Log.e(LOG_TAG, "Category edited name: " + categoryEditResp.getData().getTitle() +
+                                ", Category id: " + categoryEditResp.getData().getId());
+                    } else if (CategoriesStatus.STATUS_UNAUTHORIZED.equalsIgnoreCase(status) || CategoriesStatus.STATUS_WRONG_TOKEN.equalsIgnoreCase(status)) {
+                        unauthorizedErrorReaction();
+                    } else {
+                        unknownErrorReaction();
+                        Log.e(LOG_TAG, unknownError);
+                    }
+                } catch (RetrofitError e) {
+                    retrofitErrorMessageShow(e.getKind(), e);
                 }
             } else {
                 noInternetReaction();
@@ -139,18 +156,25 @@ public class ServerReqUtils implements DateFormats, SyncTypes{
     public void deleteCategories(Map<Integer, Categories> categories) {
         if (categories != null && !categories.isEmpty()) {
             if (NetworkConnectionChecker.isNetworkConnected(context)) {
-                for (Map.Entry<Integer, Categories> pair : categories.entrySet()) {
-                    Categories category = pair.getValue();
-                    CategoryDeleteModel removeCategoryResp = restService.deleteCategory(category.sId, MoneyTrackerApplication.getGoogleToken(context), MoneyTrackerApplication.getToken(context));
-                    if (CategoriesStatus.STATUS_OK.equals(removeCategoryResp.getStatus())) {
-                        Log.e(LOG_TAG, category.sId + " category removed");
-                    } else {
-                        unknownErrorReaction();
-                        Log.e(LOG_TAG, unknownError);
+                try {
+                    for (Map.Entry<Integer, Categories> pair : categories.entrySet()) {
+                        Categories category = pair.getValue();
+                        CategoryDeleteModel removeCategoryResp = restService.deleteCategory(category.sId, MoneyTrackerApplication.getGoogleToken(context), MoneyTrackerApplication.getToken(context));
+                        String status = removeCategoryResp.getStatus();
+                        if (CategoriesStatus.STATUS_OK.equals(removeCategoryResp.getStatus())) {
+                            Log.e(LOG_TAG, category.sId + " category removed");
+                        } else if (CategoriesStatus.STATUS_UNAUTHORIZED.equalsIgnoreCase(status) || CategoriesStatus.STATUS_WRONG_TOKEN.equalsIgnoreCase(status)) {
+                            unauthorizedErrorReaction();
+                        } else {
+                            unknownErrorReaction();
+                            Log.e(LOG_TAG, unknownError);
+                        }
                     }
+                } catch (RetrofitError e) {
+                    retrofitErrorMessageShow(e.getKind(), e);
                 }
             } else {
-                    noInternetReaction();
+                noInternetReaction();
                     Log.e(LOG_TAG, noInternetError);
             }
         }
@@ -159,10 +183,14 @@ public class ServerReqUtils implements DateFormats, SyncTypes{
     @Background
     public void logout() {
         if (NetworkConnectionChecker.isNetworkConnected(context)) {
-            UserLogoutModel logoutResp = restService.logout();
-            if (UserStatus.STATUS_ERROR.equals(logoutResp.getStatus())) {
-                unknownErrorReaction();
-                Log.e(LOG_TAG, unknownError);
+            try {
+                UserLogoutModel logoutResp = restService.logout();
+                if (UserStatus.STATUS_ERROR.equals(logoutResp.getStatus())) {
+                    unknownErrorReaction();
+                    Log.e(LOG_TAG, unknownError);
+                }
+            } catch (RetrofitError e) {
+                retrofitErrorMessageShow(e.getKind(), e);
             }
         } else {
             noInternetReaction();
@@ -189,34 +217,38 @@ public class ServerReqUtils implements DateFormats, SyncTypes{
         SyncWrapper data = new SyncWrapper(params, null);
 
         if (NetworkConnectionChecker.isNetworkConnected(context)) {
-            restService.categoriesSync(
-                    data,
-                    MoneyTrackerApplication.getGoogleToken(context),
-                    MoneyTrackerApplication.getToken(context),
-                    new Callback<AllCategoriesModel>() {
-                        @Override
-                        public void success(AllCategoriesModel allCategoriesModel, Response response) {
-                            if (allCategoriesModel.getStatus().equalsIgnoreCase("success")) {
-                                Log.e(LOG_TAG, "OK. Category sync status success");
-                                if (launchMode == SYNC_MANUAL) {
-                                    syncFinished(SYNC_CATEGORIES, SYNC_OK);
-                                }
-                            } else {
-                                Log.e(LOG_TAG, "BAD. Category sync: something went wrong");
-                                if (launchMode == SYNC_MANUAL) {
-                                    syncFinished(SYNC_CATEGORIES, SYNC_FAILED);
+                restService.categoriesSync(
+                        data,
+                        MoneyTrackerApplication.getGoogleToken(context),
+                        MoneyTrackerApplication.getToken(context),
+                        new Callback<AllCategoriesModel>() {
+                            @Override
+                            public void success(AllCategoriesModel allCategoriesModel, Response response) {
+                                if (allCategoriesModel.getStatus().equalsIgnoreCase(CategoriesStatus.STATUS_OK)) {
+                                    Log.e(LOG_TAG, "OK. Category sync status success");
+                                    if (launchMode == SYNC_MANUAL) {
+                                        syncFinished(SYNC_CATEGORIES, SYNC_OK);
+                                    }
+                                } else {
+                                    Log.e(LOG_TAG, "BAD. Category sync: something went wrong");
+                                    if (launchMode == SYNC_MANUAL) {
+                                        syncFinished(SYNC_CATEGORIES, SYNC_FAILED);
+                                    }
                                 }
                             }
-                        }
 
-                        @Override
-                        public void failure(RetrofitError error) {
-                            Log.e(LOG_TAG, "ERROR. Category sync failed");
-                            if (launchMode == SYNC_MANUAL) {
-                                syncFinished(SYNC_CATEGORIES, SYNC_FAILED);
+                            @Override
+                            public void failure(RetrofitError error) {
+                                Log.e(LOG_TAG, "ERROR. Category sync failed");
+                                if (launchMode == SYNC_MANUAL) {
+                                    if (error.getCause().getMessage().equalsIgnoreCase("retrofit.RetrofitError: 401 Unauthorized")) {
+                                        unauthorizedErrorReaction();
+                                    } else {
+                                        syncFinished(SYNC_CATEGORIES, SYNC_FAILED);
+                                    }
+                                }
                             }
-                        }
-                    });
+                        });
         } else {
             noInternetReaction();
             Log.e(LOG_TAG, noInternetError);
@@ -264,11 +296,14 @@ public class ServerReqUtils implements DateFormats, SyncTypes{
                         public void failure(RetrofitError error) {
                             Log.e(LOG_TAG, "ERROR. Expenses sync failed");
                             if (launchMode == SYNC_MANUAL) {
-                                syncFinished(SYNC_EXPENSES, SYNC_FAILED);
+                                if (error.getCause().getMessage().equalsIgnoreCase("retrofit.RetrofitError: 401 Unauthorized")) {
+                                    unauthorizedErrorReaction();
+                                } else {
+                                    syncFinished(SYNC_EXPENSES, SYNC_FAILED);
+                                }
                             }
                         }
                     });
-
             if (launchMode == SYNC_AUTOMATIC) {
                 NotificationUtil.UpdateNotifications(context);
             }
@@ -279,7 +314,7 @@ public class ServerReqUtils implements DateFormats, SyncTypes{
     }
 
     @UiThread
-    void unauthorizedErrorReaction() {
+    public void unauthorizedErrorReaction() {
         Toast.makeText(context, unauthorizedError, Toast.LENGTH_LONG).show();
         Log.e(LOG_TAG, CategoriesStatus.STATUS_WRONG_TOKEN);
         goToLogin();
@@ -287,7 +322,7 @@ public class ServerReqUtils implements DateFormats, SyncTypes{
     }
 
     @UiThread
-    void unknownErrorReaction() {
+    public void unknownErrorReaction() {
         Toast.makeText(context, unknownError, Toast.LENGTH_LONG).show();
     }
 
@@ -313,6 +348,17 @@ public class ServerReqUtils implements DateFormats, SyncTypes{
                     Toast.makeText(context, syncExpensesFailed, Toast.LENGTH_LONG).show();
                 }
                 break;
+        }
+    }
+
+    @UiThread
+    public void retrofitErrorMessageShow(RetrofitError.Kind kind, RetrofitError error) {
+        if (kind.equals(RetrofitError.Kind.NETWORK)) {
+            Toast.makeText(context, errorTroubleConnect, Toast.LENGTH_SHORT).show();
+        } else if (kind.equals(RetrofitError.Kind.CONVERSION) || kind.equals(RetrofitError.Kind.HTTP)) {
+            Toast.makeText(context, errorTroubleServer, Toast.LENGTH_SHORT).show();
+        } else {
+            throw error;
         }
     }
 

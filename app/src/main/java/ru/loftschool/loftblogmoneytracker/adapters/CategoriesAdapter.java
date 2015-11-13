@@ -162,6 +162,24 @@ public class CategoriesAdapter extends SelectableAdapter<CategoriesAdapter.CardV
         return categories == null ? 0 : categories.size();
     }
 
+    public void refreshAdapter(List<Categories> data, int rowCount) {
+        int size = categories.size();
+        if (data != null && !data.isEmpty()){
+            categories.clear();
+            for (Categories category : data) {
+                categories.add(category);
+            }
+        }
+        if (size == rowCount) {
+            notifyItemRangeChanged(0, size);
+        } else if (size < rowCount) {
+            notifyItemRangeInserted(0, rowCount-size);
+            notifyItemRangeChanged(0,rowCount);
+        } else if (size > rowCount) {
+            notifyItemRangeRemoved(0, size-rowCount);
+            notifyItemRangeChanged(0,rowCount);
+        }
+    }
 
     private void saveRemovedItems(List<Integer> positions) {
         if (removedCategoriesMap != null) {

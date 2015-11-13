@@ -52,6 +52,10 @@ public class Expenses extends Model {
         return new Select().from(Expenses.class).orderBy("Date DESC").execute();
     }
 
+    public static Expenses selectExpenseById(int serverId) {
+        return new Select().from(Expenses.class).where("sId = ?", serverId).executeSingle();
+    }
+
     public static int rowCount() {
         return SQLiteUtils.intQuery("SELECT count(*) from Expenses", new String[]{});
     }

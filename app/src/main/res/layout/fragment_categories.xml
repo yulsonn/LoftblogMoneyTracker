@@ -5,7 +5,7 @@
     style="@style/Container.Background">
 
     <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh_expenses"
+        android:id="@+id/swipe_refresh_categories"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/relative_layout_margin">

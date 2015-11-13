@@ -47,6 +47,7 @@ import java.util.List;
 import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.adapters.CategoriesAdapter;
 import ru.loftschool.loftblogmoneytracker.database.model.Categories;
+import ru.loftschool.loftblogmoneytracker.services.DataLoadService_;
 import ru.loftschool.loftblogmoneytracker.ui.activities.MainActivity;
 import ru.loftschool.loftblogmoneytracker.utils.ServerReqUtils;
 import ru.loftschool.loftblogmoneytracker.utils.TextInputValidator;
@@ -68,7 +69,7 @@ public class CategoriesFragment extends Fragment {
     @ViewById(R.id.categories_fab)
     FloatingActionButton fab;
 
-    @ViewById(R.id.swipe_refresh_expenses)
+    @ViewById(R.id.swipe_refresh_categories)
     SwipeRefreshLayout swipeRefreshLayout;
 
     @StringRes(R.string.frag_title_categories)
@@ -127,6 +128,10 @@ public class CategoriesFragment extends Fragment {
         return actionModeCallback;
     }
 
+    public SwipeRefreshLayout getSwipeRefreshLayout() {
+        return swipeRefreshLayout;
+    }
+
     @AfterViews
     void ready(){
         getActivity().setTitle(title);
@@ -136,7 +141,7 @@ public class CategoriesFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                loadData("");
+                DataLoadService_.intent(getContext()).start();
             }
         });
         recyclerView.setHasFixedSize(true);
@@ -370,6 +375,7 @@ public class CategoriesFragment extends Fragment {
         return new Select()
                 .from(Categories.class)
                 .where("Name LIKE ?", new Object[]{'%' + filter + '%'})
+                .orderBy("Id")
                 .execute();
     }
 
@@ -407,7 +413,6 @@ public class CategoriesFragment extends Fragment {
                             .setPositiveButton(categoryRemoveAccept, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    // Accept action
                                     adapter.removeItems(adapter.getSelectedItems());
                                     undoSnackbarShow();
                                     mode.finish();
@@ -416,7 +421,6 @@ public class CategoriesFragment extends Fragment {
                             .setNegativeButton(categoryRemoveCancel, new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    // Cancel action
                                     dialogInterface.dismiss();
                                 }
                             })

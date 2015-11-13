@@ -80,7 +80,7 @@
         </service>
 
         <service
-            android:name=".services.InitialDataLoadService_"
+            android:name=".services.DataLoadService_"
             android:exported="false"/>
 
     </application>
