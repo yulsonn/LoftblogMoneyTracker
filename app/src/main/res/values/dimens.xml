@@ -23,7 +23,7 @@
     <!--Card dimens-->
     <dimen name="card_corner_radius">2dp</dimen>
     <dimen name="card_expenses_height">105dp</dimen>
-    <dimen name="card_categories_height">70dp</dimen>
+    <dimen name="card_categories_height">85dp</dimen>
     <dimen name="card_margin">2dp</dimen>
 
     <!--Relative layout dimens-->

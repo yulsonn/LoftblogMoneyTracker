@@ -130,8 +130,8 @@ public class LoginActivity extends AppCompatActivity {
     void login() {
         RestService restService = new RestService();
         UserLoginModel response = restService.login(etUser.getText().toString(), etPassword.getText().toString());
-        // save auth_token to SharedPreferences
         MoneyTrackerApplication.setToken(this, response.getAuthToken());
+        MoneyTrackerApplication.setUserName(this, etUser.getText().toString());
         String status = response.getStatus();
 
         if (UserStatus.STATUS_OK.equals(status)) {

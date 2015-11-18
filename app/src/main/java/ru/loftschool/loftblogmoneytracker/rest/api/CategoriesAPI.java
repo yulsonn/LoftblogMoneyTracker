@@ -10,6 +10,7 @@ import retrofit.http.Query;
 import ru.loftschool.loftblogmoneytracker.rest.SyncWrapper;
 import ru.loftschool.loftblogmoneytracker.rest.exception.UnauthorizedException;
 import ru.loftschool.loftblogmoneytracker.rest.models.AllCategoriesModel;
+import ru.loftschool.loftblogmoneytracker.rest.models.CategoryDeleteModel;
 import ru.loftschool.loftblogmoneytracker.rest.models.CategoryModel;
 import ru.loftschool.loftblogmoneytracker.rest.models.CategoryWithExpensesModel;
 
@@ -18,7 +19,7 @@ public interface CategoriesAPI {
     @GET("/categories/add")
     CategoryModel addCategory(@Query("title") String title,
                               @Query("google_token") String gToken,
-                              @Query("auth_token") String token) throws UnauthorizedException;
+                              @Query("auth_token") String token);
 
     @GET("/categories/edit")
     CategoryModel editCategory(@Query("title") String title,
@@ -27,7 +28,7 @@ public interface CategoriesAPI {
                                @Query("auth_token") String token);
 
     @GET("/categories/del")
-    CategoryModel deleteCategory(@Query("id") Integer id,
+    CategoryDeleteModel deleteCategory(@Query("id") Integer id,
                                  @Query("google_token") String gToken,
                                  @Query("auth_token") String token);
 
@@ -48,5 +49,5 @@ public interface CategoriesAPI {
 
     @GET("/transcat")
     ArrayList<CategoryWithExpensesModel> getAllCategoriesWithExpenses(@Query("google_token") String gToken,
-                                                                      @Query("auth_token") String token);
+                                                                      @Query("auth_token") String token)  throws UnauthorizedException;
 }

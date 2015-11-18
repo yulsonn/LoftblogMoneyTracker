@@ -51,8 +51,7 @@
             android:layout_marginTop="@dimen/text_margin_top"
             android:textSize="@dimen/medium_main_text"
             android:text="@string/item_text_date"
-            android:textColor="@color/gray"
-            android:textStyle="bold"
+            android:textStyle="italic"
             android:layout_below="@id/expense_category_text"/>
 
         <TextView

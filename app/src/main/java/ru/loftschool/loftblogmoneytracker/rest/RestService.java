@@ -8,6 +8,7 @@ import ru.loftschool.loftblogmoneytracker.rest.exception.UnauthorizedException;
 import ru.loftschool.loftblogmoneytracker.rest.models.AllCategoriesModel;
 import ru.loftschool.loftblogmoneytracker.rest.models.AllExpensesModel;
 import ru.loftschool.loftblogmoneytracker.rest.models.BalanceModel;
+import ru.loftschool.loftblogmoneytracker.rest.models.CategoryDeleteModel;
 import ru.loftschool.loftblogmoneytracker.rest.models.CategoryModel;
 import ru.loftschool.loftblogmoneytracker.rest.models.CategoryWithExpensesModel;
 import ru.loftschool.loftblogmoneytracker.rest.models.GoogleAccountDataModel;
@@ -37,7 +38,7 @@ public class RestService {
         return restClient.getUserAPI().logoutUser();
     }
 
-    public CategoryModel addCategory(String title, String gToken, String token) throws UnauthorizedException{
+    public CategoryModel addCategory(String title, String gToken, String token){
         return restClient.getCategoriesAPI().addCategory(title, gToken, token);
     }
 
@@ -65,11 +66,11 @@ public class RestService {
         return restClient.getCategoriesAPI().getCategoryWithExpenses(id, gToken, token);
     }
 
-    public ArrayList<CategoryWithExpensesModel> getAllCategoriesWithExpenses(String gToken, String token) {
+    public ArrayList<CategoryWithExpensesModel> getAllCategoriesWithExpenses(String gToken, String token)  throws UnauthorizedException {
         return restClient.getCategoriesAPI().getAllCategoriesWithExpenses(gToken, token);
     }
 
-    public CategoryModel deleteCategory(Integer id, String gToken, String token) {
+    public CategoryDeleteModel deleteCategory(Integer id, String gToken, String token) {
         return restClient.getCategoriesAPI().deleteCategory(id, gToken, token);
     }
 

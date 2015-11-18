@@ -6,6 +6,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -42,8 +43,7 @@ import ru.loftschool.loftblogmoneytracker.database.model.Categories;
 import ru.loftschool.loftblogmoneytracker.database.model.Expenses;
 import ru.loftschool.loftblogmoneytracker.rest.RestService;
 import ru.loftschool.loftblogmoneytracker.rest.models.GoogleAccountDataModel;
-import ru.loftschool.loftblogmoneytracker.rest.status.CategoriesStatus;
-import ru.loftschool.loftblogmoneytracker.services.InitialDataLoadService_;
+import ru.loftschool.loftblogmoneytracker.services.DataLoadService_;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.CategoriesFragment;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.CategoriesFragment_;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.ExpensesFragment;
@@ -52,12 +52,13 @@ import ru.loftschool.loftblogmoneytracker.ui.fragments.SettingsFragment;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.StatisticsFragment;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.StatisticsFragment_;
 import ru.loftschool.loftblogmoneytracker.utils.ServerReqUtils;
+import ru.loftschool.loftblogmoneytracker.utils.SyncTypes;
 import ru.loftschool.loftblogmoneytracker.utils.TokenKeyStorage;
 import ru.loftschool.loftblogmoneytracker.utils.network.NetworkConnectionChecker;
 
 @EActivity(R.layout.activity_main)
 @OptionsMenu(R.menu.menu_main)
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements TokenKeyStorage, SyncTypes {
 
     public static final String LOAD_START_ACTION = "start_load";
     public static final String LOAD_STOP_ACTION = "stop_load";
@@ -95,6 +96,9 @@ public class MainActivity extends AppCompatActivity {
     @StringRes(R.string.error_unauthorized)
     String unauthorizedError;
 
+    @StringRes(R.string.update_data_text)
+    String updateDataText;
+
     @StringArrayRes(R.array.initial_categories)
     String[] initCategories;
 
@@ -110,55 +114,30 @@ public class MainActivity extends AppCompatActivity {
     void ready(){
         initToolbar();
         setupNavigationDrawer();
-
-       /* methods for testing rest-queries: */
-
-        /* 1. add new category - OK */
-        //addCategoriesToServer();
-
-        /* 2. edit category - OK */
-        //editCategoryOnServer();
-
-        /* 3. get all categories info - OK */
-        //getAllCategories();
-
-        /* 4. get one category with expenses info - OK
-        * bug: returns List<Object> instead of one Object*/
-        //getCategoryInfo();
-
-        /* 5. get all expenses info - OK */
-        //getAllExpenses();
-
-        /* 6. get one expense info - OK */
-        //addExpense();
-
-        /* 7. get all categories with expenses info - OK*/
-        //getAllCategoriesInfo();
-
-        /* 8. get balance / set balance - OK*/
-        //balanceTest();
-
-        /* 9. remove category - FAIL */
-        //deleteCategory();
-
-        /* 10. categories synch - OK */
-        //categoriesSync();
-
-        /* 11. expenses synch - ? */
-        //expensesSync();
-
-        initDrawerHeaderWithGoogleAccInfo();
+        if (!MoneyTrackerApplication.getGoogleToken(this).equalsIgnoreCase(DEFAULT_TOKEN_GOOGLE_KEY)) {
+            initDrawerHeaderWithGoogleAccInfo();
+        } else {
+            initDrawerHeaderInfo();
+        }
     }
 
     @Receiver(actions = LOAD_START_ACTION)
     protected void startLoadData() {
         swipeRefreshVisible(true);
+        Toast.makeText(MainActivity.this, updateDataText, Toast.LENGTH_SHORT).show();
     }
 
     @Receiver(actions = LOAD_STOP_ACTION)
     protected void stopLoadData() {
-        if (ExpensesFragment.getAdapter() != null) {
-            ExpensesFragment.getAdapter().refreshAdapter(Expenses.selectAll(), Expenses.rowCount());
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.frame_container);
+        if (currentFragment instanceof CategoriesFragment && CategoriesFragment.getAdapter() != null) {
+            if (CategoriesFragment.getAdapter() != null) {
+                CategoriesFragment.getAdapter().refreshAdapter(Categories.selectAll(), Categories.rowCount());
+            }
+        } else if (currentFragment instanceof ExpensesFragment && ExpensesFragment.getAdapter() != null) {
+            if (ExpensesFragment.getAdapter() != null) {
+                ExpensesFragment.getAdapter().refreshAdapter(Expenses.selectAll(), Expenses.rowCount());
+            }
         }
         swipeRefreshVisible(false);
     }
@@ -175,7 +154,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(LOG_TAG, "onCreate() method called");
-        initialCategoriesFill();
         FragmentManager fm = getSupportFragmentManager();
         if (savedInstanceState == null) {
             fm.beginTransaction().replace(R.id.frame_container, new ExpensesFragment_(), ExpensesFragment_.class.getSimpleName())
@@ -189,10 +167,18 @@ public class MainActivity extends AppCompatActivity {
                 if (getSupportFragmentManager().getBackStackEntryCount() == 0) finish();
             }
         });
+
+        initialCategoriesFill();
     }
 
     void swipeRefreshVisible(boolean isVisible) {
-        SwipeRefreshLayout swipe = ((ExpensesFragment) this.getSupportFragmentManager().findFragmentById(R.id.frame_container)).getSwipeRefreshLayout();
+        SwipeRefreshLayout swipe = null;
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.frame_container);
+        if (currentFragment instanceof CategoriesFragment) {
+            swipe = ((CategoriesFragment) this.getSupportFragmentManager().findFragmentById(R.id.frame_container)).getSwipeRefreshLayout();
+        } else if (currentFragment instanceof ExpensesFragment) {
+            swipe = ((ExpensesFragment) this.getSupportFragmentManager().findFragmentById(R.id.frame_container)).getSwipeRefreshLayout();
+        }
         if (swipe != null) {
             swipe.setRefreshing(isVisible);
         }
@@ -289,11 +275,17 @@ public class MainActivity extends AppCompatActivity {
                         .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
                         .commit();
                 break;
+            case R.id.drawer_item_sync:
+                serverRequest.synchronize(SYNC_MANUAL);
+                break;
             case R.id.drawer_item_logout:
-                serverRequest.logout();
+                if (!DEFAULT_TOKEN_KEY.equalsIgnoreCase(MoneyTrackerApplication.getToken(this))) {
+                    serverRequest.logout();
+                }
+                MoneyTrackerApplication.setToken(this, DEFAULT_TOKEN_KEY);
+                MoneyTrackerApplication.setGoogleToken(this, DEFAULT_TOKEN_GOOGLE_KEY);
+                MoneyTrackerApplication.setUserName(this, MoneyTrackerApplication.DEFAULT_USER_NAME);
                 goToLogin();
-                MoneyTrackerApplication.setToken(this, TokenKeyStorage.DEFAULT_TOKEN_KEY);
-                MoneyTrackerApplication.setGoogleToken(this, TokenKeyStorage.DEFAULT_TOKEN_GOOGLE_KEY);
                 break;
         }
 
@@ -364,22 +356,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initialCategoriesFill() {
-        if (Categories.selectAll().isEmpty()) {
-            InitialDataLoadService_.intent(this).start();
-        }
-    }
-
-    @UiThread
-    void unauthorizedErrorReaction() {
-        Toast.makeText(this, unauthorizedError, Toast.LENGTH_LONG).show();
-        Log.e(LOG_TAG, CategoriesStatus.STATUS_WRONG_TOKEN);
-        goToLogin();
-        finish();
-    }
-
-    @UiThread
-    void unknownErrorReaction() {
-        Toast.makeText(this, unknownError, Toast.LENGTH_LONG).show();
+        DataLoadService_.intent(this).start();
     }
 
     @UiThread
@@ -389,17 +366,17 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
-    @Background
-    public void logout(MenuItem item){
-        goToLogin();
-        MoneyTrackerApplication.setToken(this, TokenKeyStorage.DEFAULT_TOKEN_KEY);
-    }
-
     void initDrawerHeaderWithGoogleAccInfo() {
         if (NetworkConnectionChecker.isNetworkConnected(this)
                 && !TokenKeyStorage.DEFAULT_TOKEN_GOOGLE_KEY.equalsIgnoreCase(MoneyTrackerApplication.getGoogleToken(this))) {
             getGoogleAccountData();
         }
+    }
+
+    void initDrawerHeaderInfo() {
+        avatar.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.noname_avatar));
+        userName.setText(MoneyTrackerApplication.getUserName(this));
+        email.setText("");
     }
 
     @Background
@@ -421,7 +398,6 @@ public class MainActivity extends AppCompatActivity {
     public static void destroyActionModeIfNeeded() {
         if (actionMode != null) {
             actionMode.finish();
-            Log.e("ActionMode", "FINISH");
         }
     }
 }

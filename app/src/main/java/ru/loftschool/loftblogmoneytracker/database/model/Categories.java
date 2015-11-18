@@ -22,6 +22,7 @@ public class Categories extends Model {
     }
 
     public Categories(String name, Integer sId) {
+        super();
         this.name = name;
         this.sId = sId;
     }
@@ -50,5 +51,9 @@ public class Categories extends Model {
 
     public static List<Categories> selectAll() {
         return new Select().from(Categories.class).orderBy("Id").execute();
+    }
+
+    public static int rowCount() {
+        return SQLiteUtils.intQuery("SELECT count(*) from Categories", new String[]{});
     }
 }

@@ -16,11 +16,9 @@ public class Expenses extends Model {
     public String name;
 
     @Column(name = "Price")
-    //public String price;
     public Float price;
 
     @Column(name = "Date")
-    //public String date;
     public Date date;
 
     @Column(name = "sId")
@@ -34,6 +32,7 @@ public class Expenses extends Model {
     }
 
     public Expenses(String name, Float price, Date date, Integer sId, Categories category) {
+        super();
         this.name = name;
         this.price = price;
         this.date = date;
@@ -50,10 +49,14 @@ public class Expenses extends Model {
     }
 
     public static List<Expenses> selectAll() {
-        return new Select().from(Expenses.class).execute();
+        return new Select().from(Expenses.class).orderBy("Date DESC").execute();
+    }
+
+    public static Expenses selectExpenseById(int serverId) {
+        return new Select().from(Expenses.class).where("sId = ?", serverId).executeSingle();
     }
 
     public static int rowCount() {
-        return SQLiteUtils.intQuery("SELECT count(*) from Categories", new String[]{});
+        return SQLiteUtils.intQuery("SELECT count(*) from Expenses", new String[]{});
     }
 }

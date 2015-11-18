@@ -55,7 +55,7 @@ public class ExpensesAdapter extends SelectableAdapter<ExpensesAdapter.CardViewH
     public void onBindViewHolder(CardViewHolder holder, int position) {
         Expenses expense = expenses.get(position);
         holder.textTitle.setText(expense.name);
-        holder.dateTitle.setText(DateConvertUtils.dateToString(expense.date, DateConvertUtils.DEFAULT_FORMAT));
+        holder.dateTitle.setText(DateConvertUtils.dateToString(expense.date, DateConvertUtils.FULL_DATE_FORMAT));
         holder.sumTitle.setText(String.format("%.2f",expense.price));
         holder.categoryTitle.setText(expense.category.toString());
         holder.selectedOverlay.setVisibility(isSelected(position) ? View.VISIBLE : View.INVISIBLE);
@@ -147,12 +147,22 @@ public class ExpensesAdapter extends SelectableAdapter<ExpensesAdapter.CardViewH
     }
 
     public void refreshAdapter(List<Expenses> data, int rowCount) {
+        int size = expenses.size();
         if (data != null && !data.isEmpty()){
+            expenses.clear();
             for (Expenses expense : data) {
                 expenses.add(expense);
             }
         }
-        notifyItemRangeInserted(0, rowCount);
+        if (size == rowCount) {
+            notifyItemRangeChanged(0, size);
+        } else if (size < rowCount) {
+            notifyItemRangeInserted(0, rowCount-size);
+            notifyItemRangeChanged(0,rowCount);
+        } else if (size > rowCount) {
+            notifyItemRangeRemoved(0, size-rowCount);
+            notifyItemRangeChanged(0,rowCount);
+        }
     }
 
     @Override
