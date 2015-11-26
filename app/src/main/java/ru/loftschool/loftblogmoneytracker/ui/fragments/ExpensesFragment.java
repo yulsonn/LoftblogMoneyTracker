@@ -92,6 +92,9 @@ public class ExpensesFragment extends Fragment implements DateFormats{
     @StringRes(R.string.edit_expense_changed)
     String expenseChanged;
 
+    @StringRes(R.string.no_categories_message)
+    String noCategoriesMsg;
+
     @OptionsMenuItem(R.id.search_action)
     MenuItem menuItem;
 
@@ -113,9 +116,13 @@ public class ExpensesFragment extends Fragment implements DateFormats{
     @Click
     void fab() {
         MainActivity.destroyActionModeIfNeeded();
-        Intent openActivityIntent = new Intent(getActivity(), AddExpenseActivity_.class);
-        getActivity().startActivity(openActivityIntent);
-        getActivity().overridePendingTransition(R.anim.from_middle, R.anim.to_middle);
+        if (!Categories.selectAll().isEmpty()) {
+            Intent openActivityIntent = new Intent(getActivity(), AddExpenseActivity_.class);
+            getActivity().startActivity(openActivityIntent);
+            getActivity().overridePendingTransition(R.anim.from_middle, R.anim.to_middle);
+        } else {
+            Toast.makeText(getContext(), noCategoriesMsg, Toast.LENGTH_LONG).show();
+        }
     }
 
     @AfterViews

@@ -47,6 +47,7 @@
     <string name="error_null_name">Введите наименование!</string>
     <string name="error_input_message">Одно или несколько полей не заполнены!</string>
     <string name="expense_added_text">Трата добавлена: </string>
+    <string name="no_categories_message">Не найдено категорий. Невозможно создать трату без категории.</string>
 
     <!--Splash text-->
     <string name="splash_text">Welcome to Loftblog Money Tracker</string>
