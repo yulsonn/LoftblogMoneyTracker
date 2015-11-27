@@ -48,7 +48,6 @@ import ru.loftschool.loftblogmoneytracker.ui.fragments.CategoriesFragment;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.CategoriesFragment_;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.ExpensesFragment;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.ExpensesFragment_;
-import ru.loftschool.loftblogmoneytracker.ui.fragments.SettingsFragment;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.StatisticsFragment;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.StatisticsFragment_;
 import ru.loftschool.loftblogmoneytracker.utils.ServerReqUtils;
@@ -106,8 +105,15 @@ public class MainActivity extends AppCompatActivity implements TokenKeyStorage, 
     ServerReqUtils serverRequest;
 
     @OptionsItem(android.R.id.home)
-    void settings(){
+    void homeBtnAction(){
         drawerLayout.openDrawer(GravityCompat.START);
+    }
+
+    @OptionsItem(R.id.action_settings)
+    void settingsAction() {
+        Intent intent = new Intent(this, TrackerPreferenceActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.activity_open_scale, R.anim.activity_close_translate);
     }
 
     @AfterViews
@@ -268,12 +274,6 @@ public class MainActivity extends AppCompatActivity implements TokenKeyStorage, 
                 break;
             case R.id.drawer_item_statistics:
                 replaceFragment(new StatisticsFragment_());
-                break;
-            case R.id.drawer_item_settings:
-                getFragmentManager().beginTransaction().replace(R.id.frame_container, new SettingsFragment(), SettingsFragment.class.getSimpleName())
-                        .addToBackStack(SettingsFragment.class.getSimpleName())
-                        .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE)
-                        .commit();
                 break;
             case R.id.drawer_item_sync:
                 serverRequest.synchronize(SYNC_MANUAL);

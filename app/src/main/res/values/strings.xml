@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">LoftblogMoneyTracker</string>
 
+    <!--Main menu-->
+    <string name="action_settings">Настройки</string>
+
     <!--Sync-->
     <string name="content_authority" translatable="false">ru.loftschool.loftblogmoneytracker</string>
     <string name="sync_account_type" translatable="false">loftblogmoneytracker.loftschool.ru</string>
@@ -27,10 +30,10 @@
     <string name="frag_title_expenses">Траты</string>
     <string name="frag_title_categories">Категории</string>
     <string name="frag_title_statistics">Статистика</string>
-    <string name="frag_title_settings">Настройки</string>
 
     <!--Заголовки активити-->
     <string name="act_title_add_expense">Добавить трату</string>
+    <string name="act_title_settings">Настройки</string>
 
     <!--Стркоки для Drawer header-->
     <string name="drawer_header_username">User</string>
