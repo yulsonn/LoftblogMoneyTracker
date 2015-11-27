@@ -89,6 +89,9 @@
             android:name=".services.SyncExpensesService_"
             android:exported="false"/>
 
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="cb20c07c9c84d18bf080988d201dc468711bf39c" />
     </application>
 
 </manifest>
