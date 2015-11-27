@@ -85,6 +85,10 @@
             android:name=".services.DataLoadService_"
             android:exported="false"/>
 
+        <service
+            android:name=".services.SyncExpensesService_"
+            android:exported="false"/>
+
     </application>
 
 </manifest>

@@ -21,6 +21,7 @@ import java.util.TreeMap;
 
 import ru.loftschool.loftblogmoneytracker.R;
 import ru.loftschool.loftblogmoneytracker.database.model.Expenses;
+import ru.loftschool.loftblogmoneytracker.services.SyncExpensesService_;
 import ru.loftschool.loftblogmoneytracker.utils.date.DateConvertUtils;
 
 public class ExpensesAdapter extends SelectableAdapter<ExpensesAdapter.CardViewHolder> {
@@ -116,7 +117,6 @@ public class ExpensesAdapter extends SelectableAdapter<ExpensesAdapter.CardViewH
 
     private void removeExpenses(int position) {
         if (expenses.get(position) != null) {
-            //expenses.get(position).delete();
             expenses.remove(position);
         }
     }
@@ -126,7 +126,8 @@ public class ExpensesAdapter extends SelectableAdapter<ExpensesAdapter.CardViewH
             for (Map.Entry<Integer, Expenses> pair : removedExpensesMap.entrySet()) {
                 pair.getValue().delete();
             }
-            removedExpensesMap = null; 
+            removedExpensesMap = null;
+            SyncExpensesService_.intent(context).start();
         }
     }
 

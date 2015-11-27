@@ -50,9 +50,11 @@ import ru.loftschool.loftblogmoneytracker.adapters.ExpensesAdapter;
 import ru.loftschool.loftblogmoneytracker.database.model.Categories;
 import ru.loftschool.loftblogmoneytracker.database.model.Expenses;
 import ru.loftschool.loftblogmoneytracker.services.DataLoadService_;
+import ru.loftschool.loftblogmoneytracker.services.SyncExpensesService_;
 import ru.loftschool.loftblogmoneytracker.ui.activities.AddExpenseActivity_;
 import ru.loftschool.loftblogmoneytracker.ui.activities.MainActivity;
 import ru.loftschool.loftblogmoneytracker.ui.dialogs.DatePickerFragment;
+import ru.loftschool.loftblogmoneytracker.utils.ServerReqUtils;
 import ru.loftschool.loftblogmoneytracker.utils.TextInputValidator;
 import ru.loftschool.loftblogmoneytracker.utils.date.DateConvertUtils;
 import ru.loftschool.loftblogmoneytracker.utils.date.DateFormats;
@@ -100,6 +102,9 @@ public class ExpensesFragment extends Fragment implements DateFormats{
 
     @Bean
     TextInputValidator validator;
+
+    @Bean
+    ServerReqUtils serverRequest;
 
     public static ExpensesAdapter getAdapter() {
         return adapter;
@@ -319,6 +324,7 @@ public class ExpensesFragment extends Fragment implements DateFormats{
                     expense.category = (Categories)spCategories.getSelectedItem();
 
                     adapter.updateExpense(position, expense);
+                    SyncExpensesService_.intent(getContext()).start();
 
                     Toast.makeText(getActivity(), expenseChanged + expense.price + ", "
                             + expense.name + ", "

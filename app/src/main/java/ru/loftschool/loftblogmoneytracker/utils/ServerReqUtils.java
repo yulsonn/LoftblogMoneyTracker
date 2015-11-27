@@ -286,7 +286,7 @@ public class ServerReqUtils implements DateFormats, SyncTypes{
                                 }
                             } else {
                                 Log.e(LOG_TAG, "BAD. Expenses sync: something went wrong");
-                                if (launchMode == SYNC_MANUAL) {
+                                if (launchMode == SYNC_MANUAL || launchMode == SYNC_EXPENSES_LIST_UPDATE) {
                                     syncFinished(SYNC_EXPENSES, SYNC_FAILED);
                                 }
                             }
@@ -295,7 +295,7 @@ public class ServerReqUtils implements DateFormats, SyncTypes{
                         @Override
                         public void failure(RetrofitError error) {
                             Log.e(LOG_TAG, "ERROR. Expenses sync failed");
-                            if (launchMode == SYNC_MANUAL) {
+                            if (launchMode == SYNC_MANUAL || launchMode == SYNC_EXPENSES_LIST_UPDATE) {
                                 if (error.getCause().getMessage().equalsIgnoreCase("retrofit.RetrofitError: 401 Unauthorized")) {
                                     unauthorizedErrorReaction();
                                 } else {

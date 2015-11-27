@@ -120,7 +120,7 @@ public class CategoriesAdapter extends SelectableAdapter<CategoriesAdapter.CardV
     }
 
 
-    private void completelyRemoveExpensesFromDB() {
+    private void completelyRemoveCategoriesFromDB() {
         if (removedCategoriesMap != null) {
             for (Map.Entry<Integer, Categories> pair : removedCategoriesMap.entrySet()) {
                 pair.getValue().delete();
@@ -183,7 +183,7 @@ public class CategoriesAdapter extends SelectableAdapter<CategoriesAdapter.CardV
 
     private void saveRemovedItems(List<Integer> positions) {
         if (removedCategoriesMap != null) {
-            completelyRemoveExpensesFromDB();
+            completelyRemoveCategoriesFromDB();
         }
         removedCategoriesMap = new TreeMap<>();
         for (int position : positions) {
@@ -193,7 +193,7 @@ public class CategoriesAdapter extends SelectableAdapter<CategoriesAdapter.CardV
 
     private void saveRemovedItem(int position) {
         if (removedCategoriesMap != null) {
-            completelyRemoveExpensesFromDB();
+            completelyRemoveCategoriesFromDB();
         }
         ArrayList<Integer> positions = new ArrayList<>(1);
         positions.add(position);
@@ -226,7 +226,7 @@ public class CategoriesAdapter extends SelectableAdapter<CategoriesAdapter.CardV
         @Override
         public void run() {
             undoRemoveTimer = null;
-            completelyRemoveExpensesFromDB();
+            completelyRemoveCategoriesFromDB();
         }
     }
 
