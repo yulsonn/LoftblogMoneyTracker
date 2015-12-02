@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">LoftblogMoneyTracker</string>
+    <string name="app_name">Personal MoneyTracker</string>
 
     <!--Main menu-->
     <string name="action_settings">Настройки</string>
