@@ -28,9 +28,10 @@ public interface CategoriesAPI {
                                @Query("auth_token") String token);
 
     @GET("/categories/del")
-    CategoryDeleteModel deleteCategory(@Query("id") Integer id,
-                                 @Query("google_token") String gToken,
-                                 @Query("auth_token") String token);
+    void deleteCategory(@Query("id") Integer id,
+                                       @Query("google_token") String gToken,
+                                       @Query("auth_token") String token,
+                                       Callback<CategoryDeleteModel> cb);
 
     @GET("/categories")
     AllCategoriesModel getAllCategories(@Query("google_token") String gToken,

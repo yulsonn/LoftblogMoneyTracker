@@ -70,8 +70,8 @@ public class RestService {
         return restClient.getCategoriesAPI().getAllCategoriesWithExpenses(gToken, token);
     }
 
-    public CategoryDeleteModel deleteCategory(Integer id, String gToken, String token) {
-        return restClient.getCategoriesAPI().deleteCategory(id, gToken, token);
+    public void deleteCategory(Integer id, String gToken, String token, Callback<CategoryDeleteModel> cb) {
+        restClient.getCategoriesAPI().deleteCategory(id, gToken, token, cb);
     }
 
     public BalanceModel getBalance(String gToken, String token) {
