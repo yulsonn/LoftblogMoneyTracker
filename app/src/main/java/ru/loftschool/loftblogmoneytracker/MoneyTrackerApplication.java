@@ -6,6 +6,8 @@ import android.preference.PreferenceManager;
 
 import com.activeandroid.ActiveAndroid;
 
+import com.crashlytics.android.Crashlytics;
+import io.fabric.sdk.android.Fabric;
 import ru.loftschool.loftblogmoneytracker.utils.TokenKeyStorage;
 
 public class MoneyTrackerApplication extends com.activeandroid.app.Application implements TokenKeyStorage{
@@ -16,6 +18,7 @@ public class MoneyTrackerApplication extends com.activeandroid.app.Application i
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
         ActiveAndroid.initialize(this);
     }
 

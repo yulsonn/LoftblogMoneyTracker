@@ -114,7 +114,7 @@ public class CategoriesFragment extends Fragment {
     @Bean
     TextInputValidator validator;
 
-    @Bean()
+    @Bean
     ServerReqUtils serverRequest;
 
     @OptionsMenuItem(R.id.search_action)

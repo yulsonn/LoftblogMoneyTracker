@@ -8,5 +8,6 @@ public interface SyncTypes {
     int SYNC_FAILED = 1;
     int SYNC_AUTOMATIC = 0;
     int SYNC_MANUAL = 1;
+    int SYNC_EXPENSES_LIST_UPDATE = 2;
 
 }

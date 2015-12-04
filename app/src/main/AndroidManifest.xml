@@ -35,6 +35,8 @@
 
         <activity android:name=".ui.activities.LoginActivity_" />
 
+        <activity android:name=".ui.activities.TrackerPreferenceActivity" />
+
         <activity
             android:name=".ui.activities.MainActivity_"
             android:label="@string/app_name"
@@ -83,6 +85,13 @@
             android:name=".services.DataLoadService_"
             android:exported="false"/>
 
+        <service
+            android:name=".services.SyncExpensesService_"
+            android:exported="false"/>
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="cb20c07c9c84d18bf080988d201dc468711bf39c" />
     </application>
 
 </manifest>

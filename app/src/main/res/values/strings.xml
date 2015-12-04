@@ -1,5 +1,8 @@
 <resources>
-    <string name="app_name">LoftblogMoneyTracker</string>
+    <string name="app_name">Personal MoneyTracker</string>
+
+    <!--Main menu-->
+    <string name="action_settings">Настройки</string>
 
     <!--Sync-->
     <string name="content_authority" translatable="false">ru.loftschool.loftblogmoneytracker</string>
@@ -27,10 +30,10 @@
     <string name="frag_title_expenses">Траты</string>
     <string name="frag_title_categories">Категории</string>
     <string name="frag_title_statistics">Статистика</string>
-    <string name="frag_title_settings">Настройки</string>
 
     <!--Заголовки активити-->
     <string name="act_title_add_expense">Добавить трату</string>
+    <string name="act_title_settings">Настройки</string>
 
     <!--Стркоки для Drawer header-->
     <string name="drawer_header_username">User</string>
@@ -47,6 +50,7 @@
     <string name="error_null_name">Введите наименование!</string>
     <string name="error_input_message">Одно или несколько полей не заполнены!</string>
     <string name="expense_added_text">Трата добавлена: </string>
+    <string name="no_categories_message">Не найдено категорий. Невозможно создать трату без категории.</string>
 
     <!--Splash text-->
     <string name="splash_text">Welcome to Loftblog Money Tracker</string>

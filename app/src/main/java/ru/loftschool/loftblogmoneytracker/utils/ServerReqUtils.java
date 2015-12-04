@@ -156,26 +156,38 @@ public class ServerReqUtils implements DateFormats, SyncTypes{
     public void deleteCategories(Map<Integer, Categories> categories) {
         if (categories != null && !categories.isEmpty()) {
             if (NetworkConnectionChecker.isNetworkConnected(context)) {
-                try {
                     for (Map.Entry<Integer, Categories> pair : categories.entrySet()) {
-                        Categories category = pair.getValue();
-                        CategoryDeleteModel removeCategoryResp = restService.deleteCategory(category.sId, MoneyTrackerApplication.getGoogleToken(context), MoneyTrackerApplication.getToken(context));
-                        String status = removeCategoryResp.getStatus();
-                        if (CategoriesStatus.STATUS_OK.equals(removeCategoryResp.getStatus())) {
-                            Log.e(LOG_TAG, category.sId + " category removed");
-                        } else if (CategoriesStatus.STATUS_UNAUTHORIZED.equalsIgnoreCase(status) || CategoriesStatus.STATUS_WRONG_TOKEN.equalsIgnoreCase(status)) {
-                            unauthorizedErrorReaction();
-                        } else {
-                            unknownErrorReaction();
-                            Log.e(LOG_TAG, unknownError);
-                        }
+                        final Categories category = pair.getValue();
+                        restService.deleteCategory(
+                                category.sId,
+                                MoneyTrackerApplication.getGoogleToken(context),
+                                MoneyTrackerApplication.getToken(context),
+                                new Callback<CategoryDeleteModel>() {
+                            @Override
+                            public void success(CategoryDeleteModel categoryDeleteModel, Response response) {
+                                String status = categoryDeleteModel.getStatus();
+                                if (CategoriesStatus.STATUS_OK.equals(status)) {
+                                    Log.e(LOG_TAG, category.sId + " category removed");
+                                } else {
+                                    unknownErrorReaction();
+                                    Log.e(LOG_TAG, unknownError);
+                                }
+                            }
+
+                            @Override
+                            public void failure(RetrofitError error) {
+                                if (error.getCause().getMessage().equalsIgnoreCase("retrofit.RetrofitError: 401 Unauthorized")) {
+                                    unauthorizedErrorReaction();
+                                } else {
+                                    unknownErrorReaction();
+                                    Log.e(LOG_TAG, unknownError);
+                                }
+                            }
+                        });
                     }
-                } catch (RetrofitError e) {
-                    retrofitErrorMessageShow(e.getKind(), e);
-                }
             } else {
                 noInternetReaction();
-                    Log.e(LOG_TAG, noInternetError);
+                Log.e(LOG_TAG, noInternetError);
             }
         }
     }
@@ -286,7 +298,7 @@ public class ServerReqUtils implements DateFormats, SyncTypes{
                                 }
                             } else {
                                 Log.e(LOG_TAG, "BAD. Expenses sync: something went wrong");
-                                if (launchMode == SYNC_MANUAL) {
+                                if (launchMode == SYNC_MANUAL || launchMode == SYNC_EXPENSES_LIST_UPDATE) {
                                     syncFinished(SYNC_EXPENSES, SYNC_FAILED);
                                 }
                             }
@@ -295,7 +307,7 @@ public class ServerReqUtils implements DateFormats, SyncTypes{
                         @Override
                         public void failure(RetrofitError error) {
                             Log.e(LOG_TAG, "ERROR. Expenses sync failed");
-                            if (launchMode == SYNC_MANUAL) {
+                            if (launchMode == SYNC_MANUAL || launchMode == SYNC_EXPENSES_LIST_UPDATE) {
                                 if (error.getCause().getMessage().equalsIgnoreCase("retrofit.RetrofitError: 401 Unauthorized")) {
                                     unauthorizedErrorReaction();
                                 } else {

@@ -58,7 +58,7 @@ public class NotificationUtil {
 
             String title = context.getString(R.string.app_name);
             String contentText = context.getResources().getString(R.string.notification_message);
-            Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.notification);
+            Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.mipmap.launcher_wallet);
             builder.setLargeIcon(largeIcon);
             builder.setContentTitle(title);
             builder.setContentText(contentText);

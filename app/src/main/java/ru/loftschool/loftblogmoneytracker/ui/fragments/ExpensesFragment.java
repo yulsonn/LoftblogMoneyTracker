@@ -50,9 +50,11 @@ import ru.loftschool.loftblogmoneytracker.adapters.ExpensesAdapter;
 import ru.loftschool.loftblogmoneytracker.database.model.Categories;
 import ru.loftschool.loftblogmoneytracker.database.model.Expenses;
 import ru.loftschool.loftblogmoneytracker.services.DataLoadService_;
+import ru.loftschool.loftblogmoneytracker.services.SyncExpensesService_;
 import ru.loftschool.loftblogmoneytracker.ui.activities.AddExpenseActivity_;
 import ru.loftschool.loftblogmoneytracker.ui.activities.MainActivity;
 import ru.loftschool.loftblogmoneytracker.ui.dialogs.DatePickerFragment;
+import ru.loftschool.loftblogmoneytracker.utils.ServerReqUtils;
 import ru.loftschool.loftblogmoneytracker.utils.TextInputValidator;
 import ru.loftschool.loftblogmoneytracker.utils.date.DateConvertUtils;
 import ru.loftschool.loftblogmoneytracker.utils.date.DateFormats;
@@ -92,11 +94,17 @@ public class ExpensesFragment extends Fragment implements DateFormats{
     @StringRes(R.string.edit_expense_changed)
     String expenseChanged;
 
+    @StringRes(R.string.no_categories_message)
+    String noCategoriesMsg;
+
     @OptionsMenuItem(R.id.search_action)
     MenuItem menuItem;
 
     @Bean
     TextInputValidator validator;
+
+    @Bean
+    ServerReqUtils serverRequest;
 
     public static ExpensesAdapter getAdapter() {
         return adapter;
@@ -113,9 +121,13 @@ public class ExpensesFragment extends Fragment implements DateFormats{
     @Click
     void fab() {
         MainActivity.destroyActionModeIfNeeded();
-        Intent openActivityIntent = new Intent(getActivity(), AddExpenseActivity_.class);
-        getActivity().startActivity(openActivityIntent);
-        getActivity().overridePendingTransition(R.anim.from_middle, R.anim.to_middle);
+        if (!Categories.selectAll().isEmpty()) {
+            Intent openActivityIntent = new Intent(getActivity(), AddExpenseActivity_.class);
+            getActivity().startActivity(openActivityIntent);
+            getActivity().overridePendingTransition(R.anim.from_middle, R.anim.to_middle);
+        } else {
+            Toast.makeText(getContext(), noCategoriesMsg, Toast.LENGTH_LONG).show();
+        }
     }
 
     @AfterViews
@@ -312,6 +324,7 @@ public class ExpensesFragment extends Fragment implements DateFormats{
                     expense.category = (Categories)spCategories.getSelectedItem();
 
                     adapter.updateExpense(position, expense);
+                    SyncExpensesService_.intent(getContext()).start();
 
                     Toast.makeText(getActivity(), expenseChanged + expense.price + ", "
                             + expense.name + ", "

@@ -8,8 +8,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.activeandroid.query.Select;
-
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
@@ -28,9 +26,9 @@ import ru.loftschool.loftblogmoneytracker.database.model.Expenses;
 import ru.loftschool.loftblogmoneytracker.ui.dialogs.DatePickerFragment;
 import ru.loftschool.loftblogmoneytracker.ui.fragments.ExpensesFragment;
 import ru.loftschool.loftblogmoneytracker.utils.ServerReqUtils;
+import ru.loftschool.loftblogmoneytracker.utils.TextInputValidator;
 import ru.loftschool.loftblogmoneytracker.utils.date.DateConvertUtils;
 import ru.loftschool.loftblogmoneytracker.utils.date.DateFormats;
-import ru.loftschool.loftblogmoneytracker.utils.TextInputValidator;
 
 @EActivity(R.layout.activity_add_expense)
 public class AddExpenseActivity extends AppCompatActivity implements DateFormats {
@@ -109,7 +107,7 @@ public class AddExpenseActivity extends AppCompatActivity implements DateFormats
     }
 
     private List<Categories> getCategoriesList(){
-        return new Select().from(Categories.class).orderBy("Id").execute();
+        return Categories.selectAll();
     }
 
     @Override
